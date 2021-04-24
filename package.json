@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "js-tokens": "^4.0.0",
+    "kotlinx-coroutines-core": "^1.4.3",
+    "loose-envify": "^1.4.0",
+    "object-assign": "^4.1.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.14.0",
+    "react-is": "^16.13.1",
+    "react-swipeable": "^5.5.1"
+  }
+}

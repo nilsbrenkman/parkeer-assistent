@@ -1,0 +1,12 @@
+lib/
+build/
+node_modules/
+externals/
+.gradle
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
