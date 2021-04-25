@@ -61,20 +61,22 @@ fun main() {
         Logger.getRootLogger().level = Level.INFO
     }
 
+    val log = Logger.getLogger("Server.kt")
+
     val trustStore = System.getProperty("server.trustStore", "keystore.jks")
     val trustStoreFile = File(trustStore)
     if (trustStoreFile.exists()) {
-        println("Using trust store: ${trustStoreFile.absolutePath}")
+        log.info("Using trust store: ${trustStoreFile.absolutePath}")
         System.setProperty("javax.net.ssl.trustStore", trustStoreFile.absolutePath)
         System.setProperty("javax.net.ssl.trustStorePassword", "parkeerassistent")
     } else {
-        println("Trust store not found: ${trustStoreFile.absolutePath}")
+        log.info("Trust store not found: ${trustStoreFile.absolutePath}")
     }
 
     val host = System.getProperty("server.host", "127.0.0.1")
     val port = System.getProperty("server.port", "3000").toInt()
 
-    println("Starting server: $host:$port")
+    log.info("Starting server: $host:$port")
 
     embeddedServer(Netty, port = port, host = host) {
         install(ContentNegotiation) {
@@ -82,6 +84,10 @@ fun main() {
         }
         install(Compression) {
             gzip()
+        }
+        if ("true" == System.getProperty("server.forceSsl")) {
+            install(XForwardedHeaderSupport)
+            install((HttpsRedirect))
         }
         routing {
             get("/") {
