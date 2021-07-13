@@ -105,7 +105,7 @@ val ParkingList = functionalComponent<ParkingListProps> { props ->
                         fontSize = 14.px
                         lineHeight = LineHeight("14px")
                     }
-                    +parking.timeRange()
+                    +Util.getTimeRange(parking)
                 }
                 div {
                     styledSpan {

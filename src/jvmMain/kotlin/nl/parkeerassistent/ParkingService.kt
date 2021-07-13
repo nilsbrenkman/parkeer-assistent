@@ -54,16 +54,14 @@ object ParkingService {
     }
 
     private val regex = "/Date\\(([0-9]+)\\)/".toRegex()
-    private val sdf = SimpleDateFormat("dd/MM HH:mm")
+    private val dateTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
     private fun convertTime(utc: String): String {
         val match = regex.find(utc)!!
         val unix = match.groupValues[1].toLong()
         val date = Date(unix)
-        return sdf.format(date)
+        return dateTime.format(date)
     }
-
-    private val dateTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
     fun start(request: AddParkingRequest, call: ApplicationCall) {
         val sessionCookie = call.request.cookies["session"]!!
