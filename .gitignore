@@ -10,3 +10,4 @@ externals/
 *.iml
 *.ipr
 out/
+ios/parkeerassistent.xcodeproj/
