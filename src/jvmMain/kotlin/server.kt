@@ -55,6 +55,10 @@ fun HTML.index() {
     }
 }
 
+private val activeVersions = listOf(
+    "1.0.0"
+)
+
 fun main() {
     org.apache.log4j.BasicConfigurator.configure()
     if (System.getProperty("log.debug", "false") != "true") {
@@ -90,6 +94,14 @@ fun main() {
             install((HttpsRedirect))
         }
         routing {
+            get("/version/{version}") {
+                val version = call.parameters["version"]!!
+                if (activeVersions.contains(version)) {
+                    call.respondText("live", status = HttpStatusCode.OK)
+                } else {
+                    call.respondText("mock", status = HttpStatusCode.NotFound)
+                }
+            }
             get("/") {
                 call.respondHtml(HttpStatusCode.OK, HTML::index)
             }
