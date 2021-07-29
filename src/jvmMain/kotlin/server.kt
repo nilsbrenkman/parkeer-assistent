@@ -9,13 +9,9 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import kotlinx.css.CSSBuilder
-import kotlinx.css.body
 import kotlinx.html.*
 import nl.parkeerassistent.*
-import nl.parkeerassistent.model.AddParkingRequest
-import nl.parkeerassistent.model.AddVisitorRequest
-import nl.parkeerassistent.model.LoginRequest
+import nl.parkeerassistent.model.*
 import nl.parkeerassistent.style.Style
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -98,45 +94,125 @@ fun main() {
                 call.respondRedirect("/", false)
             }
             get("/login") {
-                call.respond(LoginService.isLoggedIn(call.request))
+                call.respond(
+                    ServiceUtil.execute(
+                        LoginService.Method.LoggedIn,
+                        call,
+                        Response(false),
+                        LoginService::isLoggedIn
+                    )
+                )
             }
             post("/login") {
                 val request = call.receive<LoginRequest>()
-                call.respond(LoginService.login(request, call))
+                call.respond(
+                    ServiceUtil.execute(
+                        LoginService.Method.Login,
+                        call,
+                        request,
+                        Response(false),
+                        LoginService::login
+                    )
+                )
             }
             get("/logout") {
-                call.respond(LoginService.logout(call))
+                call.respond(
+                    ServiceUtil.execute(
+                        LoginService.Method.Logout,
+                        call,
+                        Response(false),
+                        LoginService::logout
+                    )
+                )
             }
             route("/user") {
                 get {
-                    UserService.get(call)
+                    call.respond(
+                        ServiceUtil.execute(
+                            UserService.Method.Get,
+                            call,
+                            UserResponse("", 0.0, ""),
+                            UserService::get
+                        )
+                    )
                 }
                 get("/balance") {
-                    UserService.balance(call)
+                    call.respond(
+                        ServiceUtil.execute(
+                            UserService.Method.Balance,
+                            call,
+                            BalanceResponse(""),
+                            UserService::balance
+                        )
+                    )
                 }
             }
             route("/parking") {
                 get {
-                    ParkingService.get(call)
+                    call.respond(
+                        ServiceUtil.execute(
+                            ParkingService.Method.Get,
+                            call,
+                            ParkingResponse(emptyList(), emptyList()),
+                            ParkingService::get
+                        )
+                    )
                 }
                 post {
                     val request = call.receive<AddParkingRequest>()
-                    ParkingService.start(request, call)
+                    call.respond(
+                        ServiceUtil.execute(
+                            ParkingService.Method.Start,
+                            call,
+                            request,
+                            Response(false),
+                            ParkingService::start
+                        )
+                    )
                 }
                 delete("/{id}") {
-                    ParkingService.stop(call)
+                    call.respond(
+                        ServiceUtil.execute(
+                            ParkingService.Method.Stop,
+                            call,
+                            Response(false),
+                            ParkingService::stop
+                        )
+                    )
                 }
             }
             route("/visitor") {
                 get {
-                    call.respond(VisitorService.get(call))
+                    call.respond(
+                        ServiceUtil.execute(
+                            VisitorService.Method.Get,
+                            call,
+                            VisitorResponse(emptyList()),
+                            VisitorService::get
+                        )
+                    )
                 }
                 post {
                     val request = call.receive<AddVisitorRequest>()
-                    call.respond(VisitorService.add(request, call))
+                    call.respond(
+                        ServiceUtil.execute(
+                            VisitorService.Method.Add,
+                            call,
+                            request,
+                            VisitorResponse(emptyList()),
+                            VisitorService::add
+                        )
+                    )
                 }
                 delete("/{visitorId}") {
-                    call.respond(VisitorService.delete(call))
+                    call.respond(
+                        ServiceUtil.execute(
+                            VisitorService.Method.Delete,
+                            call,
+                            Response(false),
+                            VisitorService::delete
+                        )
+                    )
                 }
             }
             static("/static") {
