@@ -12,10 +12,7 @@ import io.ktor.server.netty.*
 import kotlinx.css.CSSBuilder
 import kotlinx.css.body
 import kotlinx.html.*
-import nl.parkeerassistent.LoginService
-import nl.parkeerassistent.ParkingService
-import nl.parkeerassistent.UserService
-import nl.parkeerassistent.VisitorService
+import nl.parkeerassistent.*
 import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.AddVisitorRequest
 import nl.parkeerassistent.model.LoginRequest
@@ -55,9 +52,6 @@ fun HTML.index() {
     }
 }
 
-private val activeVersions = listOf(
-    "1.0.0"
-)
 
 fun main() {
     org.apache.log4j.BasicConfigurator.configure()
@@ -95,12 +89,7 @@ fun main() {
         }
         routing {
             get("/version/{version}") {
-                val version = call.parameters["version"]!!
-                if (activeVersions.contains(version)) {
-                    call.respondText("live", status = HttpStatusCode.OK)
-                } else {
-                    call.respondText("mock", status = HttpStatusCode.NotFound)
-                }
+                VersionService.version(call)
             }
             get("/") {
                 call.respondHtml(HttpStatusCode.OK, HTML::index)
