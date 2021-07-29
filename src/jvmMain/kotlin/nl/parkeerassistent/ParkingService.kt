@@ -1,12 +1,9 @@
 package nl.parkeerassistent
 
 import io.ktor.application.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.response.*
-import kotlinx.coroutines.runBlocking
 import nl.parkeerassistent.external.AddParkingSession
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.external.GetParkingSessions
@@ -20,24 +17,30 @@ import java.util.*
 
 object ParkingService {
 
-    fun get(call: ApplicationCall) {
+    enum class Method: Monitoring.Method {
+        Get,
+        Start,
+        Stop,
+        ;
+        override fun service(): Monitoring.Service {
+            return Monitoring.Service.Parking
+        }
+        override fun method(): String {
+            return name
+        }
+    }
+
+    suspend fun get(call: ApplicationCall): ParkingResponse {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
         val customerId = call.request.cookies["customerid"]!!
 
-        try {
-            runBlocking {
-                val active = getParkingSessions(session, customerId, "Customer/Dashboard/GetActiveParkingSessions")
-                val scheduled = getParkingSessions(session, customerId, "Customer/Dashboard/GetReservedParkingSessions")
-                val response = ParkingResponse(active, scheduled)
-                call.respond(response)
-            }
-            return
-        } catch (e: RedirectResponseException) {
-            //
-        }
-        call.response.status(HttpStatusCode.Forbidden)
+        val active = getParkingSessions(session, customerId, "Customer/Dashboard/GetActiveParkingSessions")
+        val scheduled = getParkingSessions(session, customerId, "Customer/Dashboard/GetReservedParkingSessions")
+
+        Monitoring.info(Method.Get, "SUCCESS")
+        return ParkingResponse(active, scheduled)
     }
 
     private suspend fun getParkingSessions(session: Session, customerId: String, url: String): List<Parking> {
@@ -63,7 +66,7 @@ object ParkingService {
         return dateTime.format(date)
     }
 
-    fun start(request: AddParkingRequest, call: ApplicationCall) {
+    suspend fun start(call: ApplicationCall, request: AddParkingRequest): Response {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
@@ -88,42 +91,27 @@ object ParkingService {
             true,
             true
         )
-        try {
-            runBlocking {
-                val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/AddParkingSession")) {
-                    ApiHelper.addHeaders(this, session)
-                    contentType(ContentType.Application.Json)
-                    body = requestBody
-                }
-                call.respond(Response(result.successful))
-            }
-            return
-        } catch (e: RedirectResponseException) {
-            //
+
+        val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/AddParkingSession")) {
+            ApiHelper.addHeaders(this, session)
+            contentType(ContentType.Application.Json)
+            body = requestBody
         }
-        call.response.status(HttpStatusCode.Forbidden)
+        return ServiceUtil.convertResponse(Method.Start, result)
     }
 
-    fun stop(call: ApplicationCall) {
+    suspend fun stop(call: ApplicationCall): Response {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
         val parkingId = call.parameters["id"]!!
 
-        try {
-            runBlocking {
-                val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/StopParkingSession")) {
-                    ApiHelper.addHeaders(this, session)
-                    contentType(ContentType.Application.Json)
-                    body = StopParkingSession(parkingId.toInt())
-                }
-                call.respond(Response(result.successful))
-            }
-            return
-        } catch (e: RedirectResponseException) {
-            //
+        val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/StopParkingSession")) {
+            ApiHelper.addHeaders(this, session)
+            contentType(ContentType.Application.Json)
+            body = StopParkingSession(parkingId.toInt())
         }
-        call.response.status(HttpStatusCode.Forbidden)
+        return ServiceUtil.convertResponse(Method.Stop, result)
     }
 
 }

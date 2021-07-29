@@ -1,12 +1,9 @@
 package nl.parkeerassistent
 
 import io.ktor.application.*
-import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import io.ktor.response.*
-import kotlinx.coroutines.runBlocking
 import nl.parkeerassistent.external.GetBalanceInfo
 import nl.parkeerassistent.external.GetPermitsByCustomer
 import nl.parkeerassistent.model.BalanceResponse
@@ -14,43 +11,43 @@ import nl.parkeerassistent.model.UserResponse
 
 object UserService {
 
-    suspend fun get(call: ApplicationCall) {
+    enum class Method: Monitoring.Method {
+        Get,
+        Balance,
+        ;
+        override fun service(): Monitoring.Service {
+            return Monitoring.Service.User
+        }
+        override fun method(): String {
+            return name
+        }
+    }
+
+    suspend fun get(call: ApplicationCall): UserResponse {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
         val customerId = call.request.cookies["customerid"]!!
 
-        try {
-            val balance = getBalance(session)
-            val permitId = getPermitId(session, customerId)
-            val permitIdCookie = Cookie("permitid", permitId.toString())
-            call.response.cookies.append(permitIdCookie)
+        val balance = getBalance(session)
+        val permitId = getPermitId(session, customerId)
+        val permitIdCookie = Cookie("permitid", permitId.toString())
+        call.response.cookies.append(permitIdCookie)
 
-            val info = getInfo(session, customerId, permitId.toString())
+        val info = getInfo(session, customerId, permitId.toString())
 
-            val response = UserResponse(balance, info.hourRate, info.regimeEndTime)
-            call.respond(response)
-            return
-        } catch (e: RedirectResponseException) {
-            //
-        }
-        call.response.status(HttpStatusCode.Forbidden)
+        Monitoring.info(Method.Get, "SUCCESS")
+        return UserResponse(balance, info.hourRate, info.regimeEndTime)
     }
 
-    fun balance(call: ApplicationCall) {
+    suspend fun balance(call: ApplicationCall): BalanceResponse {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
-        try {
-            runBlocking {
-                val balance = getBalance(session)
-                call.respond(BalanceResponse(balance))
-            }
-            return
-        } catch (e: RedirectResponseException) {
-            //
-        }
-        call.response.status(HttpStatusCode.Forbidden)
+        val balance = getBalance(session)
+
+        Monitoring.info(Method.Balance, "SUCCESS")
+        return BalanceResponse(balance)
     }
 
     suspend fun getBalance(session: Session): String {
