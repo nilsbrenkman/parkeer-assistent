@@ -15,7 +15,7 @@ struct PropertyView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.small) {
             Text("\(label):")
-                .foregroundColor(AppColor.darkGrey)
+                .foregroundColor(Color.ui.bw30)
             Text(text)
                 .bold()
         }
