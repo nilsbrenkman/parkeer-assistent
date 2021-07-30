@@ -73,7 +73,7 @@ struct AddParkingView: View {
                             .centered()
                     }
                 }
-                .color(AppColor.success, enabled: minutes > 0)
+                .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: minutes > 0)
                 
                 Button(action: { user.selectedVisitor = nil }) {
                     Text("Annuleren")
@@ -81,7 +81,8 @@ struct AddParkingView: View {
                         .bold()
                         .centered()
                 }
-                .foregroundColor(AppColor.danger.main)
+                .foregroundColor(Color.ui.danger)
+                .listRowBackground(Color.ui.light)
             }
         }
         .navigationBarHidden(true)

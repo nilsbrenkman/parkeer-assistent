@@ -14,17 +14,18 @@ struct LicenseView: View {
     var body: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 6.0, style: .continuous)
-                .fill(AppColor.license)
+                .fill(Color.ui.licenseBg)
                 .frame(width: 140, height: 36)
             
             Text("\(License.formatLicense(license))")
                 .font(.title3)
+                .foregroundColor(Color.ui.license)
                 .bold()
                 .tracking(2)
                 .frame(width: 140, height: 36)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.black, lineWidth: 1)
+                        .stroke(Color.ui.licenseBorder, lineWidth: 1)
                 )
         }
     }

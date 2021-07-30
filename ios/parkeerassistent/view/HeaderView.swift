@@ -17,7 +17,7 @@ struct HeaderView: View {
             
             ZStack {
                 Rectangle()
-                    .fill(AppColor.header)
+                    .fill(Color.ui.header)
                     .frame(height: 68)
                 HStack {
                     if !login.isLoggedIn {
@@ -49,19 +49,20 @@ struct HeaderView: View {
                 HStack {
                     Spacer()
                     Text("Saldo:")
-                        .foregroundColor(AppColor.header)
+                        .foregroundColor(Color.ui.header)
                         .padding(.vertical, 8)
                     Text("€ \(user.balance!)")
                         .bold()
-                        .foregroundColor(AppColor.header)
+                        .foregroundColor(Color.ui.header)
                         .padding(.vertical, 8)
-
+                    
                 }
                 .padding(.horizontal)
-                
+                .background(Color.ui.light)
+
                 Rectangle()
                     .frame(height: 1)
-                    .border(AppColor.header, width: 1)
+                    .border(Color.ui.header, width: 1)
             }
                         
         }

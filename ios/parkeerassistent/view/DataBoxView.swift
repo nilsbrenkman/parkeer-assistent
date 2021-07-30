@@ -18,10 +18,10 @@ struct DataBoxView: View  {
             Text(title)
             ZStack {
                 RoundedRectangle(cornerRadius: 6.0, style: .continuous)
-                    .fill(AppColor.lightGrey)
+                    .fill(Color.ui.bw70)
                     .frame(height: 60)
                     .overlay(RoundedRectangle(cornerRadius: 6.0, style: .continuous)
-                                .stroke(Color.black, lineWidth: 1))
+                                .stroke(Color.ui.bw0, lineWidth: 1))
                 
                 Text(content)
                     .font(.title2)
