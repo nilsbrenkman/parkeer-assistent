@@ -12,7 +12,7 @@ data class Visitor(
 ) {
 
     fun full(): String {
-        if (name != null) {
+        if (name != null && name != "") {
             return "$license / $name"
         }
         return license

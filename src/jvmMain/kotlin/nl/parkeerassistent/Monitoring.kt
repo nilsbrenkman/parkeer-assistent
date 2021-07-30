@@ -1,8 +1,5 @@
 package nl.parkeerassistent
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import nl.parkeerassistent.model.Visitor
 import org.apache.log4j.Logger
 
 object Monitoring {
