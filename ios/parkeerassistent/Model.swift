@@ -53,7 +53,7 @@ struct Visitor: Codable, Hashable {
     var permitId: Int
     var license: String
     var formattedLicense: String
-    var name: String
+    var name: String?
     
     var id: Int {
         visitorId
