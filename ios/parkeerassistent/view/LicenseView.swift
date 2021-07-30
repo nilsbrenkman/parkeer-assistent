@@ -17,7 +17,7 @@ struct LicenseView: View {
                 .fill(AppColor.license)
                 .frame(width: 140, height: 36)
             
-            Text("\(license)")
+            Text("\(License.formatLicense(license))")
                 .font(.title3)
                 .bold()
                 .tracking(2)

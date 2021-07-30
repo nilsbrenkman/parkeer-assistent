@@ -72,13 +72,13 @@ class VisitorClientMock: VisitorClient {
     func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
 
-        if (License.normalise(s: license).count != 6) {
+        if (License.normalise(license).count != 6) {
             onComplete(Response(success: false, message: "Invalid license"))
             return
         }
         
         nextId += 1
-        let visitor = Visitor(visitorId: nextId, permitId: permitId, license: license, formattedLicense: License.formatLicense(license: license), name: name)
+        let visitor = Visitor(visitorId: nextId, permitId: permitId, license: license, formattedLicense: License.formatLicense(license), name: name)
         visitors[visitor.visitorId] = visitor
         onComplete(Response(success: true))
     }

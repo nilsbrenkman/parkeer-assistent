@@ -9,8 +9,8 @@ import Foundation
 
 class License {
     
-    static func formatLicense(license: String) -> String {
-        let chars = normalise(s: license)
+    static func formatLicense(_ license: String) -> String {
+        let chars = normalise(license)
 
         for format in formats {
             if format.matches(chars) {
@@ -21,7 +21,7 @@ class License {
         return String(chars)
     }
 
-    static func normalise(s: String) -> [Character] {
+    static func normalise(_ s: String) -> [Character] {
         var chars: [Character] = []
         for c in s.uppercased() {
             if "0"..."9" ~= c || "A"..."Z" ~= c {
