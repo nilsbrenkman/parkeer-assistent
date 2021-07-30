@@ -44,7 +44,7 @@ object VisitorService {
             })
         }
         Monitoring.info(Method.Get, "SUCCESS")
-        return VisitorResponse(result.data.map{ Visitor(it.LPId,it.PermitId, it.LP, it.FormattedLP, it.Comment ?: "") })
+        return VisitorResponse(result.data.map{ Visitor(it.LPId,it.PermitId, it.LP, it.FormattedLP, it.Comment ?: "...") })
     }
 
     suspend fun add(call: ApplicationCall, request: AddVisitorRequest): Response {
