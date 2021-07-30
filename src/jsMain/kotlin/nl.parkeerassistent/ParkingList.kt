@@ -112,7 +112,7 @@ val ParkingList = functionalComponent<ParkingListProps> { props ->
                         css {
                             +MainStyles.visitorName
                         }
-                        +visitor.name
+                        +visitor.name.orEmpty()
                     }
                     styledSpan {
                         css {

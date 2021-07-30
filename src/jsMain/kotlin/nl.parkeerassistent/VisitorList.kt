@@ -99,7 +99,7 @@ val VisitorList = functionalComponent<VisitorListProps> { props ->
                 css {
                     +MainStyles.visitorName
                 }
-                +visitor.name
+                +visitor.name.orEmpty()
             }
         }
 
