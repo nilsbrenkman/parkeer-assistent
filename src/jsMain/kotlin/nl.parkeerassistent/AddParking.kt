@@ -121,7 +121,7 @@ val AddParking = functionalComponent<AddParkingProps> { props ->
             +MainStyles.visitorName
             +MainStyles.padding
         }
-        +props.selectedVisitor.name
+        +props.selectedVisitor.name.orEmpty()
     }
     styledDiv {
         css {

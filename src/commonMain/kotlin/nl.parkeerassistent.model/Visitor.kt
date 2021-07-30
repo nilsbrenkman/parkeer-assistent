@@ -8,11 +8,14 @@ data class Visitor(
     val permitId: Int,
     val license: String,
     val formattedLicense: String,
-    val name: String
+    val name: String?
 ) {
 
     fun full(): String {
-        return "$license / $name"
+        if (name != null) {
+            return "$license / $name"
+        }
+        return license
     }
 
 }
