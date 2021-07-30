@@ -114,9 +114,9 @@ class VisitorClientMock: VisitorClient {
 struct MockVisitor {
     static let visitors = [
         MockVisitor(name: "Suzanne", license: "111-AA-1"),
-        MockVisitor(name: "Erik", license: "22-BBB-2")
-//        MockVisitor(name: "Future visitor", license: "3-CCC-33"),
-//        MockVisitor(name: "Invalid visitor", license: "44-DD-44")
+        MockVisitor(name: "Erik", license: "22-BBB-2"),
+        MockVisitor(name: "Future visitor", license: "3-CCC-33"),
+        MockVisitor(name: "Invalid visitor", license: "44-DD-44")
     ]
     
     let name: String

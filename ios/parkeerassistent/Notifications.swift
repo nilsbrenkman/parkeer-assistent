@@ -46,8 +46,10 @@ class Notifications {
             print("Can not find visitor")
             throw GenericError.VisitorNotFound
         }
-        let subtitle = "\(visitor.name) | [ \(visitor.formattedLicense) ]"
-        return subtitle
+        if let name = visitor.name {
+            return "\(name) | [ \(visitor.formattedLicense) ]"
+        }
+        return "[ \(visitor.formattedLicense) ]"
     }
     
     func schedule(_ identifier: String, title: String, subtitle: String, date: Date) {

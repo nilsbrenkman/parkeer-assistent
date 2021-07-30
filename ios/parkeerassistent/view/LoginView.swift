@@ -10,13 +10,16 @@ import LocalAuthentication
 
 struct LoginView: View {
     
+    @Environment(\.scenePhase) private var scenePhase
+
     @EnvironmentObject var login: Login
     @EnvironmentObject var messenger: Messenger
 
-    @State private var username: String = "" // 100365
-    @State private var password: String = "" // 0102
+    @State private var username: String = ""
+    @State private var password: String = ""
     @State private var storeCredentials: Bool = false
-    
+    @State private var isBackground: Bool = false
+
     @State private var wait: Bool = false
 
     var body: some View {
@@ -70,6 +73,16 @@ struct LoginView: View {
             }
         }
         .onAppear(perform: authenticate)
+        .onChange(of: scenePhase) { phase in
+            if phase == .background {
+                isBackground = true
+            } else if isBackground {
+                isBackground = false
+                if username.isEmpty && password.isEmpty {
+                    authenticate()
+                }
+            }
+        }
     }
     
     private func startLogin() {

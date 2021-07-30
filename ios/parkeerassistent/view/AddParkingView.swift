@@ -34,7 +34,7 @@ struct AddParkingView: View {
                     
                     LicenseView(license: visitor.formattedLicense)
                     
-                    Text("\(visitor.name)")
+                    Text("\(visitor.name ?? "")")
                         .font(.title3)
                         .bold()
                     

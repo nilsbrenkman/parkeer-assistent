@@ -15,7 +15,7 @@ struct VisitorView: View {
         HStack {
             LicenseView(license: visitor.formattedLicense)
 
-            Text("\(visitor.name)")
+            Text("\(visitor.name ?? "")")
                 .font(/*@START_MENU_TOKEN@*/.title3/*@END_MENU_TOKEN@*/)
                 .bold()
                 .padding(.leading)
