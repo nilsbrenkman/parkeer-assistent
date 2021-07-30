@@ -42,7 +42,7 @@ struct AddVisitorView: View {
                                     .stroke(Color.black, lineWidth: 1)
                             )
                             .onChange(of: license, perform: { value in
-                                license = License.formatLicense(license: license)
+                                license = License.formatLicense(license)
                             })
                     }
                     
