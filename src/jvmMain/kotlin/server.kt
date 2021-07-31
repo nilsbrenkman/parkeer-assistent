@@ -131,7 +131,7 @@ fun main() {
                         ServiceUtil.execute(
                             UserService.Method.Get,
                             call,
-                            UserResponse("", 0.0, ""),
+                            UserResponse("", 0.0, "",""),
                             UserService::get
                         )
                     )
