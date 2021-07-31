@@ -11,8 +11,11 @@ struct WheelSelector: View {
     
     var config: Config
     var onChange: (Int) -> Void
-    var onEnd: () -> Void
     
+    @State private var value = 0
+    @State private var valueBegin = 0
+    @State private var valuePrev = 0
+
     @State private var angle: CGFloat = 0.0
     @State private var angleBegin: CGFloat = 0.0
     @State private var anglePrev: CGFloat = 0.0
@@ -36,7 +39,7 @@ struct WheelSelector: View {
                             .onEnded({ value in
                                 angleBegin = angle
                                 anglePrev = 0
-                                self.onEnd()
+                                valuePrev = 0
                             })
                             .onChanged({ value in
                                 change(value: value)
@@ -52,7 +55,6 @@ struct WheelSelector: View {
     }
     
     private func change(value: DragGesture.Value) {
-        
         let angleStart = getDegree(x: value.startLocation.x, y: value.startLocation.y)
         let angleLocation = getDegree(x: value.location.x, y: value.location.y)
         
@@ -66,9 +68,13 @@ struct WheelSelector: View {
         anglePrev = anglePrev + angleDiff
         angle = angleBegin + anglePrev
         
-        let value = Int(anglePrev / 360 * 60)
-        self.onChange(value)
-        
+        let valueNew = Int(anglePrev / 360 * 60)
+        if valueNew == valuePrev {
+            return
+        }
+        let valueDiff = valueNew - valuePrev
+        valuePrev = valueNew
+        onChange(valueDiff)
     }
     
     private func getDegree(x: CGFloat, y: CGFloat) -> CGFloat {
@@ -88,8 +94,6 @@ struct WheelSelector_Previews: PreviewProvider {
             radius: 50,
             size: 12
         ), onChange: { value in
-            //
-        }, onEnd: {
             //
         })
     }

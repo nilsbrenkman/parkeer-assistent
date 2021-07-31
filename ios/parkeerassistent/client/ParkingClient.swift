@@ -9,7 +9,7 @@ import Foundation
 
 protocol ParkingClient {
     func get(onComplete: @escaping (ParkingResponse) -> Void)
-    func start(visitor: Visitor, timeMinutes: Int, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void)
+    func start(visitor: Visitor, timeMinutes: Int, startTime: Date?, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void)
     func stop(parkingId: Int, onComplete: @escaping (Response) -> Void)
 }
 
@@ -29,8 +29,10 @@ class ParkingClientApi: ParkingClient {
         }
     }
     
-    func start(visitor: Visitor, timeMinutes: Int, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
-        let body = AddParkingRequest(visitor: visitor, timeMinutes: timeMinutes, regimeTimeEnd: regimeTimeEnd)
+    func start(visitor: Visitor, timeMinutes: Int, startTime: Date?, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
+        let start = startTime != nil ? Util.dateTimeFormatter.string(from: startTime!) : nil
+        print(start!)
+        let body = AddParkingRequest(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd)
         do {
             try ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body, onComplete: onComplete)
         } catch {
@@ -83,7 +85,7 @@ class ParkingClientMock: ParkingClient {
         ))
     }
     
-    func start(visitor: Visitor, timeMinutes: Int, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
+    func start(visitor: Visitor, timeMinutes: Int, startTime: Date?, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
         
         if visitor.name == "Invalid visitor" {
@@ -93,10 +95,7 @@ class ParkingClientMock: ParkingClient {
         
         nextId += 1
         let timeInterval = 60 * Double(timeMinutes)
-        var startTime = Date()
-        if visitor.name == "Future visitor" {
-            startTime.addTimeInterval(timeInterval)
-        }
+        let startTime = startTime ?? Date()
         let endTime = startTime.addingTimeInterval(timeInterval)
 
         let p = Parking(id: nextId, license: visitor.license, startTime: dateFormatter.string(from: startTime), endTime: dateFormatter.string(from: endTime), cost: Double(timeMinutes) * hourRate / 60.0)
