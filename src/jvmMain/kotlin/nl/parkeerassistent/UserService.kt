@@ -37,7 +37,7 @@ object UserService {
         val info = getInfo(session, customerId, permitId.toString())
 
         Monitoring.info(Method.Get, "SUCCESS")
-        return UserResponse(balance, info.hourRate, info.regimeEndTime)
+        return UserResponse(balance, info.hourRate, info.regimeStartTime, info.regimeEndTime)
     }
 
     suspend fun balance(call: ApplicationCall): BalanceResponse {
