@@ -11,7 +11,7 @@ class Util {
         
     static let dateTimeFormatter = createDateFormatter(format: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
     static let timeFormatter = createDateFormatter(format: "HH:mm")
-    static let dateFormatter = createDateFormatter(format: "yyyy-MM-dd")
+    static let dateFormatter = createDateFormatter(format: "d/M")
     static let parkingFormatter = createDateFormatter(format: "dd/MM HH:mm")
 
     static func createDateFormatter(format: String) -> DateFormatter {

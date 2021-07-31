@@ -12,6 +12,7 @@ class User: ObservableObject {
     @Published var balance: String?
     @Published var hourRate: Double?
     @Published var timeBalance: Int = 0
+    @Published var regimeTimeStart: Date?
     @Published var regimeTimeEnd: Date?
     @Published var visitors: [Visitor]?
     @Published var parking: ParkingResponse?
@@ -44,6 +45,7 @@ class User: ObservableObject {
                 DispatchQueue.main.async {
                     self.balance = response.balance
                     self.hourRate = response.hourRate
+                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
                     self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
                     self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: response.hourRate)
                 }
@@ -117,10 +119,10 @@ class User: ObservableObject {
         }
     }
     
-    func startParking(_ visitor: Visitor, timeMinutes: Int, onComplete: @escaping () -> Void) {
+    func startParking(_ visitor: Visitor, timeMinutes: Int, startTime: Date?, onComplete: @escaping () -> Void) {
         let regimeTimeEnd = Util.dateTimeFormatter.string(from: self.regimeTimeEnd!)
         DispatchQueue.global().async {
-            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, regimeTimeEnd: regimeTimeEnd) { response in
+            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, startTime: startTime, regimeTimeEnd: regimeTimeEnd) { response in
                 if response.success {
                     DispatchQueue.main.async {
                         self.selectedVisitor = nil

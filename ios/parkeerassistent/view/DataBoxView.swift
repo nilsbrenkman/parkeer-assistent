@@ -14,12 +14,12 @@ struct DataBoxView: View  {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 5) {
             Text(title)
             ZStack {
                 RoundedRectangle(cornerRadius: 6.0, style: .continuous)
                     .fill(Color.ui.bw70)
-                    .frame(height: 60)
+                    .frame(height: 48)
                     .overlay(RoundedRectangle(cornerRadius: 6.0, style: .continuous)
                                 .stroke(Color.ui.bw0, lineWidth: 1))
                 

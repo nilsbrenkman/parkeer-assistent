@@ -47,3 +47,44 @@ extension Button {
         self.modifier(ButtonView(main: main, disabled: disabled, enabled: enabled))
     }
 }
+
+struct DatePickerView: View {
+    
+    @Binding var show: Bool
+    @Binding var date: Date
+    var update: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.gray.opacity(0.2)
+                .onTapGesture {
+                    show = false
+                    update()
+                }
+            VStack {
+                Spacer()
+                
+                VStack {
+                    DatePicker(
+                        "",
+                        selection: $date,
+                        in: Date()...,
+                        displayedComponents: [.date]
+                    )
+                    .datePickerStyle(GraphicalDatePickerStyle())
+                    .padding()
+                }
+                .background(Color.ui.bw100)
+                .cornerRadius(10)
+                                
+                Spacer()
+            }
+            .cornerRadius(10)
+            .padding(.horizontal)
+
+
+        }
+        .background(Color.clear)
+    }
+    
+}

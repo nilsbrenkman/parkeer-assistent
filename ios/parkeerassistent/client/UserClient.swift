@@ -51,9 +51,10 @@ class UserClientMock: UserClient {
 
     func get(onComplete: @escaping (UserResponse) -> Void) {
         MockClient.mockDelay()
+        let regimeTimeStart = "\(dateFormatter.string(from: Date()))T09:00:00+02:00"
         let tomorrow = Date(timeIntervalSinceNow: 24*60*60)
         let regimeTimeEnd = "\(dateFormatter.string(from: tomorrow))T00:00:00+02:00"
-        onComplete(UserResponse(balance: "50.00", hourRate: hourRate, regimeTimeEnd: regimeTimeEnd))
+        onComplete(UserResponse(balance: "50.00", hourRate: hourRate, regimeTimeStart: regimeTimeStart, regimeTimeEnd: regimeTimeEnd))
     }
     
     func balance(onComplete: @escaping (BalanceResponse) -> Void) {
