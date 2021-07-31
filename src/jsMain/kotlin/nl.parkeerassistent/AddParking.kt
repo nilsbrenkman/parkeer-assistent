@@ -95,6 +95,7 @@ val AddParking = functionalComponent<AddParkingProps> { props ->
                 body = AddParkingRequest(
                     props.selectedVisitor,
                     timeMinutes,
+                    null,
                     props.regimeTimeEnd
                 )
             }

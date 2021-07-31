@@ -71,13 +71,18 @@ object ParkingService {
         val session = Session(sessionCookie)
 
         val calendar = Calendar.getInstance()
-        calendar.time = Date()
+        calendar.time = request.start?.let { start -> dateTime.parse(start) } ?: run { Date() }
         calendar.add(Calendar.SECOND, 1)
         val start = calendar.time
         calendar.add(Calendar.MINUTE, request.timeMinutes)
         var end = calendar.time
 
-        val regimeEnd = dateTime.parse(request.regimeTimeEnd)
+        var regimeEnd = dateTime.parse(request.regimeTimeEnd)
+        while (start.after(regimeEnd)) {
+            calendar.time = regimeEnd
+            calendar.add(Calendar.DATE, 1)
+            regimeEnd = calendar.time
+        }
         if (end.after(regimeEnd)) {
             end = regimeEnd
         }
@@ -87,7 +92,7 @@ object ParkingService {
             request.visitor.full(),
             dateTime.format(start),
             dateTime.format(end),
-            request.regimeTimeEnd,
+            dateTime.format(regimeEnd),
             true,
             true
         )
