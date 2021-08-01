@@ -28,6 +28,11 @@ struct BalanceResponse: Codable {
     var balance: String
 }
 
+struct RegimeResponse: Codable {
+    var regimeTimeStart: String
+    var regimeTimeEnd: String
+}
+
 struct Parking: Codable, Hashable {
     var id: Int
     var license: String

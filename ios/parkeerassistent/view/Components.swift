@@ -56,7 +56,7 @@ struct DatePickerView: View {
 
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.2)
+            Color.gray.opacity(0.5)
                 .onTapGesture {
                     show = false
                     update()
@@ -81,7 +81,6 @@ struct DatePickerView: View {
             }
             .cornerRadius(10)
             .padding(.horizontal)
-
 
         }
         .background(Color.clear)

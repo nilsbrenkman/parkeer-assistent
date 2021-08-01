@@ -12,8 +12,6 @@ struct WheelSelector: View {
     var config: Config
     var onChange: (Int) -> Void
     
-    @State private var value = 0
-    @State private var valueBegin = 0
     @State private var valuePrev = 0
 
     @State private var angle: CGFloat = 0.0
@@ -74,7 +72,8 @@ struct WheelSelector: View {
         }
         let valueDiff = valueNew - valuePrev
         valuePrev = valueNew
-        onChange(valueDiff)
+        let diff = Int(Double(valueDiff) * abs(Double(valueDiff)).squareRoot())
+        onChange(diff)
     }
     
     private func getDegree(x: CGFloat, y: CGFloat) -> CGFloat {

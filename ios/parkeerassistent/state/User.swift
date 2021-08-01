@@ -64,6 +64,18 @@ class User: ObservableObject {
         }
     }
     
+    func getRegime(_ date: Date, onComplete: @escaping () -> Void) {
+        DispatchQueue.global().async {
+            self.userClient.regime(date) { response in
+                DispatchQueue.main.async {
+                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+                    self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+                    onComplete()
+                }
+            }
+        }
+    }
+
     func getVisitor(_ parking: Parking) -> Visitor? {
         return Util.getVisitor(parking, visitors: self.visitors)
     }
