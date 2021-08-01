@@ -142,6 +142,9 @@ class User: ObservableObject {
                     }
                     self.getParking()
                     self.getBalance()
+                    self.getRegime(Date()) {
+                        //
+                    }
                 } else {
                     self.addMessage(response.message, type: Type.WARN)
                 }
