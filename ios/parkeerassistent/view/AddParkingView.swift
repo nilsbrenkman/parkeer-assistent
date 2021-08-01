@@ -21,12 +21,12 @@ struct AddParkingView: View {
     let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     @State private var minutes = 0
-    @State private var date = Date()
-    @State private var startDate: Date?
+    @State private var startDate = Date()
     @State private var startTime = ""
     @State private var endTime = ""
     @State private var cost = "0.00"
 
+    @State private var customStartDate = false
     @State private var modifyStartTime = false
     @State private var showDatePicker = false
     @State private var wait: Bool = false
@@ -41,7 +41,7 @@ struct AddParkingView: View {
                         VisitorView(visitor: visitor)
                         
                         HStack(alignment: .center, spacing: 20) {
-                            DataBoxView(title: "Datum:", content: "\(Util.dateFormatter.string(from: date))")
+                            DataBoxView(title: "Datum:", content: "\(Util.dayMonthFormatter.string(from: startDate))")
                                 .onTapGesture {
                                     showDatePicker.toggle()
                                 }
@@ -103,21 +103,29 @@ struct AddParkingView: View {
                     .listRowBackground(Color.ui.light)
                 }
             }
-            DatePickerView(show: $showDatePicker, date: $date, update: {
-                calculateTimes()
+            DatePickerView(show: $showDatePicker, date: $startDate, update: {
+                self.user.getRegime(startDate) {
+                    update()
+                }
             })
             .opacity(showDatePicker ? 1.0: 0)
         }
         .navigationBarHidden(true)
-        .onAppear(perform: calculateTimes)
+        .onAppear(perform: {
+            update()
+        })
         .onReceive(timer, perform: { _ in
-            calculateTimes()
+            if !showDatePicker {
+                update()
+            }
         })
     }
     
     private func onChange(diff: Int) -> Void {
         if modifyStartTime {
-            onChangeStartTime(diff)
+            customStartDate = true
+            startDate.addTimeInterval(Double(diff * 60))
+            update()
             return
         }
         let minutesVal = minutes + diff
@@ -128,71 +136,62 @@ struct AddParkingView: View {
         } else {
             updateMinutes(minutesVal)
         }
-        cost = Util.calculateCost(minutes: minutes, hourRate: user.hourRate)
-        calculateTimes()
+        update()
+    }
+    
+    private func update() {
+        updateStartDate(customStartDate ? startDate : minimumStartTime())
+        startTime = Util.timeFormatter.string(from: startDate)
+        updateMinutes(minutes)
+        let endDate = Date(timeInterval: TimeInterval(minutes * 60), since: startDate)
+        endTime = Util.timeFormatter.string(from: endDate)
     }
     
     private func updateMinutes(_ minutes: Int) {
-        let endTime = Date(timeInterval: TimeInterval(minutes*60), since: getStartDate())
+        let endTime = Date(timeInterval: TimeInterval(minutes*60), since: startDate)
         if endTime > regimeEndTime() {
-            let minutesToEnd = Int((regimeEndTime().timeIntervalSince(getStartDate()) / 60).rounded(.up))
+            let minutesToEnd = Int((regimeEndTime().timeIntervalSince(startDate) / 60).rounded(.up))
             self.minutes = minutesToEnd
         } else {
             self.minutes = minutes
         }
+        cost = Util.calculateCost(minutes: self.minutes, hourRate: user.hourRate)
     }
 
-    private func onChangeStartTime(_ diff: Int) {
-        var start = startDate ?? minimumStartTime()
-        start.addTimeInterval(Double(diff * 60))
+//    private func onChangeStartTime(_ diff: Int) {
+//        var start = startDate
+//        start.addTimeInterval(Double(diff * 60))
+//        updateStartDate(start)
+//    }
+
+    private func updateStartDate(_ start: Date) {
         if start > regimeEndTime() {
             startDate = regimeEndTime()
             return
         }
         if start > minimumStartTime() {
             startDate = start
+            customStartDate = true
         } else {
-            startDate = nil
+            startDate = minimumStartTime()
+            customStartDate = false
         }
-        calculateTimes()
     }
 
-    private func calculateTimes() {
-        let start = getStartDate()
-        startTime = Util.timeFormatter.string(from: start)
-        updateMinutes(minutes)
-        let endDate = Date(timeInterval: TimeInterval(minutes * 60), since: start)
-        endTime = Util.timeFormatter.string(from: endDate)
-    }
-    
+//    private func calculateTimes() {
+//        startTime = Util.timeFormatter.string(from: startDate)
+//        updateMinutes(minutes)
+//        let endDate = Date(timeInterval: TimeInterval(minutes * 60), since: startDate)
+//        endTime = Util.timeFormatter.string(from: endDate)
+//    }
+//
     private func getParkingStart() -> Date? {
-        if today() {
-            if let start = startDate {
-                return start
-            }
-            if minimumStartTime() > Date() {
-                return minimumStartTime()
-            }
-            return startDate
+        if !customStartDate {
+            return nil
         }
-        var start = startDate ?? minimumStartTime()
-        let diff = Calendar.current.startOfDay(for: start).distance(to: Calendar.current.startOfDay(for: date))
-        start.addTimeInterval(diff)
-        return start
+        return startDate
     }
-    
-    private func getStartDate() -> Date {
-        if let startDate = startDate {
-            let minimumStartTime = minimumStartTime()
-            if startDate < minimumStartTime {
-                self.startDate = minimumStartTime
-                return minimumStartTime
-            }
-            return startDate
-        }
-        return minimumStartTime()
-    }
-   
+       
     private func minimumStartTime() -> Date {
         if !today() {
             return regimeStartTime()
@@ -207,7 +206,7 @@ struct AddParkingView: View {
     }
     
     private func today() -> Bool {
-        return Calendar.current.isDateInToday(date)
+        return Calendar.current.isDateInToday(startDate)
     }
     
     private func regimeStartTime() -> Date {

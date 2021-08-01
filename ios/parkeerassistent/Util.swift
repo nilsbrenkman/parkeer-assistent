@@ -11,12 +11,12 @@ class Util {
         
     static let dateTimeFormatter = createDateFormatter(format: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
     static let timeFormatter = createDateFormatter(format: "HH:mm")
-    static let dateFormatter = createDateFormatter(format: "d/M")
+    static let dateFormatter = createDateFormatter(format: "yyyy-MM-dd")
+    static let dayMonthFormatter = createDateFormatter(format: "d MMM")
     static let parkingFormatter = createDateFormatter(format: "dd/MM HH:mm")
 
     static func createDateFormatter(format: String) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "nl_NL")
         formatter.dateFormat = format
         return formatter
     }
