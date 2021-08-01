@@ -76,7 +76,7 @@ struct AddParkingView: View {
                     Button(action: {
                         if !wait && minutes > 0 {
                             wait = true
-                            user.startParking(visitor, timeMinutes: minutes, startTime: getParkingStart()) {
+                            user.startParking(visitor, timeMinutes: minutes, start: startDate) {
                                 wait = false
                             }
                         }
@@ -158,12 +158,6 @@ struct AddParkingView: View {
         cost = Util.calculateCost(minutes: self.minutes, hourRate: user.hourRate)
     }
 
-//    private func onChangeStartTime(_ diff: Int) {
-//        var start = startDate
-//        start.addTimeInterval(Double(diff * 60))
-//        updateStartDate(start)
-//    }
-
     private func updateStartDate(_ start: Date) {
         if start > regimeEndTime() {
             startDate = regimeEndTime()
@@ -177,21 +171,7 @@ struct AddParkingView: View {
             customStartDate = false
         }
     }
-
-//    private func calculateTimes() {
-//        startTime = Util.timeFormatter.string(from: startDate)
-//        updateMinutes(minutes)
-//        let endDate = Date(timeInterval: TimeInterval(minutes * 60), since: startDate)
-//        endTime = Util.timeFormatter.string(from: endDate)
-//    }
-//
-    private func getParkingStart() -> Date? {
-        if !customStartDate {
-            return nil
-        }
-        return startDate
-    }
-       
+   
     private func minimumStartTime() -> Date {
         if !today() {
             return regimeStartTime()

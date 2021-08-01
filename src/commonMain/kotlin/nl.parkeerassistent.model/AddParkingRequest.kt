@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class AddParkingRequest(
     val visitor: Visitor,
     val timeMinutes: Int,
-    val start: String?,
+    val start: String? = null,
     val regimeTimeEnd: String
 ) {}

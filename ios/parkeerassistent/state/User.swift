@@ -131,10 +131,10 @@ class User: ObservableObject {
         }
     }
     
-    func startParking(_ visitor: Visitor, timeMinutes: Int, startTime: Date?, onComplete: @escaping () -> Void) {
+    func startParking(_ visitor: Visitor, timeMinutes: Int, start: Date, onComplete: @escaping () -> Void) {
         let regimeTimeEnd = Util.dateTimeFormatter.string(from: self.regimeTimeEnd!)
         DispatchQueue.global().async {
-            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, startTime: startTime, regimeTimeEnd: regimeTimeEnd) { response in
+            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd) { response in
                 if response.success {
                     DispatchQueue.main.async {
                         self.selectedVisitor = nil
