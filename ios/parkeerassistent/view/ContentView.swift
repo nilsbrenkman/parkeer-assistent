@@ -34,8 +34,6 @@ struct ContentView: View {
                 }
             }
             
-            Spacer()
-            
         }
         .environmentObject(login)
         .environmentObject(user)
