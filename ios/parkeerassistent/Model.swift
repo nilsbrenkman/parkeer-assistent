@@ -20,11 +20,17 @@ struct LoginRequest: Codable {
 struct UserResponse: Codable {
     var balance: String
     var hourRate: Double
+    var regimeTimeStart: String
     var regimeTimeEnd: String
 }
 
 struct BalanceResponse: Codable {
     var balance: String
+}
+
+struct RegimeResponse: Codable {
+    var regimeTimeStart: String
+    var regimeTimeEnd: String
 }
 
 struct Parking: Codable, Hashable {
@@ -45,6 +51,7 @@ struct ParkingResponse: Codable {
 struct AddParkingRequest: Codable {
     var visitor: Visitor
     var timeMinutes: Int
+    var start: String?
     var regimeTimeEnd: String
 }
 

@@ -36,7 +36,7 @@ struct LoginView: View {
                             .padding(.horizontal)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.ui.bw0, lineWidth: 1)
                             )
                     }
                     VStack(alignment: .leading, spacing: Spacing.small) {
@@ -48,7 +48,7 @@ struct LoginView: View {
                             .padding(.horizontal)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.ui.bw0, lineWidth: 1)
                             )
                     }
                 }
@@ -66,7 +66,7 @@ struct LoginView: View {
                             .centered()
                     }
                 }
-                .color(AppColor.success, enabled: self.username.count > 0 && self.password.count > 0)
+                .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: self.username.count > 0 && self.password.count > 0)
             }
             Section {
                 Toggle("Onthoud inlog gegevens", isOn: $storeCredentials)

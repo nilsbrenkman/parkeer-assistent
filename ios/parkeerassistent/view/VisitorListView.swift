@@ -43,7 +43,7 @@ struct VisitorListView: View {
                                 }
                             }
                         }
-                        .foregroundColor(.black)
+                        .foregroundColor(Color.ui.bw0)
                     }
                     .onDelete(perform: delete)
                 }
@@ -68,7 +68,7 @@ struct VisitorListView: View {
                         .centered()
                 }
             }
-            .color(AppColor.success)
+            .color(Color.ui.success, disabled: Color.ui.successDisabled)
         }
 
     }

@@ -131,7 +131,7 @@ fun main() {
                         ServiceUtil.execute(
                             UserService.Method.Get,
                             call,
-                            UserResponse("", 0.0, ""),
+                            UserResponse("", 0.0, "",""),
                             UserService::get
                         )
                     )
@@ -143,6 +143,16 @@ fun main() {
                             call,
                             BalanceResponse(""),
                             UserService::balance
+                        )
+                    )
+                }
+                get("/regime/{date}") {
+                    call.respond(
+                        ServiceUtil.execute(
+                            UserService.Method.Regime,
+                            call,
+                            RegimeResponse("", ""),
+                            UserService::regime
                         )
                     )
                 }

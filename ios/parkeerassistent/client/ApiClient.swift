@@ -73,10 +73,12 @@ class ApiClient {
             }
             
             guard let data = data else {
+                print("no data")
                 return
             }
 
             guard let res = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
+                print("unable to decode")
                 return
             }
             

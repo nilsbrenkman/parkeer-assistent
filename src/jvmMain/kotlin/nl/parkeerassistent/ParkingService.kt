@@ -57,13 +57,12 @@ object ParkingService {
     }
 
     private val regex = "/Date\\(([0-9]+)\\)/".toRegex()
-    private val dateTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
 
     private fun convertTime(utc: String): String {
         val match = regex.find(utc)!!
         val unix = match.groupValues[1].toLong()
         val date = Date(unix)
-        return dateTime.format(date)
+        return DateUtil.dateTime.format(date)
     }
 
     suspend fun start(call: ApplicationCall, request: AddParkingRequest): Response {
@@ -71,13 +70,13 @@ object ParkingService {
         val session = Session(sessionCookie)
 
         val calendar = Calendar.getInstance()
-        calendar.time = Date()
+        calendar.time = request.start?.let { start -> DateUtil.dateTime.parse(start) } ?: run { Date() }
         calendar.add(Calendar.SECOND, 1)
         val start = calendar.time
         calendar.add(Calendar.MINUTE, request.timeMinutes)
         var end = calendar.time
 
-        val regimeEnd = dateTime.parse(request.regimeTimeEnd)
+        val regimeEnd = DateUtil.dateTime.parse(request.regimeTimeEnd)
         if (end.after(regimeEnd)) {
             end = regimeEnd
         }
@@ -85,9 +84,9 @@ object ParkingService {
         val requestBody = AddParkingSession(
             request.visitor.permitId,
             request.visitor.full(),
-            dateTime.format(start),
-            dateTime.format(end),
-            request.regimeTimeEnd,
+            DateUtil.dateTime.format(start),
+            DateUtil.dateTime.format(end),
+            DateUtil.dateTime.format(regimeEnd),
             true,
             true
         )

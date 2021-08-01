@@ -42,7 +42,7 @@ struct ParkingDetailView: View {
                         .bold()
                         .centered()
                 }
-                .color(AppColor.danger)
+                .color(Color.ui.danger, disabled: Color.ui.dangerDisabled)
                 
                 Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
                     Text("Terug")
@@ -50,7 +50,8 @@ struct ParkingDetailView: View {
                         .bold()
                         .centered()
                 }
-                .foregroundColor(AppColor.danger.main)
+                .foregroundColor(Color.ui.danger)
+                .listRowBackground(Color.ui.light)
 
             }
         }

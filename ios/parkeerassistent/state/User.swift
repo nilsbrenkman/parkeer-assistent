@@ -12,6 +12,7 @@ class User: ObservableObject {
     @Published var balance: String?
     @Published var hourRate: Double?
     @Published var timeBalance: Int = 0
+    @Published var regimeTimeStart: Date?
     @Published var regimeTimeEnd: Date?
     @Published var visitors: [Visitor]?
     @Published var parking: ParkingResponse?
@@ -44,6 +45,7 @@ class User: ObservableObject {
                 DispatchQueue.main.async {
                     self.balance = response.balance
                     self.hourRate = response.hourRate
+                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
                     self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
                     self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: response.hourRate)
                 }
@@ -62,6 +64,18 @@ class User: ObservableObject {
         }
     }
     
+    func getRegime(_ date: Date, onComplete: @escaping () -> Void) {
+        DispatchQueue.global().async {
+            self.userClient.regime(date) { response in
+                DispatchQueue.main.async {
+                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+                    self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+                    onComplete()
+                }
+            }
+        }
+    }
+
     func getVisitor(_ parking: Parking) -> Visitor? {
         return Util.getVisitor(parking, visitors: self.visitors)
     }
@@ -117,10 +131,10 @@ class User: ObservableObject {
         }
     }
     
-    func startParking(_ visitor: Visitor, timeMinutes: Int, onComplete: @escaping () -> Void) {
+    func startParking(_ visitor: Visitor, timeMinutes: Int, start: Date, onComplete: @escaping () -> Void) {
         let regimeTimeEnd = Util.dateTimeFormatter.string(from: self.regimeTimeEnd!)
         DispatchQueue.global().async {
-            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, regimeTimeEnd: regimeTimeEnd) { response in
+            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd) { response in
                 if response.success {
                     DispatchQueue.main.async {
                         self.selectedVisitor = nil
@@ -128,6 +142,9 @@ class User: ObservableObject {
                     }
                     self.getParking()
                     self.getBalance()
+                    self.getRegime(Date()) {
+                        //
+                    }
                 } else {
                     self.addMessage(response.message, type: Type.WARN)
                 }

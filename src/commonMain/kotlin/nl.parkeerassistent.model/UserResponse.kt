@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class UserResponse(
     val balance: String,
     val hourRate: Double,
+    val regimeTimeStart: String,
     val regimeTimeEnd: String
 ) {}

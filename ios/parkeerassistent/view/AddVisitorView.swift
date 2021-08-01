@@ -28,21 +28,22 @@ struct AddVisitorView: View {
                     
                     ZStack() {
                         RoundedRectangle(cornerRadius: 6.0, style: .continuous)
-                            .fill(Color.yellow)
+                            .fill(Color.ui.licenseBg)
                             .frame(width: 140, height: 36)
                         
                         TextField("", text: $license)
                             .padding(.horizontal)
                             .font(.title3)
+                            .foregroundColor(Color.ui.license)
                             .multilineTextAlignment(.center)
                             .frame(width: 140, height: 36)
                             .disableAutocorrection(true)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.black, lineWidth: 1)
+                                    .stroke(Color.ui.licenseBorder, lineWidth: 1)
                             )
                             .onChange(of: license, perform: { value in
-                                license = License.formatLicense(license: license)
+                                license = License.formatLicense(license)
                             })
                     }
                     
@@ -55,7 +56,7 @@ struct AddVisitorView: View {
                         .padding(.horizontal)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.black, lineWidth: 1)
+                                .stroke(Color.ui.bw0, lineWidth: 1)
                         )
                 }
                 .padding(.vertical)
@@ -80,7 +81,7 @@ struct AddVisitorView: View {
                             .centered()
                     }
                 }
-                .color(AppColor.success, enabled: self.license.count > 0 && self.name.count > 0)
+                .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: self.license.count > 0 && self.name.count > 0)
                 
                 Button(action: { user.addVisitor = false }) {
                     Text("Annuleren")
@@ -88,7 +89,8 @@ struct AddVisitorView: View {
                         .bold()
                         .centered()
                 }
-                .foregroundColor(AppColor.danger.main)
+                .foregroundColor(Color.ui.danger)
+                .listRowBackground(Color.ui.light)
             }
             
         }

@@ -6,6 +6,7 @@ import io.ktor.http.*
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
 import org.apache.log4j.Logger
+import java.text.SimpleDateFormat
 
 object ServiceUtil {
 

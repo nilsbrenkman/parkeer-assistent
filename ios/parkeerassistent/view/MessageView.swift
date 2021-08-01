@@ -18,7 +18,7 @@ struct MessageView: ViewModifier {
             if let msg = message {
                 ZStack {
                     Rectangle()
-                        .fill(AppColor.background)
+                        .fill(Color.ui.background)
                     
                     VStack(alignment: .center, spacing: 0) {
                         Text(msg.message)
@@ -32,7 +32,7 @@ struct MessageView: ViewModifier {
                             }) {
                                 Text("OK")
                                     .bold()
-                                    .foregroundColor(Color.white)
+                                    .foregroundColor(Color.ui.enabled)
                                     .centered()
                             }
                             .frame(height: 42)
@@ -40,14 +40,14 @@ struct MessageView: ViewModifier {
                                 ZStack {
                                     VStack(alignment: .center, spacing: 0) {
                                         Rectangle()
-                                            .fill(AppColor.danger.main)
+                                            .fill(Color.ui.danger)
                                             .frame(height: 21)
                                         RoundedRectangle(cornerRadius: 12.0, style: .continuous)
-                                            .fill(AppColor.danger.main)
+                                            .fill(Color.ui.danger)
                                             .frame(height: 21)
                                     }
                                     RoundedRectangle(cornerRadius: 12.0, style: .continuous)
-                                        .fill(AppColor.danger.main)
+                                        .fill(Color.ui.danger)
                                         .frame(height: 42)
                                 }
                             )
@@ -55,11 +55,11 @@ struct MessageView: ViewModifier {
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 12.0, style: .continuous)
-                            .fill(Color.white)
+                            .fill(Color.ui.bw100)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12.0, style: .continuous)
-                            .stroke(Color.red, lineWidth: 1)
+                            .stroke(Color.ui.danger, lineWidth: 1)
                     )
                     .padding(.horizontal)
                 }
