@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RegimeResponse (
-    val regimeStartTime: String,
-    val regimeEndTime: String
+    val regimeTimeStart: String,
+    val regimeTimeEnd: String
 ) {}
