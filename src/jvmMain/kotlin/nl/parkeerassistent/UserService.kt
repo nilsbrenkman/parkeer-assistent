@@ -4,16 +4,21 @@ import io.ktor.application.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import nl.parkeerassistent.external.GetBalanceInfo
-import nl.parkeerassistent.external.GetPermitsByCustomer
+import nl.parkeerassistent.external.*
 import nl.parkeerassistent.model.BalanceResponse
+import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.Calendar.HOUR
+import java.util.Calendar.MINUTE
 
 object UserService {
 
     enum class Method: Monitoring.Method {
         Get,
         Balance,
+        Regime,
         ;
         override fun service(): Monitoring.Service {
             return Monitoring.Service.User
@@ -48,6 +53,38 @@ object UserService {
 
         Monitoring.info(Method.Balance, "SUCCESS")
         return BalanceResponse(balance)
+    }
+
+    suspend fun regime(call: ApplicationCall): RegimeResponse {
+        val sessionCookie = call.request.cookies["session"]!!
+        val session = Session(sessionCookie)
+
+        val permitId = call.request.cookies["permitid"]!!
+        val regimeDate = call.parameters["date"]!!
+        val calendar = Calendar.getInstance()
+        calendar.time = DateUtil.date.parse(regimeDate)
+        calendar.timeZone = DateUtil.amsterdam
+        calendar.set(HOUR, 0)
+        calendar.set(MINUTE, 1)
+        val start = calendar.time
+        calendar.set(HOUR, 23)
+        calendar.set(MINUTE, 59)
+        val end = calendar.time
+
+        val requestBody = CalculateBalanceRequest(
+            permitId.toInt(),
+            DateUtil.dateTime.format(start),
+            DateUtil.dateTime.format(end)
+        )
+
+        val result = ApiHelper.client.post<CalculateBalanceResponse>(ApiHelper.getUrl("Customer/Dashboard/CalculateBalance")) {
+            ApiHelper.addHeaders(this, session)
+            contentType(ContentType.Application.Json)
+            body = requestBody
+        }
+
+        Monitoring.info(Method.Regime, "SUCCESS")
+        return RegimeResponse(result.regimeStartTime, result.regimeEndTime)
     }
 
     suspend fun getBalance(session: Session): String {

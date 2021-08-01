@@ -146,6 +146,16 @@ fun main() {
                         )
                     )
                 }
+                get("/regime/{date}") {
+                    call.respond(
+                        ServiceUtil.execute(
+                            UserService.Method.Regime,
+                            call,
+                            RegimeResponse("", ""),
+                            UserService::regime
+                        )
+                    )
+                }
             }
             route("/parking") {
                 get {
