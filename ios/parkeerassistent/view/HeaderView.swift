@@ -12,6 +12,8 @@ struct HeaderView: View {
     @EnvironmentObject var login: Login
     @EnvironmentObject var user: User
     
+    @Binding var showInfo: Bool
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
@@ -28,6 +30,9 @@ struct HeaderView: View {
                         .scaledToFit()
                         .frame(height: 48)
                         .animation(.linear)
+                        .onTapGesture {
+                            showInfo = true
+                        }
                     Spacer()
                     if login.isLoggedIn {
                         Button(action: logout){
@@ -81,7 +86,8 @@ struct HeaderView: View {
 }
 
 struct HeaderView_Previews: PreviewProvider {
+    @State static var showInfo = false
     static var previews: some View {
-        HeaderView()
+        HeaderView(showInfo: $showInfo)
     }
 }

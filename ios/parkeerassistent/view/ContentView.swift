@@ -16,24 +16,28 @@ struct ContentView: View {
     @StateObject var messenger = Messenger()
     
     @State var initialised = false
+    @State var showInfo = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HeaderView()
-            
-            ZStack {
-                if login.isLoading || login.isBackground {
-                    LoadingView()
-                } else if login.isLoggedIn {
-                    NavigationView {
-                        UserView()
+        ZStack {
+            VStack(alignment: .leading, spacing: 0) {
+                HeaderView(showInfo: $showInfo)
+                
+                ZStack {
+                    if login.isLoading || login.isBackground {
+                        LoadingView()
+                    } else if login.isLoggedIn {
+                        NavigationView {
+                            UserView()
+                        }
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    } else {
+                        LoginView()
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
-                } else {
-                    LoginView()
                 }
             }
-            
+            InfoView(showInfo: $showInfo)
+                .opacity(showInfo ? 1.0: 0)
         }
         .environmentObject(login)
         .environmentObject(user)
