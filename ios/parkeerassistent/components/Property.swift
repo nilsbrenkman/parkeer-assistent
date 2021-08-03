@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct PropertyView: View {
+struct Property: View {
     
     var label: String
     var text: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.small) {
+        VStack(alignment: .leading, spacing: Constants.spacing.small) {
             Text("\(label):")
                 .foregroundColor(Color.ui.bw30)
             Text(text)
@@ -22,8 +22,8 @@ struct PropertyView: View {
     }
 }
 
-struct PropertyView_Previews: PreviewProvider {
+struct Property_Previews: PreviewProvider {
     static var previews: some View {
-        PropertyView(label: "Label", text: "Value / text")
+        Property(label: "Label", text: "Value / text")
     }
 }

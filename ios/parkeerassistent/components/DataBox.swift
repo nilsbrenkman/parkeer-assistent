@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-struct DataBoxView: View  {
+struct DataBox: View  {
     
     var title: String
     var content: String
     
     var body: some View {
         
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: Constants.spacing.xSmall) {
             Text(title)
             ZStack {
-                RoundedRectangle(cornerRadius: 6.0, style: .continuous)
+                RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                     .fill(Color.ui.bw70)
                     .frame(height: 48)
-                    .overlay(RoundedRectangle(cornerRadius: 6.0, style: .continuous)
+                    .overlay(RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                                 .stroke(Color.ui.bw0, lineWidth: 1))
                 
                 Text(content)
@@ -32,8 +32,8 @@ struct DataBoxView: View  {
     }
 }
 
-struct DataBoxView_Previews: PreviewProvider {
+struct DataBox_Previews: PreviewProvider {
     static var previews: some View {
-        DataBoxView(title: "Title", content: "12.34")
+        DataBox(title: "Title", content: "12.34")
     }
 }

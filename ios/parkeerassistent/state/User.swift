@@ -24,8 +24,6 @@ class User: ObservableObject {
     let userClient: UserClient
     let parkingClient: ParkingClient
     let visitorClient: VisitorClient
-    
-    var messenger: ((String, Type) -> Void)? = nil
 
     init() throws {
         userClient    = try ClientManager.instance.get(UserClient.self)
@@ -100,7 +98,7 @@ class User: ObservableObject {
                     }
                     self.getVisitors()
                 } else {
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
                 onComplete()
             }
@@ -114,7 +112,7 @@ class User: ObservableObject {
                     self.getVisitors()
                 } else {
                     self.getVisitors()
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
             }
         }
@@ -146,7 +144,7 @@ class User: ObservableObject {
                         //
                     }
                 } else {
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
                 onComplete()
             }
@@ -170,21 +168,9 @@ class User: ObservableObject {
                     self.getBalance()
                 } else {
                     self.getParking()
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
             }
-        }
-    }
-
-    func addMessage(_ message: String?, type: Type) {
-        guard let message = message else {
-            print("Message is nil")
-            return
-        }
-        if let messenger = self.messenger {
-            messenger(message, type)
-        } else {
-            print("Messenger not set")
         }
     }
     

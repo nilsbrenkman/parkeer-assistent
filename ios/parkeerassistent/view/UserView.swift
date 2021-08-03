@@ -15,9 +15,9 @@ struct UserView: View {
         
         Form {
 
-            ParkingView(parking: user.parking)
+            ParkingView()
             
-            VisitorListView(visitors: user.visitors)
+            VisitorListView()
 
         }
         .listStyle(InsetGroupedListStyle())

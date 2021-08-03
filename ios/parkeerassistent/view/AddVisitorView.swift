@@ -27,7 +27,7 @@ struct AddVisitorView: View {
                         .font(.title3)
                     
                     ZStack() {
-                        RoundedRectangle(cornerRadius: 6.0, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                             .fill(Color.ui.licenseBg)
                             .frame(width: 140, height: 36)
                         
@@ -39,7 +39,7 @@ struct AddVisitorView: View {
                             .frame(width: 140, height: 36)
                             .disableAutocorrection(true)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.licenseBorder, lineWidth: 1)
                             )
                             .onChange(of: license, perform: { value in
@@ -55,7 +55,7 @@ struct AddVisitorView: View {
                         .frame(height: 36)
                         .padding(.horizontal)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 6)
+                            RoundedRectangle(cornerRadius: Constants.radius.small)
                                 .stroke(Color.ui.bw0, lineWidth: 1)
                         )
                 }
@@ -71,17 +71,14 @@ struct AddVisitorView: View {
                         }
                     }
                 }){
-                    if wait {
-                        ProgressView()
-                            .centered()
-                    } else {
-                        Text("Toevoegen")
-                            .font(.title3)
-                            .bold()
-                            .centered()
-                    }
+                    Text("Toevoegen")
+                        .font(.title3)
+                        .bold()
+                        .wait($wait)
                 }
-                .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: self.license.count > 0 && self.name.count > 0)
+                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
+                                                  disabled: Color.ui.successDisabled,
+                                                  enabled: self.license.count > 0 && self.name.count > 0))
                 
                 Button(action: { user.addVisitor = false }) {
                     Text("Annuleren")
@@ -89,8 +86,7 @@ struct AddVisitorView: View {
                         .bold()
                         .centered()
                 }
-                .foregroundColor(Color.ui.danger)
-                .listRowBackground(Color.ui.light)
+                .buttonStyle(ButtonStyles.cancel)
             }
             
         }

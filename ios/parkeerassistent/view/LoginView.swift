@@ -25,8 +25,8 @@ struct LoginView: View {
     var body: some View {
         Form {
             Section {
-                VStack(alignment: .leading, spacing: Spacing.normal) {
-                    VStack(alignment: .leading, spacing: Spacing.small) {
+                VStack(alignment: .leading, spacing: Constants.spacing.normal) {
+                    VStack(alignment: .leading, spacing: Constants.spacing.small) {
                         Text("Meldcode:")
                             .font(.title3)
                             .bold()
@@ -35,11 +35,11 @@ struct LoginView: View {
                             .frame(height: 36)
                             .padding(.horizontal)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
                     }
-                    VStack(alignment: .leading, spacing: Spacing.small) {
+                    VStack(alignment: .leading, spacing: Constants.spacing.small) {
                         Text("Pincode:")
                             .font(.title3)
                             .bold()
@@ -47,7 +47,7 @@ struct LoginView: View {
                             .frame(height: 36)
                             .padding(.horizontal)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
                     }
@@ -56,17 +56,14 @@ struct LoginView: View {
             }
             Section {
                 Button(action: startLogin){
-                    if !wait {
-                        Text("Inloggen")
-                            .font(.title3)
-                            .bold()
-                            .centered()
-                    } else {
-                        ProgressView()
-                            .centered()
-                    }
+                    Text("Inloggen")
+                        .font(.title3)
+                        .bold()
+                        .wait($wait)
                 }
-                .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: self.username.count > 0 && self.password.count > 0)
+                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
+                                                  disabled: Color.ui.successDisabled,
+                                                  enabled: self.username.count > 0 && self.password.count > 0))
             }
             Section {
                 Toggle("Onthoud inlog gegevens", isOn: $storeCredentials)

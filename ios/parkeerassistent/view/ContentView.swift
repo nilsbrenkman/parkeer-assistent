@@ -19,34 +19,30 @@ struct ContentView: View {
     @State var showInfo = false
 
     var body: some View {
-        ZStack {
-            VStack(alignment: .leading, spacing: 0) {
-                HeaderView(showInfo: $showInfo)
-                
-                ZStack {
-                    if login.isLoading || login.isBackground {
-                        LoadingView()
-                    } else if login.isLoggedIn {
-                        NavigationView {
-                            UserView()
-                        }
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    } else {
-                        LoginView()
+        VStack(alignment: .leading, spacing: 0) {
+            HeaderView(showInfo: $showInfo)
+            
+            ZStack {
+                if login.isLoading || login.isBackground {
+                    LoadingView()
+                } else if login.isLoggedIn {
+                    NavigationView {
+                        UserView()
                     }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                } else {
+                    LoginView()
                 }
             }
-            InfoView(showInfo: $showInfo)
-                .opacity(showInfo ? 1.0: 0)
         }
         .environmentObject(login)
         .environmentObject(user)
-        .environmentObject(messenger)
         .message(message: $messenger.message)
+        .modal(visible: $showInfo) {
+            InfoView()
+        }
         .onAppear {
             if !initialised {
-                login.messenger = messenger.addMessage
-                user.messenger = messenger.addMessage
                 login.loggedIn()
                 initialised = true
             }

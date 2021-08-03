@@ -78,7 +78,7 @@ class VisitorClientMock: VisitorClient {
         }
         
         nextId += 1
-        let visitor = Visitor(visitorId: nextId, permitId: permitId, license: license, formattedLicense: License.formatLicense(license), name: name)
+        let visitor = Visitor(visitorId: nextId, permitId: permitId, license: license, formattedLicense: License.formatLicense(license), name: name.count > 0 ? name : nil)
         visitors[visitor.visitorId] = visitor
         onComplete(Response(success: true))
     }
@@ -115,7 +115,8 @@ struct MockVisitor {
     static let visitors = [
         MockVisitor(name: "Suzanne", license: "111-AA-1"),
         MockVisitor(name: "Erik", license: "22-BBB-2"),
-        MockVisitor(name: "Invalid visitor", license: "33-CC-33")
+        MockVisitor(name: "Invalid visitor", license: "33-CC-33"),
+        MockVisitor(name: "", license: "4-DDD-44")
     ]
     
     let name: String

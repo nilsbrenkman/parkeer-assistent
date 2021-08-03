@@ -13,7 +13,7 @@ struct LicenseView: View {
     
     var body: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 6.0, style: .continuous)
+            RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                 .fill(Color.ui.licenseBg)
                 .frame(width: 140, height: 36)
             
@@ -24,7 +24,7 @@ struct LicenseView: View {
                 .tracking(2)
                 .frame(width: 140, height: 36)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: Constants.radius.small)
                         .stroke(Color.ui.licenseBorder, lineWidth: 1)
                 )
         }

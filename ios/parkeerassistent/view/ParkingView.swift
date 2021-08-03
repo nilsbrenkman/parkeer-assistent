@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ParkingView: View {
     
-    var parking: ParkingResponse?
-    
+    @EnvironmentObject var user: User
+
     var body: some View {
         
         Section {
@@ -18,7 +18,7 @@ struct ParkingView: View {
                 .font(.title2)
                 .bold()
             
-            if let parking = parking {
+            if let parking = $user.parking.wrappedValue {
                 if parking.active.isEmpty && parking.scheduled.isEmpty {
                     Text("Geen actieve of geplande sessies")
                         .centered()
@@ -40,10 +40,4 @@ struct ParkingView: View {
         
     }
     
-}
-
-struct ParkingResponseView_Previews: PreviewProvider {
-    static var previews: some View {
-        ParkingView(parking: ParkingResponse(active: [], scheduled: []))
-    }
 }

@@ -20,7 +20,7 @@ struct ParkingRowView: View {
             
             LicenseView(license: visitor?.formattedLicense ?? parking.license)
             
-            Text("\(visitor?.name ?? "?")")
+            Text("\(visitor?.name ?? "")")
                 .font(/*@START_MENU_TOKEN@*/.title3/*@END_MENU_TOKEN@*/)
                 .bold()
                 .padding(.leading)
