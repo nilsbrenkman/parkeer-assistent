@@ -1,11 +1,10 @@
 //
-//  Constants.swift
+//  Color.swift
 //  parkeerassistent
 //
-//  Created by Nils Brenkman on 30/06/2021.
+//  Created by Nils Brenkman on 03/08/2021.
 //
 
-import Foundation
 import SwiftUI
 
 extension Color {
@@ -33,18 +32,4 @@ extension Color {
         let danger = Color("Color-danger")
         let dangerDisabled = Color("Color-danger-disabled")
     }
-}
-
-enum AppSound {
-    static let carHorn = UNNotificationSound(named: UNNotificationSoundName("car-horn.wav"))
-}
-
-struct Spacing {
-    static let normal: CGFloat = 20
-    static let small: CGFloat = 10
-}
-
-enum GenericError: Error {
-    case VisitorNotFound
-    case InvalidDate
 }

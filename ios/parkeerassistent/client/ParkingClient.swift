@@ -92,15 +92,21 @@ class ParkingClientMock: ParkingClient {
             return
         }
         
+        let cost = Double(timeMinutes) * hourRate / 60.0
+        if cost > getBalance() {
+            onComplete(Response(success: false, message: "Not enough balance"))
+            return
+        }
+        
         nextId += 1
         let timeInterval = 60 * Double(timeMinutes)
         let end = start.addingTimeInterval(timeInterval)
-
+        
         let p = Parking(id: nextId,
                         license: visitor.license,
                         startTime: dateFormatter.string(from: start),
                         endTime: dateFormatter.string(from: end),
-                        cost: Double(timeMinutes) * hourRate / 60.0)
+                        cost: cost)
         parking[p.id] = p
         onComplete(Response(success: true))
     }
@@ -115,4 +121,12 @@ class ParkingClientMock: ParkingClient {
         }
     }
     
+    func getBalance() -> Double {
+        var balance = 10.0
+        for p in parking.values {
+            balance -= p.cost
+        }
+        return balance
+    }
+
 }

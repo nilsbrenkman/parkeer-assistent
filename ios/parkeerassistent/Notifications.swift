@@ -60,7 +60,7 @@ class Notifications {
         let content = UNMutableNotificationContent()
         content.title = title
         content.subtitle = subtitle
-        content.sound = AppSound.carHorn
+        content.sound = Constants.sound.carHorn
         
         let timeInterval = Date().distance(to: date)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)

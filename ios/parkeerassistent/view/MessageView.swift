@@ -42,11 +42,11 @@ struct MessageView: ViewModifier {
                                         Rectangle()
                                             .fill(Color.ui.danger)
                                             .frame(height: 21)
-                                        RoundedRectangle(cornerRadius: 12.0, style: .continuous)
+                                        RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
                                             .fill(Color.ui.danger)
                                             .frame(height: 21)
                                     }
-                                    RoundedRectangle(cornerRadius: 12.0, style: .continuous)
+                                    RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
                                         .fill(Color.ui.danger)
                                         .frame(height: 42)
                                 }
@@ -54,11 +54,11 @@ struct MessageView: ViewModifier {
                         }
                     }
                     .background(
-                        RoundedRectangle(cornerRadius: 12.0, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
                             .fill(Color.ui.bw100)
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12.0, style: .continuous)
+                        RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
                             .stroke(Color.ui.danger, lineWidth: 1)
                     )
                     .padding(.horizontal)

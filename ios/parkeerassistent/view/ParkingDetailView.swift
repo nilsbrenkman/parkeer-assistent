@@ -20,14 +20,14 @@ struct ParkingDetailView: View {
         Form {
 
             Section {
-                VStack(alignment: .leading, spacing: Spacing.normal) {
+                VStack(alignment: .leading, spacing: Constants.spacing.normal) {
                     LicenseView(license: visitor?.formattedLicense ?? parking.license)
                         .centered()
 
-                    PropertyView(label: "Naam", text: visitor?.name ?? "?")
-                    PropertyView(label: "Kosten", text: "€ \(Util.formatCost(cost:parking.cost))")
-                    PropertyView(label: "Start tijd", text: Util.getParkingTime(parking.startTime))
-                    PropertyView(label: "Eind tijd", text: Util.getParkingTime(parking.endTime))
+                    Property(label: "Naam", text: visitor?.name ?? "")
+                    Property(label: "Kosten", text: "€ \(Util.formatCost(parking.cost))")
+                    Property(label: "Start tijd", text: Util.getParkingTime(parking.startTime))
+                    Property(label: "Eind tijd", text: Util.getParkingTime(parking.endTime))
                 }
                 .padding(.vertical)
             }
@@ -42,7 +42,7 @@ struct ParkingDetailView: View {
                         .bold()
                         .centered()
                 }
-                .color(Color.ui.danger, disabled: Color.ui.dangerDisabled)
+                .buttonStyle(ButtonStyles.danger)
                 
                 Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
                     Text("Terug")
@@ -50,8 +50,7 @@ struct ParkingDetailView: View {
                         .bold()
                         .centered()
                 }
-                .foregroundColor(Color.ui.danger)
-                .listRowBackground(Color.ui.light)
+                .buttonStyle(ButtonStyles.cancel)
 
             }
         }

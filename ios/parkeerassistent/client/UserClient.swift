@@ -59,7 +59,7 @@ class UserClientMock: UserClient {
 
     func get(onComplete: @escaping (UserResponse) -> Void) {
         MockClient.mockDelay()
-        onComplete(UserResponse(balance: "50.00",
+        onComplete(UserResponse(balance: getBalance(),
                                 hourRate: hourRate,
                                 regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(Date())),
                                 regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(Date()))))
@@ -67,7 +67,7 @@ class UserClientMock: UserClient {
     
     func balance(onComplete: @escaping (BalanceResponse) -> Void) {
         MockClient.mockDelay()
-        onComplete(BalanceResponse(balance: "50.00"))
+        onComplete(BalanceResponse(balance: getBalance()))
     }
  
     func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void) {
@@ -76,6 +76,10 @@ class UserClientMock: UserClient {
                                   regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(date))))
     }
     
+    private func getBalance() -> String {
+        return Util.formatCost(ParkingClientMock.client.getBalance())
+    }
+
     private func getRegimeStart(_ date: Date) -> Date {
         if Calendar.current.isDateInWeekend(date) {
             return Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: date) ?? date

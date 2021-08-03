@@ -12,7 +12,7 @@ struct VisitorListView: View {
     
     @EnvironmentObject var user: User
     
-    var visitors: [Visitor]?
+//    var visitors: [Visitor]?
     
     var body: some View {
         
@@ -21,7 +21,7 @@ struct VisitorListView: View {
                 .font(.title2)
                 .bold()
             
-            if let visitors = visitors {
+            if let visitors = $user.visitors.wrappedValue {
                 
                 if visitors.isEmpty {
                     Text("Voeg een bezoeker toe")
@@ -68,7 +68,7 @@ struct VisitorListView: View {
                         .centered()
                 }
             }
-            .color(Color.ui.success, disabled: Color.ui.successDisabled)
+            .buttonStyle(ButtonStyles.success)
         }
 
     }

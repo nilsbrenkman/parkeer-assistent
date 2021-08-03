@@ -32,83 +32,78 @@ struct AddParkingView: View {
     @State private var wait: Bool = false
 
     var body: some View {
-        ZStack {
-            Form {
-                Section {
+        Form {
+            Section {
+                
+                VStack(alignment:.center, spacing: Constants.spacing.normal) {
+                                        
+                    VisitorView(visitor: visitor)
                     
-                    VStack(alignment:.center, spacing: 20) {
-                                            
-                        VisitorView(visitor: visitor)
-                        
-                        HStack(alignment: .center, spacing: 20) {
-                            DataBoxView(title: "Datum:", content: "\(Util.dayMonthFormatter.string(from: startDate))")
-                                .onTapGesture {
-                                    showDatePicker.toggle()
-                                }
-                                .opacity(opacity(enabled: showDatePicker))
-                            DataBoxView(title: "Start tijd:", content: "\(startTime)")
-                                .onTapGesture {
-                                    self.modifyStartTime = true
-                                }
-                                .opacity(opacity(enabled: modifyStartTime))
-                            DataBoxView(title: "", content: "").hidden()
-                        }
-
-                        HStack(alignment: .center, spacing: 20) {
-                            DataBoxView(title: "Minuten:", content: "\(minutes)")
-                            DataBoxView(title: "Eind tijd:", content: "\(endTime)")
-                            DataBoxView(title: "Kosten:", content: "€ \(cost)")
-                        }
-                        .onTapGesture(perform: {
-                            self.modifyStartTime = false
-                        })
-                        .opacity(opacity(enabled: !showDatePicker && !modifyStartTime))
-
-                        WheelSelector(config: Config(
-                            radius: 75,
-                            size: 16
-                        ), onChange: self.onChange)
-                    }
-                    .padding(.vertical, 20)
-                }
-
-                Section {
-                    Button(action: {
-                        if !wait && minutes > 0 {
-                            wait = true
-                            user.startParking(visitor, timeMinutes: minutes, start: startDate) {
-                                wait = false
+                    HStack(alignment: .center, spacing: Constants.spacing.normal) {
+                        DataBox(title: "Datum:", content: "\(Util.dayMonthFormatter.string(from: startDate))")
+                            .onTapGesture {
+                                showDatePicker.toggle()
                             }
-                        }
-                    }){
-                        if wait {
-                            ProgressView()
-                                .centered()
-                        } else {
-                            Text("Toevoegen")
-                                .font(.title3)
-                                .bold()
-                                .centered()
+                            .opacity(opacity(enabled: showDatePicker))
+                        DataBox(title: "Start tijd:", content: "\(startTime)")
+                            .onTapGesture {
+                                self.modifyStartTime = true
+                            }
+                            .opacity(opacity(enabled: modifyStartTime))
+                        DataBox(title: "", content: "").hidden()
+                    }
+
+                    HStack(alignment: .center, spacing: Constants.spacing.normal) {
+                        DataBox(title: "Minuten:", content: "\(minutes)")
+                        DataBox(title: "Eind tijd:", content: "\(endTime)")
+                        DataBox(title: "Kosten:", content: "€ \(cost)")
+                    }
+                    .onTapGesture(perform: {
+                        self.modifyStartTime = false
+                    })
+                    .opacity(opacity(enabled: !showDatePicker && !modifyStartTime))
+
+                    WheelSelector(config: Config(
+                        radius: 75,
+                        size: 16
+                    ), onChange: self.onChange)
+                }
+                .padding(.vertical, Constants.padding.normal)
+            }
+
+            Section {
+                Button(action: {
+                    if !wait && minutes > 0 {
+                        wait = true
+                        user.startParking(visitor, timeMinutes: minutes, start: startDate) {
+                            wait = false
                         }
                     }
-                    .color(Color.ui.success, disabled: Color.ui.successDisabled, enabled: minutes > 0)
-                    
-                    Button(action: { user.selectedVisitor = nil }) {
+                }){
+                    Text("Toevoegen")
+                        .font(.title3)
+                        .bold()
+                        .wait($wait)
+                }
+                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
+                                                  disabled: Color.ui.successDisabled,
+                                                  enabled: minutes > 0))
+                
+                Button(action: { user.selectedVisitor = nil }) {
+                    ZStack {
                         Text("Annuleren")
                             .font(.title3)
                             .bold()
                             .centered()
+
                     }
-                    .foregroundColor(Color.ui.danger)
-                    .listRowBackground(Color.ui.light)
+                    .padding(.horizontal)
                 }
+                .buttonStyle(ButtonStyles.cancel)
             }
-            DatePickerView(show: $showDatePicker, date: $startDate, update: {
-                self.user.getRegime(startDate) {
-                    update()
-                }
-            })
-            .opacity(showDatePicker ? 1.0: 0)
+        }
+        .modal(visible: $showDatePicker, onClose: updateRegime) {
+            DatePickerModal(date: $startDate)
         }
         .navigationBarHidden(true)
         .onAppear(perform: {
@@ -169,6 +164,12 @@ struct AddParkingView: View {
         } else {
             startDate = minimumStartTime()
             customStartDate = false
+        }
+    }
+    
+    private func updateRegime() {
+        user.getRegime(startDate) {
+            update()
         }
     }
    

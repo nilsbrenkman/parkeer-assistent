@@ -52,7 +52,7 @@ class Login: ObservableObject {
                         self.isLoggedIn = true
                     }
                 } else {
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
                 onComplete()
             }
@@ -72,25 +72,13 @@ class Login: ObservableObject {
                         self.isLoggedIn = false
                     }
                 } else {
-                    self.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
                 }
                 onComplete()
                 DispatchQueue.main.async {
                     self.isLoading = false
                 }
             }
-        }
-    }
-    
-    func addMessage(_ message: String?, type: Type) {
-        guard let message = message else {
-            print("Message is nil")
-            return
-        }
-        if let messenger = self.messenger {
-            messenger(message, type)
-        } else {
-            print("Messenger not set")
         }
     }
 

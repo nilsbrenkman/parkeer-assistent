@@ -29,26 +29,21 @@ class Util {
         return date
     }
     
-    static func calculateEndTime(minutes: Int) -> String {
-        let endTime = Date(timeIntervalSinceNow: TimeInterval(minutes*60))
-        return timeFormatter.string(from: endTime)
-    }
-    
     static func calculateCost(minutes: Int, hourRate: Double?) -> String {
         if let hourRate = hourRate {
             let cost = (hourRate * Double(minutes)) / 60
-            return formatCost(cost: cost)
+            return formatCost(cost)
         }
-        return formatCost(cost: 0)
+        return formatCost(0)
     }
     
-    static func formatCost(cost: Double) -> String {
+    static func formatCost(_ cost: Double) -> String {
         return String(format: "%.2f", cost)
     }
     
     static func calculateTimeBalance(balance: String?, hourRate: Double?) -> Int {
         if let balance = Double(balance ?? "0"), let hourRate = hourRate {
-            return Int(round(balance / hourRate * 60))
+            return Int(balance / hourRate * 60)
         }
         return 0
     }
