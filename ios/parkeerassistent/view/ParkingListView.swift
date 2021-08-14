@@ -24,6 +24,7 @@ struct ParkingListView: View {
             NavigationLink(destination: ParkingDetailView(parking: parking)) {
                 ParkingRowView(parking: parking)
             }
+            .accessibility(identifier: "parking")
         }
         .onDelete(perform: {offsets in
             for i in offsets {

@@ -94,7 +94,7 @@ class VisitorClientMock: VisitorClient {
             guard let endDate = try? Util.parseDate(parking.endTime) else {
                 continue
             }
-            if endDate > Date() && parking.license == visitor.license {
+            if endDate > Date.now() && parking.license == visitor.license {
                 onComplete(Response(success: false, message: "Can't delete visitor with active or scheduled sessions"))
                 return
             }

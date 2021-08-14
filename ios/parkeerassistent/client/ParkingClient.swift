@@ -72,14 +72,14 @@ class ParkingClientMock: ParkingClient {
                       let endDate = try? Util.parseDate(parking.endTime) else {
                     return false
                 }
-                return startDate < Date.init() && endDate > Date.init()
+                return startDate < Date.now() && endDate > Date.now()
             })),
             scheduled: Array(parking.values.filter({ parking in
                 guard let startDate = try? Util.parseDate(parking.startTime),
                       let endDate = try? Util.parseDate(parking.endTime) else {
                     return false
                 }
-                return startDate > Date.init() && endDate > Date.init()
+                return startDate > Date.now() && endDate > Date.now()
             }))
         ))
     }

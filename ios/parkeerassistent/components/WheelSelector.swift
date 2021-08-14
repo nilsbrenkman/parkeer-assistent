@@ -42,7 +42,8 @@ struct WheelSelector: View {
                             .onChanged({ value in
                                 change(value: value)
                             }))
-            
+                .accessibility(identifier: "wheel-selector")
+
             Circle()
                 .fill(Color(red: 0.7, green: 0.7, blue: 0.7))
                 .frame(width: config.radius * 2, height: config.radius * 2)

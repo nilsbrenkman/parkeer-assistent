@@ -32,6 +32,7 @@ struct AddVisitorView: View {
                             .frame(width: 140, height: 36)
                         
                         TextField("", text: $license)
+                            .accessibility(identifier: "license")
                             .padding(.horizontal)
                             .font(.title3)
                             .foregroundColor(Color.ui.license)
@@ -50,6 +51,7 @@ struct AddVisitorView: View {
                     Text("Naam:")
                         .font(.title3)
                     TextField("", text: $name)
+                        .accessibility(identifier: "name")
                         .font(.title3)
                         .disableAutocorrection(true)
                         .frame(height: 36)

@@ -67,4 +67,37 @@ class Util {
         return nil
     }
     
+    static func isUITest() -> Bool {
+        #if DEBUG
+        if CommandLine.arguments.contains("ui-test") {
+            return true
+        }
+        #endif
+        return false
+    }
+    
+}
+
+extension Date {
+
+    static let systemTimeOffset = systemTimeOverride()
+    
+    static func now() -> Date {
+        #if DEBUG
+        if let interval = systemTimeOffset {
+            return Date().addingTimeInterval(interval)
+        }
+        #endif
+        return Date()
+    }
+    
+    static func systemTimeOverride() -> TimeInterval? {
+        #if DEBUG
+        if Util.isUITest() {
+            return try? Util.parseDate("2021-08-01T14:00:00+02:00").timeIntervalSinceNow
+        }
+        #endif
+        return nil
+    }
+    
 }

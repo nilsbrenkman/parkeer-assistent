@@ -140,7 +140,7 @@ class User: ObservableObject {
                     }
                     self.getParking()
                     self.getBalance()
-                    self.getRegime(Date()) {
+                    self.getRegime(Date.now()) {
                         //
                     }
                 } else {
@@ -181,10 +181,10 @@ class User: ObservableObject {
             if let parking = self.parking {
                 for active in parking.active {
                     if let endDate = try? Util.parseDate(active.endTime) {
-                        if endDate < Date.init() {
+                        if endDate < Date.now() {
                             update = true
                         } else {
-                            let timeInterval = Date().distance(to: endDate)
+                            let timeInterval = Date.now().distance(to: endDate)
                             if timeInterval < delay {
                                 delay = timeInterval
                             }
@@ -193,10 +193,10 @@ class User: ObservableObject {
                 }
                 for scheduled in parking.scheduled {
                     if let startDate = try? Util.parseDate(scheduled.startTime) {
-                        if startDate < Date.init() {
+                        if startDate < Date.now() {
                             update = true
                         } else {
-                            let timeInterval = Date().distance(to: startDate)
+                            let timeInterval = Date.now().distance(to: startDate)
                             if timeInterval < delay {
                                 delay = timeInterval
                             }

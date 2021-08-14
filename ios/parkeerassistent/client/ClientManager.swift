@@ -40,6 +40,12 @@ enum ClientManagerError: Error {
 
 class MockClient {
     static func mockDelay() {
+//        if Util.isUITest() {
+//            do {
+//                usleep(25000)
+//            }
+//            return
+//        }
         do {
             usleep(250000)
         }

@@ -60,7 +60,8 @@ struct HeaderView: View {
                         .bold()
                         .foregroundColor(Color.ui.header)
                         .padding(.vertical, 8)
-                    
+                        .accessibilityIdentifier("balance")
+
                 }
                 .padding(.horizontal)
                 .background(Color.ui.light)

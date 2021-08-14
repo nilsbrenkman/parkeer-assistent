@@ -21,7 +21,7 @@ struct AddParkingView: View {
     let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
 
     @State private var minutes = 0
-    @State private var startDate = Date()
+    @State private var startDate = Date.now()
     @State private var startTime = ""
     @State private var endTime = ""
     @State private var cost = "0.00"
@@ -45,11 +45,13 @@ struct AddParkingView: View {
                                 showDatePicker.toggle()
                             }
                             .opacity(opacity(enabled: showDatePicker))
+                            .accessibility(identifier: "start-date")
                         DataBox(title: "Start tijd:", content: "\(startTime)")
                             .onTapGesture {
                                 self.modifyStartTime = true
                             }
                             .opacity(opacity(enabled: modifyStartTime))
+                            .accessibility(identifier: "start-time")
                         DataBox(title: "", content: "").hidden()
                     }
 
@@ -177,25 +179,25 @@ struct AddParkingView: View {
         if !today() {
             return regimeStartTime()
         }
-        if regimeStartTime() > Date() {
+        if regimeStartTime() > Date.now() {
             return regimeStartTime()
         }
-        if regimeEndTime() < Date() {
+        if regimeEndTime() < Date.now() {
             return regimeEndTime()
         }
-        return Date()
+        return Date.now()
     }
     
     private func today() -> Bool {
-        return Calendar.current.isDateInToday(startDate)
+        return Calendar.current.isDate(startDate, inSameDayAs: Date.now())
     }
     
     private func regimeStartTime() -> Date {
-        return user.regimeTimeStart ?? Date()
+        return user.regimeTimeStart ?? Date.now()
     }
     
     private func regimeEndTime() -> Date {
-        return user.regimeTimeEnd ?? Date()
+        return user.regimeTimeEnd ?? Date.now()
     }
 
     private func opacity(enabled: Bool) -> Double {

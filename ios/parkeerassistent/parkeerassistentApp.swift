@@ -29,6 +29,9 @@ struct parkeerassistentApp: App {
     }
     
     private func useMockClient() -> Bool {
+        if Util.isUITest() {
+            return true
+        }
         guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return true
         }

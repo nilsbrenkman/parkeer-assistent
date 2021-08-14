@@ -22,6 +22,7 @@ struct MessageView: ViewModifier {
                     
                     VStack(alignment: .center, spacing: 0) {
                         Text(msg.message)
+                            .accessibilityIdentifier("message")
                             .padding(.all, 40)
                         
                         VStack {
