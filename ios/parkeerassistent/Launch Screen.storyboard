@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen-image" translatesAutoresizingMaskIntoConstraints="NO" id="IR0-ku-UgH">
-                                <rect key="frame" x="80" y="80" width="162" height="538"/>
+                                <rect key="frame" x="80" y="80" width="215" height="652"/>
                                 <edgeInsets key="layoutMargins" top="50" left="50" bottom="50" right="50"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default"/>
                             </imageView>

@@ -13,6 +13,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         return true
     }
+    func applicationDidFinishLaunching(_ application: UIApplication) {
+        if Util.isUITest() {
+            UIView.setAnimationsEnabled(false)
+        }
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {

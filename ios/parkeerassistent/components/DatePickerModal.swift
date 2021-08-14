@@ -17,7 +17,7 @@ struct DatePickerModal: View {
                 DatePicker(
                     "",
                     selection: $date,
-                    in: Date()...,
+                    in: Date.now()...,
                     displayedComponents: [.date]
                 )
                 .datePickerStyle(GraphicalDatePickerStyle())

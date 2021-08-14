@@ -12,8 +12,6 @@ struct VisitorListView: View {
     
     @EnvironmentObject var user: User
     
-//    var visitors: [Visitor]?
-    
     var body: some View {
         
         Section {
@@ -43,6 +41,7 @@ struct VisitorListView: View {
                                 }
                             }
                         }
+                        .accessibility(identifier: "visitor")
                         .foregroundColor(Color.ui.bw0)
                     }
                     .onDelete(perform: delete)

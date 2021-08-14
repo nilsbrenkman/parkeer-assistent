@@ -62,7 +62,7 @@ class Notifications {
         content.subtitle = subtitle
         content.sound = Constants.sound.carHorn
         
-        let timeInterval = Date().distance(to: date)
+        let timeInterval = Date.now().distance(to: date)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
 
         let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)

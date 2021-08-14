@@ -31,6 +31,7 @@ struct LoginView: View {
                             .font(.title3)
                             .bold()
                         TextField("", text: $username)
+                            .accessibilityIdentifier("username")
                             .disableAutocorrection(true)
                             .frame(height: 36)
                             .padding(.horizontal)
@@ -38,18 +39,21 @@ struct LoginView: View {
                                 RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
+                            
                     }
                     VStack(alignment: .leading, spacing: Constants.spacing.small) {
                         Text("Pincode:")
                             .font(.title3)
                             .bold()
                         SecureField("", text: $password)
+                            .accessibilityIdentifier("password")
                             .frame(height: 36)
                             .padding(.horizontal)
                             .overlay(
                                 RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
+                            
                     }
                 }
                 .padding(.vertical)
