@@ -18,10 +18,9 @@ struct LicenseView: View {
                 .frame(width: 140, height: 36)
             
             Text("\(License.formatLicense(license))")
-                .font(.title3)
+                .font(Font.ui.license)
                 .foregroundColor(Color.ui.license)
-                .bold()
-                .tracking(2)
+                .tracking(1)
                 .frame(width: 140, height: 36)
                 .overlay(
                     RoundedRectangle(cornerRadius: Constants.radius.small)

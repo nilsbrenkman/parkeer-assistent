@@ -46,7 +46,6 @@ class License {
 
     static func isSame(a: Character, b: Character) -> Bool {
         return (isDigit(c: a) && isDigit(c: b)) || (!isDigit(c: a) && !isDigit(c: b))
-        
     }
     
     static func isDigit(c: Character) -> Bool {

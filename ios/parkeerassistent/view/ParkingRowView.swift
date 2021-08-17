@@ -18,7 +18,7 @@ struct ParkingRowView: View {
         HStack {
             let visitor = user.getVisitor(parking)
             
-            LicenseView(license: visitor?.formattedLicense ?? parking.license)
+            LicenseView(license: visitor?.license ?? parking.license)
             
             Text("\(visitor?.name ?? "")")
                 .font(/*@START_MENU_TOKEN@*/.title3/*@END_MENU_TOKEN@*/)
