@@ -21,7 +21,7 @@ struct ParkingDetailView: View {
 
             Section {
                 VStack(alignment: .leading, spacing: Constants.spacing.normal) {
-                    LicenseView(license: visitor?.formattedLicense ?? parking.license)
+                    LicenseView(license: visitor?.license ?? parking.license)
                         .centered()
 
                     Property(label: "Naam", text: visitor?.name ?? "")

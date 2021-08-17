@@ -16,6 +16,7 @@ struct DataBox: View  {
         
         VStack(alignment: .leading, spacing: Constants.spacing.xSmall) {
             Text(title)
+                .font(Font.ui.dataBoxTitle)
             ZStack {
                 RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                     .fill(Color.ui.bw70)
@@ -24,7 +25,7 @@ struct DataBox: View  {
                                 .stroke(Color.ui.bw0, lineWidth: 1))
                 
                 Text(content)
-                    .font(.title2)
+                    .font(Font.ui.dataBoxContent)
                 
             }
         }

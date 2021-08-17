@@ -13,11 +13,10 @@ struct VisitorView: View {
     
     var body: some View {
         HStack {
-            LicenseView(license: visitor.formattedLicense)
+            LicenseView(license: visitor.license)
 
             Text("\(visitor.name ?? "")")
-                .font(/*@START_MENU_TOKEN@*/.title3/*@END_MENU_TOKEN@*/)
-                .bold()
+                .font(Font.ui.name)
                 .padding(.leading)
 
         }
@@ -26,7 +25,7 @@ struct VisitorView: View {
 
 struct VisitorView_Previews: PreviewProvider {
     static var previews: some View {
-        let visitor = Visitor(visitorId: 1, permitId: 1, license: "12-AB-34", formattedLicense: "12-AB-34", name: "Jan")
+        let visitor = Visitor(visitorId: 1, permitId: 1, license: "12AB34", formattedLicense: "12-AB-34", name: "Jan")
         VisitorView(visitor: visitor)
     }
 }
