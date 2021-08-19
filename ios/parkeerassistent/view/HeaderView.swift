@@ -25,7 +25,7 @@ struct HeaderView: View {
                     if !login.isLoggedIn {
                         Spacer()
                     }
-                    Image("logo")
+                    Image("Image-logo")
                         .resizable()
                         .scaledToFit()
                         .frame(height: 48)

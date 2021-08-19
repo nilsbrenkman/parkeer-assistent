@@ -48,7 +48,6 @@ class VisitorClientApi: VisitorClient {
 
 }
 
-
 class VisitorClientMock: VisitorClient {
     
     static let client = VisitorClientMock()
@@ -108,8 +107,6 @@ class VisitorClientMock: VisitorClient {
     }
     
 }
-
-
 
 struct MockVisitor {
     static let visitors = [
