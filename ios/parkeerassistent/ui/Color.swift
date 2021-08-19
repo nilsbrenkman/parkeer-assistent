@@ -31,5 +31,11 @@ extension Color {
         let successDisabled = Color("Color-success-disabled")
         let danger = Color("Color-danger")
         let dangerDisabled = Color("Color-danger-disabled")
+        
+        let grey50 = Color("Color-grey50")
+        let grey70 = Color("Color-grey70")
+        let grey80 = Color("Color-grey80")
+        let grey90 = Color("Color-grey90")
+
     }
 }

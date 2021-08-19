@@ -21,7 +21,7 @@ struct AddVisitorView: View {
         
         Form {
             Section {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: Constants.spacing.small) {
                     
                     Text("Kenteken:")
                         .font(.title3)
@@ -29,15 +29,17 @@ struct AddVisitorView: View {
                     ZStack() {
                         RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                             .fill(Color.ui.licenseBg)
-                            .frame(width: 140, height: 36)
+                            .frame(width: Constants.license.width, height: Constants.license.height)
                         
                         TextField("", text: $license)
                             .accessibility(identifier: "license")
-                            .padding(.horizontal)
                             .font(Font.ui.license)
                             .foregroundColor(Color.ui.license)
                             .multilineTextAlignment(.center)
-                            .frame(width: 140, height: 36)
+                            .padding(.horizontal, Constants.license.padding)
+                            .frame(width: Constants.license.width, height: Constants.license.height)
+                            .minimumScaleFactor(0.5)
+                            .lineLimit(1)
                             .disableAutocorrection(true)
                             .overlay(
                                 RoundedRectangle(cornerRadius: Constants.radius.small)

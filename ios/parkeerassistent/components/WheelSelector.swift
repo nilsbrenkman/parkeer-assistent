@@ -18,18 +18,20 @@ struct WheelSelector: View {
     @State private var angleBegin: CGFloat = 0.0
     @State private var anglePrev: CGFloat = 0.0
     
+    @State private var showRotate = true
+    @State private var rotate = false
+  
     var body: some View {
         
         ZStack {
             
             Circle()
-                .stroke(Color(red: 0.8, green: 0.8, blue: 0.8), style: StrokeStyle(lineWidth: config.size * 2))
+                .stroke(Color.ui.grey80, style: StrokeStyle(lineWidth: config.size * 2))
                 .frame(width: config.radius * 2, height: config.radius * 2)
                 .shadow(color: Color.ui.bw0, radius: 2)
             
             Circle()
-                .stroke(Color(red: 0.9, green: 0.9, blue: 0.9),
-                        style: StrokeStyle(lineWidth: config.size, lineCap: .butt, dash: [3, 4.8539]))
+                .stroke(Color.ui.grey90, style: StrokeStyle(lineWidth: config.size, lineCap: .butt, dash: [3, 4.8539]))
                 .frame(width: config.radius * 2, height: config.radius * 2)
                 .padding(20)
                 .rotationEffect(Angle.degrees(Double(angle)))
@@ -45,10 +47,31 @@ struct WheelSelector: View {
                 .accessibility(identifier: "wheel-selector")
 
             Circle()
-                .fill(Color(red: 0.7, green: 0.7, blue: 0.7))
-                .frame(width: config.radius * 2, height: config.radius * 2)
-                .scaleEffect(0.75)
+                .stroke(Color.ui.grey70, style: StrokeStyle(lineWidth: 2))
+                .frame(width: self.getFrameSize(offset: -1), height: self.getFrameSize(offset: -1))
             
+            Circle()
+                .stroke(Color.ui.grey80, style: StrokeStyle(lineWidth: 2))
+                .frame(width: self.getFrameSize(offset: -3), height: self.getFrameSize(offset: -3))
+            
+            Circle()
+                .fill(Color.ui.grey70)
+                .frame(width: self.getFrameSize(offset: -4), height: self.getFrameSize(offset: -4))
+                .shadow(color: Color.ui.grey50, radius: 1)
+
+            if self.showRotate {
+                Image("Image-rotate")
+                    .resizable()
+                    .scaledToFit()
+                    .rotationEffect(Angle(degrees: self.rotate ? 360 : 0))
+                    .frame(width: config.radius * 0.75, height: config.radius * 0.75)
+                    .foregroundColor(Color.ui.grey80)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0).delay(1.0).repeatForever(autoreverses: false)) {
+                            self.rotate = true
+                        }
+                    }
+            }
         }
         
     }
@@ -74,6 +97,9 @@ struct WheelSelector: View {
         let valueDiff = valueNew - valuePrev
         valuePrev = valueNew
         let diff = Int(Double(valueDiff) * abs(Double(valueDiff)).squareRoot())
+        if showRotate && diff > 0 {
+            showRotate = false
+        }
         onChange(diff)
     }
     
@@ -81,6 +107,11 @@ struct WheelSelector: View {
         let a = atan2(y - config.radius, x - config.radius)
         return a * 180 / .pi
     }
+    
+    private func getFrameSize(offset: Double) -> CGFloat {
+        return (config.radius - config.size + CGFloat(offset)) * 2
+    }
+    
 }
 
 struct Config {
