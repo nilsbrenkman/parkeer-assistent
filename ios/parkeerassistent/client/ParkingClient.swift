@@ -123,6 +123,12 @@ class ParkingClientMock: ParkingClient {
     
     func getBalance() -> Double {
         var balance = 10.0
+        for t in PaymentClientMock.client.transactions.values {
+            if PaymentClientMock.getTransactionStatus(t) == "success" {
+                let amount = Double(t.amount.replacingOccurrences(of: ",", with: ".")) ?? 0.0
+                balance += amount
+            }
+        }
         for p in parking.values {
             balance -= p.cost
         }

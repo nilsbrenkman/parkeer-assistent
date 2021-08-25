@@ -28,10 +28,13 @@ struct MessageView: ViewModifier {
                         VStack {
                             Button(action: {
                                 DispatchQueue.main.async {
+                                    if let ok = self.message?.ok {
+                                        ok()
+                                    }
                                     self.message = nil
                                 }
                             }) {
-                                Text("OK")
+                                Text(Lang.Common.ok.localized())
                                     .bold()
                                     .foregroundColor(Color.ui.enabled)
                                     .centered()
@@ -41,14 +44,14 @@ struct MessageView: ViewModifier {
                                 ZStack {
                                     VStack(alignment: .center, spacing: 0) {
                                         Rectangle()
-                                            .fill(Color.ui.danger)
+                                            .fill(msg.type.color())
                                             .frame(height: 21)
                                         RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
-                                            .fill(Color.ui.danger)
+                                            .fill(msg.type.color())
                                             .frame(height: 21)
                                     }
                                     RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
-                                        .fill(Color.ui.danger)
+                                        .fill(msg.type.color())
                                         .frame(height: 42)
                                 }
                             )
@@ -60,7 +63,7 @@ struct MessageView: ViewModifier {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
-                            .stroke(Color.ui.danger, lineWidth: 1)
+                            .stroke(msg.type.color(), lineWidth: 1)
                     )
                     .padding(.horizontal)
                 }

@@ -33,6 +33,30 @@ struct RegimeResponse: Codable {
     var regimeTimeEnd: String
 }
 
+struct IdealResponse: Codable {
+    var amounts: [String]
+    var issuers: [Issuer]
+}
+
+struct Issuer: Codable {
+    var issuerId: String
+    var name: String
+}
+
+struct PaymentRequest: Codable {
+    var amount: String
+    var issuerId: String
+}
+
+struct PaymentResponse: Codable {
+    var redirectUrl: String
+    var transactionId: String
+}
+
+struct StatusResponse: Codable {
+    var status: String
+}
+
 struct Parking: Codable, Hashable {
     var id: Int
     var license: String

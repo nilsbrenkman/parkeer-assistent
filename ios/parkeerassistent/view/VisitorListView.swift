@@ -15,14 +15,14 @@ struct VisitorListView: View {
     var body: some View {
         
         Section {
-            Text("Bezoekers:")
+            Text("\(Lang.Visitor.header.localized()):")
                 .font(.title2)
                 .bold()
             
             if let visitors = $user.visitors.wrappedValue {
                 
                 if visitors.isEmpty {
-                    Text("Voeg een bezoeker toe")
+                    Text(Lang.Visitor.noVisitors.localized())
                         .centered()
                 } else {
                     ForEach(visitors, id: \.self) { visitor in
@@ -61,13 +61,13 @@ struct VisitorListView: View {
                     }
                     .hidden()
                     
-                    Text("Nieuwe bezoeker")
+                    Text(Lang.Visitor.add.localized())
                         .font(.title3)
                         .bold()
                         .centered()
                 }
             }
-            .buttonStyle(ButtonStyles.success)
+            .style(.success)
         }
 
     }

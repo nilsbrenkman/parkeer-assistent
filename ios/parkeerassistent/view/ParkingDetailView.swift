@@ -24,10 +24,10 @@ struct ParkingDetailView: View {
                     LicenseView(license: visitor?.license ?? parking.license)
                         .centered()
 
-                    Property(label: "Naam", text: visitor?.name ?? "")
-                    Property(label: "Kosten", text: "€ \(Util.formatCost(parking.cost))")
-                    Property(label: "Start tijd", text: Util.getParkingTime(parking.startTime))
-                    Property(label: "Eind tijd", text: Util.getParkingTime(parking.endTime))
+                    Property(label: Lang.Visitor.name.localized(), text: visitor?.name ?? "")
+                    Property(label: Lang.Parking.cost.localized(), text: "€ \(Util.formatCost(parking.cost))")
+                    Property(label: Lang.Parking.startTime.localized(), text: Util.getParkingTime(parking.startTime))
+                    Property(label: Lang.Parking.endTime.localized(), text: Util.getParkingTime(parking.endTime))
                 }
                 .padding(.vertical)
             }
@@ -37,20 +37,20 @@ struct ParkingDetailView: View {
                     user.stopParking(parking)
                     self.presentationMode.wrappedValue.dismiss()
                 }){
-                    Text("Sessie beindigen")
+                    Text(Lang.Parking.stop.localized())
                         .font(.title3)
                         .bold()
                         .centered()
                 }
-                .buttonStyle(ButtonStyles.danger)
+                .style(.danger)
                 
                 Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                    Text("Terug")
+                    Text(Lang.Common.back.localized())
                         .font(.title3)
                         .bold()
                         .centered()
                 }
-                .buttonStyle(ButtonStyles.cancel)
+                .style(.cancel)
 
             }
         }

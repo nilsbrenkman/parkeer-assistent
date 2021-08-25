@@ -20,11 +20,13 @@ struct parkeerassistentApp: App {
             ClientManager.instance.register(UserClient.self,    client: UserClientMock.client)
             ClientManager.instance.register(ParkingClient.self, client: ParkingClientMock.client)
             ClientManager.instance.register(VisitorClient.self, client: VisitorClientMock.client)
+            ClientManager.instance.register(PaymentClient.self, client: PaymentClientMock.client)
         } else {
             ClientManager.instance.register(LoginClient.self,   client: LoginClientApi.client)
             ClientManager.instance.register(UserClient.self,    client: UserClientApi.client)
             ClientManager.instance.register(ParkingClient.self, client: ParkingClientApi.client)
             ClientManager.instance.register(VisitorClient.self, client: VisitorClientApi.client)
+            ClientManager.instance.register(PaymentClient.self, client: PaymentClientApi.client)
         }
     }
     

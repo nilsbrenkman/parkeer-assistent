@@ -40,13 +40,13 @@ struct AddParkingView: View {
                     VisitorView(visitor: visitor)
                     
                     HStack(alignment: .center, spacing: Constants.spacing.normal) {
-                        DataBox(title: "Datum:", content: "\(Util.dayMonthFormatter.string(from: startDate))")
+                        DataBox(title: Lang.Parking.date.localized(), content: "\(Util.dayMonthFormatter.string(from: startDate))")
                             .onTapGesture {
                                 showDatePicker.toggle()
                             }
                             .opacity(opacity(enabled: showDatePicker))
                             .accessibility(identifier: "start-date")
-                        DataBox(title: "Start tijd:", content: "\(startTime)")
+                        DataBox(title: Lang.Parking.startTime.localized(), content: "\(startTime)")
                             .onTapGesture {
                                 self.modifyStartTime = true
                             }
@@ -56,9 +56,9 @@ struct AddParkingView: View {
                     }
 
                     HStack(alignment: .center, spacing: Constants.spacing.normal) {
-                        DataBox(title: "Minuten:", content: "\(minutes)")
-                        DataBox(title: "Eind tijd:", content: "\(endTime)")
-                        DataBox(title: "Kosten:", content: "€ \(cost)")
+                        DataBox(title: Lang.Parking.minutes.localized(), content: "\(minutes)")
+                        DataBox(title: Lang.Parking.endTime.localized(), content: "\(endTime)")
+                        DataBox(title: Lang.Parking.cost.localized(), content: "€ \(cost)")
                     }
                     .onTapGesture(perform: {
                         self.modifyStartTime = false
@@ -82,18 +82,16 @@ struct AddParkingView: View {
                         }
                     }
                 }){
-                    Text("Toevoegen")
+                    Text(Lang.Common.add.localized())
                         .font(.title3)
                         .bold()
                         .wait($wait)
                 }
-                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
-                                                  disabled: Color.ui.successDisabled,
-                                                  enabled: minutes > 0))
+                .style(.success, disabled: minutes <= 0)
                 
                 Button(action: { user.selectedVisitor = nil }) {
                     ZStack {
-                        Text("Annuleren")
+                        Text(Lang.Common.cancel.localized())
                             .font(.title3)
                             .bold()
                             .centered()
@@ -101,7 +99,7 @@ struct AddParkingView: View {
                     }
                     .padding(.horizontal)
                 }
-                .buttonStyle(ButtonStyles.cancel)
+                .style(.cancel)
             }
         }
         .modal(visible: $showDatePicker, onClose: updateRegime) {

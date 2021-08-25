@@ -15,7 +15,6 @@ struct AddVisitorView: View {
     @State private var name: String = ""
     
     @State private var wait: Bool = false
-    @State private var message: String?
     
     var body: some View {
         
@@ -23,7 +22,7 @@ struct AddVisitorView: View {
             Section {
                 VStack(alignment: .leading, spacing: Constants.spacing.small) {
                     
-                    Text("Kenteken:")
+                    Text("\(Lang.Visitor.license.localized()):")
                         .font(.title3)
                     
                     ZStack() {
@@ -50,7 +49,7 @@ struct AddVisitorView: View {
                             })
                     }
                     
-                    Text("Naam:")
+                    Text("\(Lang.Visitor.name.localized()):")
                         .font(.title3)
                     TextField("", text: $name)
                         .accessibility(identifier: "name")
@@ -75,22 +74,20 @@ struct AddVisitorView: View {
                         }
                     }
                 }){
-                    Text("Toevoegen")
+                    Text(Lang.Common.add.localized())
                         .font(.title3)
                         .bold()
                         .wait($wait)
                 }
-                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
-                                                  disabled: Color.ui.successDisabled,
-                                                  enabled: self.license.count > 0 && self.name.count > 0))
+                .style(.success, disabled: self.license.count == 0 || self.name.count == 0)
                 
                 Button(action: { user.addVisitor = false }) {
-                    Text("Annuleren")
+                    Text(Lang.Common.cancel.localized())
                         .font(.title3)
                         .bold()
                         .centered()
                 }
-                .buttonStyle(ButtonStyles.cancel)
+                .style(.cancel)
             }
             
         }
@@ -106,7 +103,6 @@ struct AddVisitorView: View {
             }
             user.getVisitors()
         } else {
-            self.message = "Bezoeker toevoegen mislukt"
             wait = false
         }
     }
