@@ -4,25 +4,29 @@ import io.ktor.application.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
-import nl.parkeerassistent.external.*
+import nl.parkeerassistent.external.CalculateBalanceRequest
+import nl.parkeerassistent.external.CalculateBalanceResponse
+import nl.parkeerassistent.external.GetBalanceInfo
+import nl.parkeerassistent.external.GetPermitsByCustomer
 import nl.parkeerassistent.model.BalanceResponse
 import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.HOUR
 import java.util.Calendar.MINUTE
 
 object UserService {
 
-    enum class Method: Monitoring.Method {
+    enum class Method : Monitoring.Method {
         Get,
         Balance,
         Regime,
         ;
+
         override fun service(): Monitoring.Service {
             return Monitoring.Service.User
         }
+
         override fun method(): String {
             return name
         }

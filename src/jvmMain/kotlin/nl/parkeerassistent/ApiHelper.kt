@@ -32,10 +32,12 @@ object ApiHelper {
         return baseUrl + url
     }
 
-    fun addHeaders(httpRequestBuilder: HttpRequestBuilder, session: Session) {
+    fun addHeaders(httpRequestBuilder: HttpRequestBuilder,
+                   session: Session,
+                   referer: String = "Customer/Dashboard") {
         httpRequestBuilder.header("Cookie", session.header())
         httpRequestBuilder.header("Host", "aanmeldenparkeren.amsterdam.nl")
-        httpRequestBuilder.header("Referer", baseUrl + "Customer/Dashboard")
+        httpRequestBuilder.header("Referer", baseUrl + referer)
         httpRequestBuilder.header("Cache-Control", "no-cache")
     }
 

@@ -9,6 +9,7 @@ object Monitoring {
         User,
         Visitor,
         Parking,
+        Payment,
         ;
     }
 

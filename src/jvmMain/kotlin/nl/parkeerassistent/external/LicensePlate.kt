@@ -9,4 +9,4 @@ data class LicensePlate(
     val LP: String,
     val FormattedLP: String,
     val Comment: String?
-) {}
+)

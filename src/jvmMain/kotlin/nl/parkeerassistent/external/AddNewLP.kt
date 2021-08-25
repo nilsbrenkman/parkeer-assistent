@@ -8,5 +8,4 @@ data class AddNewLP(
     val permitId: Int,
     val formattedLP: String,
     val comment: String
-) {
-}
+)

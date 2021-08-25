@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class CalculateBalanceResponse(
     val regimeStartTime: String,
     val regimeEndTime: String
-) {}
+)
