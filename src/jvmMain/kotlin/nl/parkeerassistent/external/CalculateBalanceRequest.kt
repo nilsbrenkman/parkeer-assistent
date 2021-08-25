@@ -7,4 +7,4 @@ data class CalculateBalanceRequest(
     val permitId: Int,
     val timeStartUtc: String,
     val timeEndUtc: String
-) {}
+)

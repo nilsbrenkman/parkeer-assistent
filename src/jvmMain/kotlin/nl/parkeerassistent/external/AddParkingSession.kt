@@ -11,5 +11,4 @@ data class AddParkingSession(
     val regimeEndTime: String,
     val endTimeParkingRegimeEnd: Boolean,
     val saveMode: Boolean
-) {
-}
+)

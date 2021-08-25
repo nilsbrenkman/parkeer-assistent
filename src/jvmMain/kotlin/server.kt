@@ -225,6 +225,40 @@ fun main() {
                     )
                 }
             }
+            route("/payment") {
+                get {
+                    call.respond(
+                        ServiceUtil.execute(
+                            PaymentService.Method.Ideal,
+                            call,
+                            IdealResponse(emptyList(), emptyList()),
+                            PaymentService::ideal
+                        )
+                    )
+                }
+                post {
+                    val request = call.receive<PaymentRequest>()
+                    call.respond(
+                        ServiceUtil.execute(
+                            PaymentService.Method.Payment,
+                            call,
+                            request,
+                            PaymentResponse("", ""),
+                            PaymentService::payment
+                        )
+                    )
+                }
+                get("/{transactionId}") {
+                    call.respond(
+                        ServiceUtil.execute(
+                            PaymentService.Method.Status,
+                            call,
+                            StatusResponse("error"),
+                            PaymentService::status
+                        )
+                    )
+                }
+            }
             static("/static") {
                 resources()
                 get("/style.css") {

@@ -6,7 +6,6 @@ import io.ktor.http.*
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
 import org.apache.log4j.Logger
-import java.text.SimpleDateFormat
 
 object ServiceUtil {
 
@@ -43,10 +42,14 @@ object ServiceUtil {
         } catch (e: RedirectResponseException) {
             Monitoring.warn(method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
+        } catch (e: ServiceException) {
+            log.warn("Service error [" + e.type + "]", e)
+            Monitoring.warn(method, "SERVICE_ERROR")
+            call.response.status(HttpStatusCode.ServiceUnavailable)
         } catch (e: Exception) {
             log.warn("Unexpected error", e)
             Monitoring.warn(method, "ERROR")
-            call.response.status(HttpStatusCode.ServiceUnavailable)
+            call.response.status(HttpStatusCode.InternalServerError)
         }
         return errorResponse
     }

@@ -10,4 +10,4 @@ data class ParkingSession(
     val TimeEndUtc: String,
     val CostMoney: Double,
     val LP: String
-) {}
+)
