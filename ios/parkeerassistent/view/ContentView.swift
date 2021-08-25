@@ -13,6 +13,7 @@ struct ContentView: View {
     
     @StateObject var login = try! Login()
     @StateObject var user = try! User()
+    @StateObject var payment = try! Payment()
     @StateObject var messenger = Messenger()
     
     @State var initialised = false
@@ -26,10 +27,17 @@ struct ContentView: View {
                 if login.isLoading || login.isBackground {
                     LoadingView()
                 } else if login.isLoggedIn {
-                    NavigationView {
-                        UserView()
+                    if payment.show {
+                        NavigationView {
+                            PaymentView()
+                        }
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    } else {
+                        NavigationView {
+                            UserView()
+                        }
+                        .navigationViewStyle(StackNavigationViewStyle())
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
                 } else {
                     LoginView()
                 }
@@ -37,6 +45,7 @@ struct ContentView: View {
         }
         .environmentObject(login)
         .environmentObject(user)
+        .environmentObject(payment)
         .message(message: $messenger.message)
         .modal(visible: $showInfo) {
             InfoView()

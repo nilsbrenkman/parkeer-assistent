@@ -1,0 +1,48 @@
+/* 
+  Language.strings
+  parkeerassistent
+
+  Created by Nils Brenkman on 24/08/2021.
+  
+*/
+
+"common.ok" = "OK";
+"common.add" = "Toevoegen";
+"common.back" = "Terug";
+"common.cancel" = "Annuleren";
+"common.select" = "Selecteer";
+
+"login.login" = "Inloggen";
+"login.logout" = "Log uit";
+"login.username" = "Meldcode";
+"login.password" = "Pincode";
+"login.remember" = "Onthoud inlog gegevens";
+"login.reason" = "Opgeslagen inlog gegevens laden";
+
+"user.balance" = "Saldo";
+
+"visitor.header" = "Bezoekers";
+"visitor.noVisitors" = "Voeg een bezoeker toe";
+"visitor.add" = "Nieuwe bezoeker";
+"visitor.license" = "Kenteken";
+"visitor.name" = "Naam";
+
+"parking.header" = "Parkeren";
+"parking.active" = "Actieve sessies";
+"parking.scheduled" = "Geplande sessies";
+"parking.noSessions" = "Geen actieve of geplande sessies";
+"parking.date" = "Datum";
+"parking.startTime" = "Start tijd";
+"parking.endTime" = "Eind tijd";
+"parking.minutes" = "Minuten";
+"parking.cost" = "Kosten";
+"parking.stop" = "Sessie beindigen";
+
+"payment.amount" = "Bedrag";
+"payment.bank" = "Bank";
+"payment.start" = "Opwaarderen";
+"payment.status" = "Controleer status";
+"payment.successMsg" = "Opwaarderen van het geldsaldo is gelukt.";
+"payment.pendingMsg" = "Opwaarderen van het geldsaldo is nog bezig.";
+"payment.errorMsg" = "Er is een fout opgetreden tijdens de betaling.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.";
+"payment.unknownMsg" = "Status van de betaling kan niet worden geverifieerd.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.";

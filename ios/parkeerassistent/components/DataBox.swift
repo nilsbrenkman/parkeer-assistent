@@ -15,7 +15,7 @@ struct DataBox: View  {
     var body: some View {
         
         VStack(alignment: .leading, spacing: Constants.spacing.xSmall) {
-            Text(title)
+            Text("\(title):")
                 .font(Font.ui.dataBoxTitle)
             ZStack {
                 RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)

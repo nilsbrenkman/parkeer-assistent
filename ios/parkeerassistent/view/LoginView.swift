@@ -27,7 +27,7 @@ struct LoginView: View {
             Section {
                 VStack(alignment: .leading, spacing: Constants.spacing.normal) {
                     VStack(alignment: .leading, spacing: Constants.spacing.small) {
-                        Text("Meldcode:")
+                        Text("\(Lang.Login.username.localized()):")
                             .font(.title3)
                             .bold()
                         TextField("", text: $username)
@@ -42,7 +42,7 @@ struct LoginView: View {
                             
                     }
                     VStack(alignment: .leading, spacing: Constants.spacing.small) {
-                        Text("Pincode:")
+                        Text("\(Lang.Login.password.localized()):")
                             .font(.title3)
                             .bold()
                         SecureField("", text: $password)
@@ -60,17 +60,15 @@ struct LoginView: View {
             }
             Section {
                 Button(action: startLogin){
-                    Text("Inloggen")
+                    Text(Lang.Login.login.localized())
                         .font(.title3)
                         .bold()
                         .wait($wait)
                 }
-                .buttonStyle(ButtonStyles.Enabled(main: Color.ui.success,
-                                                  disabled: Color.ui.successDisabled,
-                                                  enabled: self.username.count > 0 && self.password.count > 0))
+                .style(.success, disabled: self.username.count == 0 || self.password.count == 0)
             }
             Section {
-                Toggle("Onthoud inlog gegevens", isOn: $storeCredentials)
+                Toggle(Lang.Login.remember.localized(), isOn: $storeCredentials)
             }
         }
         .onAppear(perform: authenticate)
@@ -104,7 +102,7 @@ struct LoginView: View {
                 return
             }
             
-            let reason = "Opgeslagen inlog gegevens laden"
+            let reason = Lang.Login.reason.localized()
 
             context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
                 DispatchQueue.main.async {

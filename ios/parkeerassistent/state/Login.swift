@@ -16,7 +16,6 @@ class Login: ObservableObject {
     @Published var loggedOut: Bool = false
 
     let loginClient: LoginClient
-    var messenger: ((String, Type) -> Void)? = nil
 
     init() throws {
         loginClient = try ClientManager.instance.get(LoginClient.self)
@@ -52,7 +51,7 @@ class Login: ObservableObject {
                         self.isLoggedIn = true
                     }
                 } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
                 onComplete()
             }
@@ -72,7 +71,7 @@ class Login: ObservableObject {
                         self.isLoggedIn = false
                     }
                 } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
                 onComplete()
                 DispatchQueue.main.async {

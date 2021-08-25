@@ -26,9 +26,13 @@ extension Color {
         let enabled = Color("Color-enabled")
         let disabled = Color("Color-disabled")
         let background = Color("Color-background")
-        
+
+        let info = Color("Color-info")
+        let infoDisabled = Color("Color-info-disabled")
         let success = Color("Color-success")
         let successDisabled = Color("Color-success-disabled")
+        let warning = Color("Color-warning")
+        let warningDisabled = Color("Color-warning-disabled")
         let danger = Color("Color-danger")
         let dangerDisabled = Color("Color-danger-disabled")
         

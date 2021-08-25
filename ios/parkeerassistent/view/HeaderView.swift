@@ -11,6 +11,7 @@ struct HeaderView: View {
     
     @EnvironmentObject var login: Login
     @EnvironmentObject var user: User
+    @EnvironmentObject var payment: Payment
     
     @Binding var showInfo: Bool
     
@@ -35,8 +36,8 @@ struct HeaderView: View {
                         }
                     Spacer()
                     if login.isLoggedIn {
-                        Button(action: logout){
-                            Text("Logout")
+                        Button(action: logout) {
+                            Text(Lang.Login.logout.localized())
                         }
                         .frame(height: 46)
                         .padding(.horizontal)
@@ -53,7 +54,7 @@ struct HeaderView: View {
 
                 HStack {
                     Spacer()
-                    Text("Saldo:")
+                    Text("\(Lang.User.balance.localized()):")
                         .foregroundColor(Color.ui.header)
                         .padding(.vertical, 8)
                     Text("€ \(user.balance!)")
@@ -65,6 +66,9 @@ struct HeaderView: View {
                 }
                 .padding(.horizontal)
                 .background(Color.ui.light)
+                .onTapGesture {
+                    payment.show = true
+                }
 
                 Rectangle()
                     .frame(height: 1)

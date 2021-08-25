@@ -14,20 +14,20 @@ struct ParkingView: View {
     var body: some View {
         
         Section {
-            Text("Parkeren:")
+            Text("\(Lang.Parking.header.localized()):")
                 .font(.title2)
                 .bold()
             
             if let parking = $user.parking.wrappedValue {
                 if parking.active.isEmpty && parking.scheduled.isEmpty {
-                    Text("Geen actieve of geplande sessies")
+                    Text(Lang.Parking.noSessions.localized())
                         .centered()
                 } else {
                     if !parking.active.isEmpty {
-                        ParkingListView(title: "Actieve sessies", parkingList: parking.active)
+                        ParkingListView(title: Lang.Parking.active.localized(), parkingList: parking.active)
                     }
                     if !parking.scheduled.isEmpty {
-                        ParkingListView(title: "Geplande sessies", parkingList: parking.scheduled)
+                        ParkingListView(title: Lang.Parking.scheduled.localized(), parkingList: parking.scheduled)
                     }
                 }
             } else {

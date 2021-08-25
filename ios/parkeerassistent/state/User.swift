@@ -98,7 +98,7 @@ class User: ObservableObject {
                     }
                     self.getVisitors()
                 } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
                 onComplete()
             }
@@ -112,7 +112,7 @@ class User: ObservableObject {
                     self.getVisitors()
                 } else {
                     self.getVisitors()
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
             }
         }
@@ -144,7 +144,7 @@ class User: ObservableObject {
                         //
                     }
                 } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
                 onComplete()
             }
@@ -168,7 +168,7 @@ class User: ObservableObject {
                     self.getBalance()
                 } else {
                     self.getParking()
-                    MessageManager.instance.addMessage(response.message, type: Type.WARN)
+                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
             }
         }
