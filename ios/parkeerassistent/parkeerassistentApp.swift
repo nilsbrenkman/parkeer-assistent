@@ -47,7 +47,7 @@ struct parkeerassistentApp: App {
     }
     
     private func mockVersion(_ version: String) -> Bool {
-        guard let url = URL(string: ApiClient.BASE_URL + "version/" + version) else {
+        guard let url = URL(string: ApiClient.client.baseUrl + "version/" + version) else {
             return true
         }
         

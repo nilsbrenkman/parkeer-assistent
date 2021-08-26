@@ -10,17 +10,20 @@ import Foundation
 class ApiClient {
       
     static let client = ApiClient()
-    
-    static let BASE_URL   = "https://parkeerassistent.nl/";
+
     static let COOKIE_KEY = "Cookies"
 
+    public let baseUrl: String
+    
     private let session: URLSession
     private let url: URL
     private var cookies: SessionCookies
 
     private init() {
+        let settings = Bundle.main.infoDictionary?["AppSettings"] as! [AnyHashable:Any]
+        baseUrl = settings["ServerBaseURL"] as! String
         session = URLSession(configuration: .default)
-        url = URL(string: ApiClient.BASE_URL)!
+        url = URL(string: baseUrl)!
         cookies = SessionCookies()
         
         if let json = UserDefaults.standard.string(forKey: ApiClient.COOKIE_KEY),
@@ -48,7 +51,7 @@ class ApiClient {
     
     func call<REQUEST: Encodable, RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, body: REQUEST? = nil, onComplete: @escaping (RESPONSE) -> Void) throws {
         
-        guard let url = URL(string: ApiClient.BASE_URL + path) else {
+        guard let url = URL(string: baseUrl + path) else {
             throw ClientError.InvalidPath
         }
         
