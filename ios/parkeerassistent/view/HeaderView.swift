@@ -36,15 +36,25 @@ struct HeaderView: View {
                         }
                     Spacer()
                     if login.isLoggedIn {
-                        Button(action: logout) {
-                            Text(Lang.Login.logout.localized())
+                        Menu {
+                            Button(action: showPayment) {
+                                Text("Saldo opwaarderen")
+                                Image(systemName: "eurosign.circle")
+                            }
+                            Button(action: logout) {
+                                Text(Lang.Login.logout.localized())
+                                Image(systemName: "square.and.arrow.up")
+                            }
+                        } label: {
+                            Text("Menu")
+                                .frame(height: 46)
+                                .padding(.horizontal)
+                                .foregroundColor(Color.white)
+                                .overlay(RoundedRectangle(cornerRadius: Constants.radius.small)
+                                            .stroke(Color.white, lineWidth: 1)
+                                )
                         }
-                        .frame(height: 46)
-                        .padding(.horizontal)
-                        .foregroundColor(Color.white)
-                        .overlay(RoundedRectangle(cornerRadius: Constants.radius.small)
-                                    .stroke(Color.white, lineWidth: 1)
-                        )
+                        
                     }
                 }
                 .padding(.horizontal)
@@ -66,9 +76,6 @@ struct HeaderView: View {
                 }
                 .padding(.horizontal)
                 .background(Color.ui.light)
-                .onTapGesture {
-                    payment.show = true
-                }
 
                 Rectangle()
                     .frame(height: 1)
@@ -76,6 +83,12 @@ struct HeaderView: View {
             }
                         
         }
+    }
+    
+    private func showPayment() {
+        payment.show = true
+        user.selectedVisitor = nil
+        user.addVisitor = false
     }
     
     private func logout() {
@@ -87,7 +100,7 @@ struct HeaderView: View {
             }
         }
     }
-    
+
 }
 
 struct HeaderView_Previews: PreviewProvider {

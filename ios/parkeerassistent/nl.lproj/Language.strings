@@ -42,7 +42,20 @@
 "payment.bank" = "Bank";
 "payment.start" = "Opwaarderen";
 "payment.status" = "Controleer status";
+"payment.recipientMsg" = "Let op: controleer altijd of de begunstigde van de betaling Gemeente Amsterdam is.";
+"payment.redirectMsg" = "Na afloop van de betaling zal je doorgestuurd worden naar de website van de gemeente. Log niet in maar open deze app om de betaling af te ronden.";
+"payment.redirectErrorMsg" = "Fout bij het starten van de betaling.";
 "payment.successMsg" = "Opwaarderen van het geldsaldo is gelukt.";
 "payment.pendingMsg" = "Opwaarderen van het geldsaldo is nog bezig.";
 "payment.errorMsg" = "Er is een fout opgetreden tijdens de betaling.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.";
 "payment.unknownMsg" = "Status van de betaling kan niet worden geverifieerd.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.";
+
+"info.header" = "Over deze app";
+"info.text1" = "Parkeren Amsterdam is een persoonlijke app die niet verbonden is aan de gemeente Amsterdam.";
+"info.text2" = "Het doel van de app is het bieden van een alternatieve, meer gebruiksvriendelijke interface voor de website van de gemeente.";
+"info.text3" = "De app verzamelt geen gebruikersdata zoals meldcode, pincode of enige andere persoonlijke gegevens. Als je ervoor kiest je inlog gegevens te onthouden worden deze lokaal en veilig bewaard.";
+"info.text4" = "De maker van de app is niet aansprakelijk voor enige vorm van gebruik.";
+"info.text5" = "De broncode van deze app is open source en beschikbaar via GitHub.";
+"info.website" = "Website";
+"info.sourceCode" = "Broncode";
+"info.version" = "Versie";

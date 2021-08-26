@@ -30,9 +30,12 @@ struct Lang {
     }
 
     enum Payment: String, LocalizationEnum {
-        case amount, bank, start, status, successMsg, pendingMsg, errorMsg, unknownMsg
+        case amount, bank, start, status, recipientMsg, redirectMsg, redirectErrorMsg, successMsg, pendingMsg, errorMsg, unknownMsg
     }
 
+    enum Info: String, LocalizationEnum {
+        case header, text1, text2, text3, text4, text5, website, sourceCode, version
+    }
 }
 
 protocol LocalizationEnum {
