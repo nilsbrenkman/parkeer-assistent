@@ -1,8 +1,9 @@
-package nl.parkeerassistent
+package nl.parkeerassistent.service
 
 import io.ktor.application.*
 import io.ktor.client.features.*
 import io.ktor.http.*
+import nl.parkeerassistent.Monitoring
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
 import org.apache.log4j.Logger

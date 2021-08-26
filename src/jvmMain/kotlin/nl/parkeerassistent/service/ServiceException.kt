@@ -1,4 +1,4 @@
-package nl.parkeerassistent
+package nl.parkeerassistent.service
 
 class ServiceException(val type: Type, message: String) : Exception(message) {
 
