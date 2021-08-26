@@ -1,6 +1,6 @@
 package nl.parkeerassistent
 
-import nl.parkeerassistent.LoginService.findCustomerId
+import nl.parkeerassistent.service.LoginService.findCustomerId
 import org.junit.Assert
 import org.junit.Test
 

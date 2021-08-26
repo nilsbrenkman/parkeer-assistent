@@ -1,4 +1,4 @@
-package nl.parkeerassistent
+package nl.parkeerassistent.service
 
 import io.ktor.application.*
 import io.ktor.http.*

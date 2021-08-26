@@ -88,7 +88,7 @@ class PaymentClientMock: PaymentClient {
         nextId += 1
         let t = MockTransaction(transactionId: transactionId, amount: amount, issuerId: issuerId, creationDate: Date.now())
         transactions[t.transactionId] = t
-        onComplete(PaymentResponse(redirectUrl: "https://parkeerassistent.nl", transactionId: transactionId))
+        onComplete(PaymentResponse(redirectUrl: ApiClient.client.baseUrl + "open", transactionId: transactionId))
     }
 
     func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void) {

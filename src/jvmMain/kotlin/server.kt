@@ -10,44 +10,13 @@ import io.ktor.serialization.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.html.*
-import nl.parkeerassistent.*
+import nl.parkeerassistent.html.*
 import nl.parkeerassistent.model.*
+import nl.parkeerassistent.service.*
 import nl.parkeerassistent.style.Style
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import java.io.File
-
-fun HTML.index() {
-    head {
-        title("Parkeer Assistent")
-        link {
-            rel = "stylesheet"
-            type = "text/css"
-            href = "https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-        }
-        link {
-            rel = "stylesheet"
-            type = "text/css"
-            href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
-        }
-        link {
-            rel = "stylesheet"
-            type = "text/css"
-            href = "/static/style.css"
-        }
-        meta {
-            name = "viewport"
-            content = "width=375, initial-scale=1"
-        }
-    }
-    body {
-        div {
-            id = "root"
-        }
-        script(src = "/static/ParkeerAssistent.js") {}
-    }
-}
-
 
 fun main() {
     org.apache.log4j.BasicConfigurator.configure()
@@ -67,7 +36,7 @@ fun main() {
         log.info("Trust store not found: ${trustStoreFile.absolutePath}")
     }
 
-    val host = System.getProperty("server.host", "127.0.0.1")
+    val host = System.getProperty("server.host", "192.168.178.74")
     val port = System.getProperty("server.port", "3000").toInt()
 
     log.info("Starting server: $host:$port")
@@ -88,7 +57,10 @@ fun main() {
                 VersionService.version(call)
             }
             get("/") {
-                call.respondHtml(HttpStatusCode.OK, HTML::index)
+                call.respondHtml(HttpStatusCode.OK, HTML::application)
+            }
+            get("/open") {
+                call.respondHtml(HttpStatusCode.OK, HTML::open)
             }
             post("/") {
                 call.respondRedirect("/", false)

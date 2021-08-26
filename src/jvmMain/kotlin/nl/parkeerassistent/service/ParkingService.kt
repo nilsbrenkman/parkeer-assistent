@@ -1,9 +1,10 @@
-package nl.parkeerassistent
+package nl.parkeerassistent.service
 
 import io.ktor.application.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
+import nl.parkeerassistent.*
 import nl.parkeerassistent.external.AddParkingSession
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.external.GetParkingSessions
@@ -12,7 +13,6 @@ import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.Parking
 import nl.parkeerassistent.model.ParkingResponse
 import nl.parkeerassistent.model.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 object ParkingService {
