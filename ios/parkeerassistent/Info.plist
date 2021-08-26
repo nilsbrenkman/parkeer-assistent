@@ -35,6 +35,11 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>AppSettings</key>
+	<dict>
+		<key>ServerBaseURL</key>
+		<string>$(SERVER_BASE_URL)</string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
