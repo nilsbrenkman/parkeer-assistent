@@ -6,7 +6,8 @@ import io.ktor.response.*
 
 object VersionService {
 
-    private val activeVersions = listOf("1.0.0","1.0.1","1.0.2","1.0.3","1.0.4","1.0.5")
+    private val activeVersions = listOf("1.0.0","1.0.1","1.0.2","1.0.3","1.0.4","1.0.5",
+                                        "1.1.0")
 
     suspend fun version(call: ApplicationCall) {
         val version = call.parameters["version"]!!
