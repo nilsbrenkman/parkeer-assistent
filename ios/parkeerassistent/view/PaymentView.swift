@@ -9,9 +9,6 @@ import SwiftUI
 
 struct PaymentView: View {
     
-    static let amountKey = "paymentAmount"
-    static let issuerKey = "paymentIssuer"
-
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) var openURL
     
@@ -23,6 +20,11 @@ struct PaymentView: View {
 
     var body: some View {
         Form {
+            Section {
+                Text(Lang.Payment.recipientMsg.localized())
+                    .bold()
+                    .foregroundColor(Color.ui.danger)
+            }
             Section {
                 if let amounts = $payment.amounts.wrappedValue {
                     NavigationLink(destination: InsetPicker(labels: amounts.map{ self.formatAmount($0) }, selected: $payment.selectedAmount)) {
@@ -50,7 +52,17 @@ struct PaymentView: View {
                     Button(action: {
                         self.wait = true
                         payment.payment { response in
-                            openURL(URL(string: response.redirectUrl)!)
+                            guard let redirectUrl = URL(string: response.redirectUrl) else {
+                                MessageManager.instance.addMessage(Lang.Payment.redirectErrorMsg.localized(), type: Type.ERROR)
+                                return
+                            }
+                            if payment.showRedirectMessage() {
+                                MessageManager.instance.addMessage(Lang.Payment.redirectMsg.localized(), type: Type.INFO) {
+                                    openURL(redirectUrl)
+                                }
+                            } else {
+                                openURL(redirectUrl)
+                            }
                         }
                     }){
                         Text(Lang.Payment.start.localized())
@@ -139,7 +151,6 @@ struct PaymentView: View {
             }
             break
         }
-
     }
     
 }
