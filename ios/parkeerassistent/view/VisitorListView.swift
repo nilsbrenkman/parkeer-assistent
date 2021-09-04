@@ -43,6 +43,7 @@ struct VisitorListView: View {
                         }
                         .accessibility(identifier: "visitor")
                         .foregroundColor(Color.ui.bw0)
+                        .frame(minHeight: 42)
                     }
                     .onDelete(perform: delete)
                 }
@@ -53,8 +54,17 @@ struct VisitorListView: View {
             }
         }
         
+
         Section {
-            Button(action: { self.user.addVisitor = true }) {
+            Button(action: {
+                if let visitors = $user.visitors.wrappedValue {
+                    if visitors.count >= 9 {
+                        MessageManager.instance.addMessage(Lang.Visitor.tooManyMsg.localized(), type: Type.WARN)
+                        return
+                    }
+                }
+                self.user.addVisitor = true
+            }) {
                 ZStack {
                     NavigationLink(destination: AddVisitorView(), isActive: $user.addVisitor) {
                         

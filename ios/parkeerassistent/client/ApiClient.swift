@@ -20,12 +20,11 @@ class ApiClient {
     private var cookies: SessionCookies
 
     private init() {
-        let settings = Bundle.main.infoDictionary?["AppSettings"] as! [AnyHashable:Any]
-        baseUrl = settings["ServerBaseURL"] as! String
+        baseUrl = Util.getSetting("ServerBaseURL")
         session = URLSession(configuration: .default)
         url = URL(string: baseUrl)!
         cookies = SessionCookies()
-        
+
         if let json = UserDefaults.standard.string(forKey: ApiClient.COOKIE_KEY),
            let data = json.data(using: .utf8),
            let persistCookies = try? JSONDecoder().decode(PersistCookies.self, from: data) {
@@ -77,11 +76,17 @@ class ApiClient {
             
             guard let data = data else {
                 print("no data")
+                if result == Response.self {
+                    onComplete(Response(success: false, message: "No data") as! RESPONSE)
+                }
                 return
             }
 
             guard let res = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
                 print("unable to decode")
+                if result == Response.self {
+                    onComplete(Response(success: false, message: "Decode error") as! RESPONSE)
+                }
                 return
             }
             

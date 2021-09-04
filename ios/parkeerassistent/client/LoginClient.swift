@@ -26,6 +26,7 @@ class LoginClientApi: LoginClient {
             try ApiClient.client.call(Response.self, path: "login", method: Method.GET, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     
@@ -35,6 +36,7 @@ class LoginClientApi: LoginClient {
             try ApiClient.client.call(Response.self, path: "login", method: Method.POST, body: body, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     
@@ -43,6 +45,7 @@ class LoginClientApi: LoginClient {
             try ApiClient.client.call(Response.self, path: "logout", method: Method.GET, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     

@@ -43,6 +43,7 @@ class PaymentClientApi: PaymentClient {
             try ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(StatusResponse(status: "error"))
         }
     }
     

@@ -67,6 +67,11 @@ class Util {
         return nil
     }
     
+    static func getSetting(_ name: String) -> String {
+        let settings = Bundle.main.infoDictionary?["AppSettings"] as! [AnyHashable:Any]
+        return settings[name] as! String
+    }
+    
     static func isUITest() -> Bool {
         #if DEBUG
         if CommandLine.arguments.contains("ui-test") {

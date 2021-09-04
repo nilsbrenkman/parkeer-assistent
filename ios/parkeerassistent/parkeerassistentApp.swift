@@ -48,16 +48,16 @@ struct parkeerassistentApp: App {
     
     private func mockVersion(_ version: String) -> Bool {
         guard let url = URL(string: ApiClient.client.baseUrl + "version/" + version) else {
-            return true
+            return false
         }
         
-        var mock = true
+        var mock = false
         let semaphore = DispatchSemaphore(value: 0)
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 200 {
-                    mock = false
+                if httpResponse.statusCode == 404 {
+                    mock = true
                 }
             }
             semaphore.signal()

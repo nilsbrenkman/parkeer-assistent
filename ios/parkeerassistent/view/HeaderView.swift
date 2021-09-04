@@ -97,6 +97,7 @@ struct HeaderView: View {
                 user.selectedVisitor = nil
                 user.addVisitor = false
                 user.isLoaded = false
+                payment.show = false
             }
         }
     }
