@@ -18,7 +18,8 @@ struct VisitorView: View {
             Text("\(visitor.name ?? "")")
                 .font(Font.ui.name)
                 .padding(.leading)
-
+                .minimumScaleFactor(0.5)
+                .lineLimit(2)
         }
     }
 }

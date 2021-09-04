@@ -36,6 +36,7 @@ class ParkingClientApi: ParkingClient {
             try ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     
@@ -44,6 +45,7 @@ class ParkingClientApi: ParkingClient {
             try ApiClient.client.call(Response.self, path: "parking/\(parkingId)", method: Method.DELETE, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     

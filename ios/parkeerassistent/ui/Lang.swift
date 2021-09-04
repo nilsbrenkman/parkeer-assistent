@@ -22,7 +22,7 @@ struct Lang {
     }
 
     enum Visitor: String, LocalizationEnum {
-        case header, noVisitors, add, license, name
+        case header, noVisitors, add, license, name, tooManyMsg
     }
 
     enum Parking: String, LocalizationEnum {

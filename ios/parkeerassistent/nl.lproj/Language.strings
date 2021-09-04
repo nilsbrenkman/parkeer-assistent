@@ -26,6 +26,7 @@
 "visitor.add" = "Nieuwe bezoeker";
 "visitor.license" = "Kenteken";
 "visitor.name" = "Naam";
+"visitor.tooManyMsg" = "Je kan maximaal 9 bezoekers bewaren. Verwijder een bezoeker om een nieuwe toe te kunnen voegen.";
 
 "parking.header" = "Parkeren";
 "parking.active" = "Actieve sessies";

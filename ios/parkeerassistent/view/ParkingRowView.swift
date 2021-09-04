@@ -26,7 +26,7 @@ struct ParkingRowView: View {
                 .padding(.leading)
 
         }
-        
+        .frame(minHeight: 42)
     }
     
 }

@@ -35,6 +35,7 @@ class VisitorClientApi: VisitorClient {
             try ApiClient.client.call(Response.self, path: "visitor", method: Method.POST, body: body, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
     
@@ -43,6 +44,7 @@ class VisitorClientApi: VisitorClient {
             try ApiClient.client.call(Response.self, path: "visitor/\(visitorId)", method: Method.DELETE, onComplete: onComplete)
         } catch {
             print("Error: \(error)")
+            onComplete(Response(success: false, message: "Client error"))
         }
     }
 
