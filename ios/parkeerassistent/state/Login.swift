@@ -40,6 +40,7 @@ class Login: ObservableObject {
         DispatchQueue.global().async {
             self.loginClient.login(username: username, password: password) { response in
                 if response.success {
+                    Stats.user.loginCount += 1
                     if storeCredentials {
                         do {
                             try Keychain.store.storeCredentials(username: username, password: password)

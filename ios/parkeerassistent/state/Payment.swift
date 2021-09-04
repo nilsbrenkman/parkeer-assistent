@@ -81,6 +81,7 @@ class Payment: ObservableObject {
         DispatchQueue.global().async {
             self.paymentClient.status(transactionId: transactionId) { response in
                 if response.status == "success" {
+                    Stats.user.paymentCount += 1
                     UserDefaults.standard.set(true, forKey: Payment.COMPLETED_KEY)
                 }
                 DispatchQueue.main.async {

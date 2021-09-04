@@ -38,8 +38,8 @@ class LoginUITests: XCTestCase {
     func testLoginSuccess() throws {
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")
         
-        let logout = app.buttons["Logout"]
-        XCTAssertTrue(logout.waitForExistence(timeout: TestUtil.timeout))
+        let menu = app.buttons["Menu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: TestUtil.timeout))
     }
     
     func testLoginFailed() throws {
@@ -53,7 +53,10 @@ class LoginUITests: XCTestCase {
     func testLogout() throws {
         try testLoginSuccess()
         
-        let logout = app.buttons["Logout"]
+        app.buttons["Menu"].tap()
+
+        let logout = app.buttons["Uitloggen"]
+        XCTAssertTrue(logout.waitForExistence(timeout: TestUtil.timeout))
         logout.tap()
         
         let meldcode = app.staticTexts["Meldcode:"]
