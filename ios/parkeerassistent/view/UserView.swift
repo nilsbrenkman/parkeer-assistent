@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct UserView: View {
     
@@ -25,6 +26,13 @@ struct UserView: View {
             if !user.isLoaded {
                 user.getUser()
                 user.isLoaded = true
+            } else {
+                if Stats.user.requestReview() {
+                    if let windowScene = UIApplication.shared.windows.first?.windowScene {
+                        Stats.user.requested = Date.now()
+                        SKStoreReviewController.requestReview(in: windowScene)
+                    }
+                }
             }
         }
         .navigationBarHidden(true)

@@ -92,6 +92,7 @@ class User: ObservableObject {
         DispatchQueue.global().async {
             self.visitorClient.add(license: license, name: name) { response in
                 if response.success {
+                    Stats.user.visitorCount += 1
                     DispatchQueue.main.async {
                         self.visitors = nil
                         self.addVisitor = false
@@ -134,6 +135,7 @@ class User: ObservableObject {
         DispatchQueue.global().async {
             self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd) { response in
                 if response.success {
+                    Stats.user.parkingCount += 1
                     DispatchQueue.main.async {
                         self.selectedVisitor = nil
                         self.parking = nil

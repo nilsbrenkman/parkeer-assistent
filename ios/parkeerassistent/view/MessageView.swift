@@ -67,6 +67,7 @@ struct MessageView: ViewModifier {
                     )
                     .padding(.horizontal)
                 }
+                .ignoresSafeArea()
             }
         }
     }

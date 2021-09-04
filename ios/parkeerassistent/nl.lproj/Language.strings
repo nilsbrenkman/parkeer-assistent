@@ -13,7 +13,7 @@
 "common.select" = "Selecteer";
 
 "login.login" = "Inloggen";
-"login.logout" = "Log uit";
+"login.logout" = "Uitloggen";
 "login.username" = "Meldcode";
 "login.password" = "Pincode";
 "login.remember" = "Onthoud inlog gegevens";

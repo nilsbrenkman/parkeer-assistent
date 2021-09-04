@@ -55,8 +55,8 @@ class VisitorUITests: XCTestCase {
 
         let erik = app.buttons["22-BBB-2, Erik"]
         erik.swipeLeft()
-        app.buttons["Delete"].tap()
-                
+        app.buttons["Verwijder"].tap()
+                        
         VisitorUITests.numberOfVisitors(app, count: 3)
     }
  
