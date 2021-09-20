@@ -91,12 +91,13 @@ val App = functionalComponent<RProps> {
     styledDiv {
         css {
             position = Position.fixed
-            backgroundColor = Colors.green
+            backgroundColor = Colors.header
             width = 100.pct
+            maxWidth = 400.px
             zIndex = ZIndex.Header.get()
             +MainStyles.padding
         }
-        styledImg("logo", src = "/static/car.png") {
+        styledImg("logo", src = "/static/logo-transparent.svg") {
             css {
                 height = 40.px
             }
