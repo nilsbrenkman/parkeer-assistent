@@ -31,10 +31,10 @@ object MainStyles : StyleSheet("MainStyles", isStatic = true) {
         textAlign = TextAlign.right
         marginTop = spacer.times(-1)
         width = 100.pct
-        color = Colors.green
+        color = Colors.header
         backgroundColor = Colors.white
         padding(2.px, marginHorizontal)
-        borderBottom(1.px, BorderStyle.solid, Colors.green)
+        borderBottom(1.px, BorderStyle.solid, Colors.header)
     }
 
     val icon by css {

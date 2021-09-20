@@ -62,6 +62,9 @@ fun main() {
             get("/open") {
                 call.respondHtml(HttpStatusCode.OK, HTML::open)
             }
+            get("/feedback") {
+                call.respondHtml(HttpStatusCode.OK, HTML::feedback)
+            }
             post("/") {
                 call.respondRedirect("/", false)
             }

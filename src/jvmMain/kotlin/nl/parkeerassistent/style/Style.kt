@@ -2,11 +2,15 @@ package nl.parkeerassistent.style
 
 import kotlinx.css.*
 import kotlinx.css.properties.border
+import kotlinx.css.properties.boxShadow
 
 var Style = CSSBuilder().apply {
 
     body {
         fontFamily = "\"Gotham SSm A\", \"Gotham SSm B\", \"Open Sans\", Helvetica, Arial, sans-serif"
+        backgroundColor = Color("#dddddd")
+        padding(0.rem)
+        margin(0.rem)
     }
 
     h3 {
@@ -43,6 +47,12 @@ var Style = CSSBuilder().apply {
 
     rule("#root") {
         position = Position.relative
+        marginLeft = LinearDimension.auto
+        marginRight = LinearDimension.auto
+        height = 100.vh
+        maxWidth = 400.px
+        backgroundColor = Color("#ffffff")
+        boxShadow(Color.black.withAlpha(0.15), 0.px, 0.px, 15.px, 5.px)
     }
 
     rule(".btn-block") {

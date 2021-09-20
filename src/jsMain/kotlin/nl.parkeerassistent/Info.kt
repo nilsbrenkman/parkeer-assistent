@@ -91,7 +91,13 @@ val Info = functionalComponent<InfoProps> { props ->
                     }
                     +"."
                 }
-
+                p {
+                    +"Laat me weten wat je van de app vindt via het "
+                    a("/feedback") {
+                        +"feedback formulier"
+                    }
+                    +"."
+                }
             }
         }
     }
