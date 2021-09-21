@@ -15,22 +15,21 @@ struct InfoView: View {
                 Text(Lang.Info.header.localized())
                     .font(.title2)
                 
-                Text(Lang.Info.text1.localized())
-                
-                Text(Lang.Info.text2.localized())
-                
-                Link(Lang.Info.website.localized(), destination: URL(string: "https://aanmeldenparkeren.amsterdam.nl/")!)
-                    .foregroundColor(Color.ui.header)
-                
-                Text(Lang.Info.text3.localized())
-                
-                Text(Lang.Info.text4.localized())
-                
-                Text(Lang.Info.text5.localized())
-                
-                Link(Lang.Info.sourceCode.localized(), destination: URL(string: "https://github.com/nilsbrenkman/parkeer-assistent")!)
-                    .foregroundColor(Color.ui.header)
-                
+                Group {
+                    Text(Lang.Info.text1.localized())
+                    Text(Lang.Info.text2.localized())
+                    createLink(Lang.Info.website.localized(), url: "https://aanmeldenparkeren.amsterdam.nl/")
+                }
+                Group {
+                    Text(Lang.Info.text3.localized())
+                    Text(Lang.Info.text4.localized())
+                    Text(Lang.Info.text5.localized())
+                    createLink(Lang.Info.sourceCode.localized(), url: "https://github.com/nilsbrenkman/parkeer-assistent")
+                }
+                Group {
+                    Text(Lang.Info.text6.localized())
+                    createLink(Lang.Info.feedback.localized(), url: "https://parkeerassistent.nl/feedback")
+                }
                 if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
                    let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
                     Text("\(Lang.Info.version.localized()): \(version) (\(build))")
@@ -46,6 +45,12 @@ struct InfoView: View {
         .cornerRadius(Constants.radius.normal)
         .padding(.horizontal)
     }
+    
+    private func createLink(_ title: String, url: String) -> some View {
+        return Link(title, destination: URL(string: url)!)
+            .foregroundColor(Color.ui.header)
+    }
+    
 }
 
 struct InfoView_Previews: PreviewProvider {

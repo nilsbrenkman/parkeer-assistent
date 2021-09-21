@@ -18,7 +18,7 @@ struct Lang {
     }
 
     enum User: String, LocalizationEnum {
-        case balance
+        case balance, addBalance
     }
 
     enum Visitor: String, LocalizationEnum {
@@ -34,7 +34,7 @@ struct Lang {
     }
 
     enum Info: String, LocalizationEnum {
-        case header, text1, text2, text3, text4, text5, website, sourceCode, version
+        case header, text1, text2, text3, text4, text5, text6, website, sourceCode, feedback, version
     }
 }
 

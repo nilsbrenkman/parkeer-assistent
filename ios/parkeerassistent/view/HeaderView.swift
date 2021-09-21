@@ -38,7 +38,7 @@ struct HeaderView: View {
                     if login.isLoggedIn {
                         Menu {
                             Button(action: showPayment) {
-                                Text("Saldo opwaarderen")
+                                Text(Lang.User.addBalance.localized())
                                 Image(systemName: "eurosign.circle")
                             }
                             Button(action: logout) {
