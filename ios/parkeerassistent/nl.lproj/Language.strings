@@ -20,6 +20,7 @@
 "login.reason" = "Opgeslagen inlog gegevens laden";
 
 "user.balance" = "Saldo";
+"user.addBalance" = "Saldo opwaarderen";
 
 "visitor.header" = "Bezoekers";
 "visitor.noVisitors" = "Voeg een bezoeker toe";
@@ -57,6 +58,8 @@
 "info.text3" = "De app verzamelt geen gebruikersdata zoals meldcode, pincode of enige andere persoonlijke gegevens. Als je ervoor kiest je inlog gegevens te onthouden worden deze lokaal en veilig bewaard.";
 "info.text4" = "De maker van de app is niet aansprakelijk voor enige vorm van gebruik.";
 "info.text5" = "De broncode van deze app is open source en beschikbaar via GitHub.";
+"info.text6" = "Werkt iets niet of heb je een suggestie? Laat me weten wat je van de app vindt.";
 "info.website" = "Website";
 "info.sourceCode" = "Broncode";
+"info.feedback" = "Feedback";
 "info.version" = "Versie";
