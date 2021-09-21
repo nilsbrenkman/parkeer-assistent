@@ -28,6 +28,7 @@ val Info = functionalComponent<InfoProps> { props ->
             position = Position.fixed
             top = 0.px
             width = 100.pct
+            maxWidth = MainStyles.containerMaxWidth
             height = 100.pct
             backgroundColor = Colors.white.withAlpha(0.75)
             zIndex = ZIndex.InfoContainer.get()
@@ -55,48 +56,57 @@ val Info = functionalComponent<InfoProps> { props ->
             }
             styledDiv {
                 css {
-                    overflowX = Overflow.hidden
-                    overflowY = Overflow.scroll
+                    position = Position.absolute
+                    overflow = Overflow.hidden
                     height = 100.pct
-                    +MainStyles.padding
-                    lineHeight = LineHeight("22px")
-                    zIndex = ZIndex.Info.get()
+                    width = 100.pct
+                    borderRadius = 6.px
                 }
-                styledP {
+                styledDiv {
                     css {
-                        fontWeight = FontWeight.bold
+                        overflowX = Overflow.hidden
+                        overflowY = Overflow.scroll
+                        height = 100.pct
+                        +MainStyles.padding
+                        lineHeight = LineHeight("22px")
+                        zIndex = ZIndex.Info.get()
                     }
-                    +"Over deze app"
-                }
-                p {
-                    +"Parkeer Assistent is een persoonlijke app die niet verbonden is aan de gemeente Amsterdam."
-                }
-                p {
-                    +"Het doel van de app is het bieden van een alternatieve, meer gebruiksvriendelijke interface voor de "
-                    a("https://aanmeldenparkeren.amsterdam.nl") {
-                        +"website van de gemeente"
+                    styledP {
+                        css {
+                            fontWeight = FontWeight.bold
+                        }
+                        +"Over deze app"
                     }
-                    +"."
-                }
-                p {
-                    +"De app slaat geen gebruikersdata zoals meldcode en pincode of enige andere gegevens op."
-                }
-                p {
-                    +"De maker van de app is niet aansprakelijk voor enige vorm van gebruik."
-                }
-                p {
-                    +"De broncode van deze app is open source en beschikbaar via "
-                    a("https://github.com/nilsbrenkman/parkeer-assistent") {
-                        +"GitHub"
+                    p {
+                        +"Parkeer Assistent is een persoonlijke app die niet verbonden is aan de gemeente Amsterdam."
                     }
-                    +"."
-                }
-                p {
-                    +"Laat me weten wat je van de app vindt via het "
-                    a("/feedback") {
-                        +"feedback formulier"
+                    p {
+                        +"Het doel van de app is het bieden van een alternatieve, meer gebruiksvriendelijke interface voor de "
+                        a("https://aanmeldenparkeren.amsterdam.nl") {
+                            +"website van de gemeente"
+                        }
+                        +"."
                     }
-                    +"."
+                    p {
+                        +"De app slaat geen gebruikersdata zoals meldcode en pincode of enige andere gegevens op."
+                    }
+                    p {
+                        +"De maker van de app is niet aansprakelijk voor enige vorm van gebruik."
+                    }
+                    p {
+                        +"De broncode van deze app is open source en beschikbaar via "
+                        a("https://github.com/nilsbrenkman/parkeer-assistent") {
+                            +"GitHub"
+                        }
+                        +"."
+                    }
+                    p {
+                        +"Laat me weten wat je van de app vindt via het "
+                        a("/feedback") {
+                            +"feedback formulier"
+                        }
+                        +"."
+                    }
                 }
             }
         }
