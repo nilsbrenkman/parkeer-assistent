@@ -93,7 +93,7 @@ val App = functionalComponent<RProps> {
             position = Position.fixed
             backgroundColor = Colors.header
             width = 100.pct
-            maxWidth = 400.px
+            maxWidth = MainStyles.containerMaxWidth
             zIndex = ZIndex.Header.get()
             +MainStyles.padding
         }
@@ -129,6 +129,7 @@ val App = functionalComponent<RProps> {
             css {
                 position = Position.fixed
                 width = 100.pct
+                maxWidth = MainStyles.containerMaxWidth
                 height = 100.pct
                 backgroundColor = Colors.darkGrey.withAlpha(0.25)
                 zIndex = ZIndex.SpinnerContainer.get()

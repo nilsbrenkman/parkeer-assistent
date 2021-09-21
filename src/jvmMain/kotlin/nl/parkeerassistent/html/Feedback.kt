@@ -1,8 +1,6 @@
 package nl.parkeerassistent.html
 
 import kotlinx.css.*
-import kotlinx.css.properties.BoxShadow
-import kotlinx.css.properties.BoxShadows
 import kotlinx.css.properties.boxShadow
 import kotlinx.html.*
 

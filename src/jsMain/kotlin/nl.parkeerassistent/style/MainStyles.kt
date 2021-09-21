@@ -12,6 +12,7 @@ object MainStyles : StyleSheet("MainStyles", isStatic = true) {
     val marginVertical = 12.px
     val spacer = 18.px
 
+    val containerMaxWidth = 400.px
     val licenseWidth = 140
 
     val license by css {
@@ -31,6 +32,7 @@ object MainStyles : StyleSheet("MainStyles", isStatic = true) {
         textAlign = TextAlign.right
         marginTop = spacer.times(-1)
         width = 100.pct
+        maxWidth = containerMaxWidth
         color = Colors.header
         backgroundColor = Colors.white
         padding(2.px, marginHorizontal)
@@ -73,10 +75,10 @@ object MainStyles : StyleSheet("MainStyles", isStatic = true) {
     }
 
     val info by css {
-        position = Position.fixed
+        position = Position.absolute
         top = 20.pct
-        left = 20.pct
-        width = 60.pct
+        left = 10.pct
+        width = 80.pct
         height = 60.pct
         border(1.px, BorderStyle.solid, Colors.darkGrey, 6.px)
         color = Colors.darkGrey
