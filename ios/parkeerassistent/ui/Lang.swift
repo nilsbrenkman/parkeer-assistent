@@ -6,46 +6,50 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Lang {
     
-    enum Common: String, LocalizationEnum {
+    enum Common: String, Localization {
         case ok, add, back, cancel, select
     }
 
-    enum Login: String, LocalizationEnum {
+    enum Login: String, Localization {
         case login, logout, username, password, remember, reason
     }
 
-    enum User: String, LocalizationEnum {
+    enum User: String, Localization {
         case balance, addBalance
     }
 
-    enum Visitor: String, LocalizationEnum {
+    enum Visitor: String, Localization {
         case header, noVisitors, add, license, name, tooManyMsg
     }
 
-    enum Parking: String, LocalizationEnum {
+    enum Parking: String, Localization {
         case header, active, scheduled, noSessions, date, startTime, endTime, minutes, cost, stop
     }
 
-    enum Payment: String, LocalizationEnum {
+    enum Payment: String, Localization {
         case amount, bank, start, status, recipientMsg, redirectMsg, redirectErrorMsg, successMsg, pendingMsg, errorMsg, unknownMsg
     }
 
-    enum Info: String, LocalizationEnum {
+    enum Info: String, Localization {
         case header, text1, text2, text3, text4, text5, text6, website, sourceCode, feedback, version
     }
 }
 
-protocol LocalizationEnum {
+protocol Localized {
+    static var allCases: [Self] { get }
     var rawValue: String { get }
 }
 
-extension LocalizationEnum where Self : RawRepresentable, Self.RawValue == String {
+extension Localized where Self : RawRepresentable, Self.RawValue == String {
     func localized() -> String {
         let prefix = String(describing: type(of: self)).lowercased()
         let key = prefix + "." + self.rawValue
         return NSLocalizedString(key, tableName: "Language", bundle: .main, value: key, comment: key)
     }
 }
+
+typealias Localization = Localized & RawRepresentable & CaseIterable
