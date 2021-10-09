@@ -30,8 +30,16 @@ class User: ObservableObject {
         parkingClient = try ClientManager.instance.get(ParkingClient.self)
         visitorClient = try ClientManager.instance.get(VisitorClient.self)
                 
+        let backgroundThread = { [weak self] in
+            while true {
+                guard let `self` = self else {
+                    return
+                }
+                Thread.sleep(forTimeInterval: User.backgroundUpdate(self))
+            }
+        }
         DispatchQueue.global(qos: .background).async {
-            self.background()
+            backgroundThread()
         }
     }
 
@@ -176,41 +184,35 @@ class User: ObservableObject {
         }
     }
     
-    func background() {
-        while true {
-            var delay = 60.0
-            var update = false
-            if let parking = self.parking {
-                for active in parking.active {
-                    if let endDate = try? Util.parseDate(active.endTime) {
-                        if endDate < Date.now() {
-                            update = true
-                        } else {
-                            let timeInterval = Date.now().distance(to: endDate)
-                            if timeInterval < delay {
-                                delay = timeInterval
-                            }
-                        }
-                    }
-                }
-                for scheduled in parking.scheduled {
-                    if let startDate = try? Util.parseDate(scheduled.startTime) {
-                        if startDate < Date.now() {
-                            update = true
-                        } else {
-                            let timeInterval = Date.now().distance(to: startDate)
-                            if timeInterval < delay {
-                                delay = timeInterval
-                            }
-                        }
+    static func backgroundUpdate(_ user: User) -> TimeInterval {
+        var delay = 60.0
+        var update = false
+        
+        let checkUpdate: (String) -> Void = { time in
+            if let date = try? Util.parseDate(time) {
+                if date < Date.now() {
+                    update = true
+                } else {
+                    let timeInterval = Date.now().distance(to: date)
+                    if timeInterval < delay {
+                        delay = timeInterval
                     }
                 }
             }
-            if update {
-                self.getParking()
-            }
-            Thread.sleep(forTimeInterval: delay)
         }
+        
+        if let parking = user.parking {
+            for active in parking.active {
+                checkUpdate(active.endTime)
+            }
+            for scheduled in parking.scheduled {
+                checkUpdate(scheduled.startTime)
+            }
+        }
+        if update {
+            user.getParking()
+        }
+        return delay
     }
 
 }
