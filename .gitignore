@@ -11,3 +11,5 @@ externals/
 *.ipr
 out/
 ios/parkeerassistent.xcodeproj/
+ios/app/.build
+ios/app/.swiftpm

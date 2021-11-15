@@ -1,0 +1,67 @@
+/* 
+  Language.strings
+  parkeerassistent
+
+  Created by Nils Brenkman on 24/08/2021.
+  
+*/
+
+"common.ok" = "OK";
+"common.add" = "Add";
+"common.back" = "Back";
+"common.cancel" = "Cancel";
+"common.select" = "Select";
+"common.stop" = "Stop";
+
+"login.login" = "Login";
+"login.logout" = "Logout";
+"login.username" = "Permit code";
+"login.password" = "Pin code";
+"login.remember" = "Remember login credentials";
+"login.rememberShort" = "Remember";
+"login.reason" = "Loading stored login credentials";
+
+"user.balance" = "Balance";
+"user.addBalance" = "Add balance";
+
+"visitor.header" = "Visitors";
+"visitor.noVisitors" = "No visitors";
+"visitor.add" = "Add visitor";
+"visitor.license" = "License";
+"visitor.name" = "Name";
+"visitor.tooManyMsg" = "You have stored the maximum number of visitors. Delete a visitor to be able to add a new one.";
+
+"parking.header" = "Parking";
+"parking.active" = "Active sessions";
+"parking.scheduled" = "Scheduled sessions";
+"parking.noSessions" = "No active or scheduled sessions";
+"parking.date" = "Date";
+"parking.startTime" = "Start";
+"parking.endTime" = "End";
+"parking.minutes" = "Minutes";
+"parking.cost" = "Cost";
+"parking.stop" = "Stop session";
+
+"payment.amount" = "Amount";
+"payment.bank" = "Bank";
+"payment.start" = "Add funds";
+"payment.status" = "Check status";
+"payment.recipientMsg" = "Attention: always check whether the beneficiary of the payment is the Municipality of Amsterdam";
+"payment.redirectMsg" = "After authorising the payment, you will be forwarded to the municipality's website. Do not log in but open this app to complete the payment.";
+"payment.redirectErrorMsg" = "Error during payment initialization.";
+"payment.successMsg" = "Successfully added funds to your balance.";
+"payment.pendingMsg" = "Payment is still in progress.";
+"payment.errorMsg" = "An error occurred during payment.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.";
+"payment.unknownMsg" = "Status of the payment can not be verified.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.";
+
+"info.header" = "About this app";
+"info.text1" = "Parking Amsterdam is a personal app that is not affiliated with the Municipality of Amsterdam.";
+"info.text2" = "The purpose of the app is to provide an alternative, more user-friendly interface to the municipality's website.";
+"info.text3" = "The app does not collect user data such as permit code, pin code or any other personal data. If you choose to remember your login credentials, they will be stored locally and securely.";
+"info.text4" = "The creator of this app is not liable for any kind of use.";
+"info.text5" = "You can inspect the source code of this app on GitHub.";
+"info.text6" = "Did you encounter an issue or do you have a suggestion? Please let me know!";
+"info.website" = "Website";
+"info.sourceCode" = "Source code";
+"info.feedback" = "Feedback";
+"info.version" = "Version";
