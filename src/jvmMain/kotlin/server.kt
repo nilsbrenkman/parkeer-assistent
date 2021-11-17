@@ -1,18 +1,53 @@
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.html.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.serialization.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import kotlinx.html.*
-import nl.parkeerassistent.html.*
-import nl.parkeerassistent.model.*
-import nl.parkeerassistent.service.*
+
+import io.ktor.application.call
+import io.ktor.application.install
+import io.ktor.features.Compression
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.HttpsRedirect
+import io.ktor.features.XForwardedHeaderSupport
+import io.ktor.features.gzip
+import io.ktor.html.respondHtml
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
+import io.ktor.request.receive
+import io.ktor.response.respond
+import io.ktor.response.respondRedirect
+import io.ktor.response.respondText
+import io.ktor.routing.delete
+import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.route
+import io.ktor.routing.routing
+import io.ktor.serialization.json
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import kotlinx.html.HTML
+import nl.parkeerassistent.html.application
+import nl.parkeerassistent.html.feedback
+import nl.parkeerassistent.html.open
+import nl.parkeerassistent.model.AddParkingRequest
+import nl.parkeerassistent.model.AddVisitorRequest
+import nl.parkeerassistent.model.BalanceResponse
+import nl.parkeerassistent.model.HistoryResponse
+import nl.parkeerassistent.model.IdealResponse
+import nl.parkeerassistent.model.LoginRequest
+import nl.parkeerassistent.model.ParkingResponse
+import nl.parkeerassistent.model.PaymentRequest
+import nl.parkeerassistent.model.PaymentResponse
+import nl.parkeerassistent.model.RegimeResponse
+import nl.parkeerassistent.model.Response
+import nl.parkeerassistent.model.StatusResponse
+import nl.parkeerassistent.model.UserResponse
+import nl.parkeerassistent.model.VisitorResponse
+import nl.parkeerassistent.service.LoginService
+import nl.parkeerassistent.service.ParkingService
+import nl.parkeerassistent.service.PaymentService
+import nl.parkeerassistent.service.ServiceUtil
+import nl.parkeerassistent.service.UserService
+import nl.parkeerassistent.service.VersionService
+import nl.parkeerassistent.service.VisitorService
 import nl.parkeerassistent.style.Style
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
@@ -162,6 +197,16 @@ fun main() {
                             call,
                             Response(false),
                             ParkingService::stop
+                        )
+                    )
+                }
+                get("/history") {
+                    call.respond(
+                        ServiceUtil.execute(
+                            ParkingService.Method.History,
+                            call,
+                            HistoryResponse(emptyList()),
+                            ParkingService::history
                         )
                     )
                 }

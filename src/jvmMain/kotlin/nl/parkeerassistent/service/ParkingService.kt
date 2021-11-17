@@ -1,19 +1,27 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
-import nl.parkeerassistent.*
+import io.ktor.application.ApplicationCall
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
+import nl.parkeerassistent.ApiHelper
+import nl.parkeerassistent.DateUtil
+import nl.parkeerassistent.Monitoring
+import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.AddParkingSession
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.external.GetParkingSessions
 import nl.parkeerassistent.external.StopParkingSession
 import nl.parkeerassistent.model.AddParkingRequest
+import nl.parkeerassistent.model.History
+import nl.parkeerassistent.model.HistoryResponse
 import nl.parkeerassistent.model.Parking
 import nl.parkeerassistent.model.ParkingResponse
 import nl.parkeerassistent.model.Response
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 object ParkingService {
 
@@ -21,6 +29,7 @@ object ParkingService {
         Get,
         Start,
         Stop,
+        History,
         ;
         override fun service(): Monitoring.Service {
             return Monitoring.Service.Parking
@@ -59,10 +68,13 @@ object ParkingService {
     private val regex = "/Date\\(([0-9]+)\\)/".toRegex()
 
     private fun convertTime(utc: String): String {
-        val match = regex.find(utc)!!
-        val unix = match.groupValues[1].toLong()
-        val date = Date(unix)
+        val date = Date(getUnixTime(utc))
         return DateUtil.dateTime.format(date)
+    }
+
+    private fun getUnixTime(utc: String): Long {
+        val match = regex.find(utc)!!
+        return match.groupValues[1].toLong()
     }
 
     suspend fun start(call: ApplicationCall, request: AddParkingRequest): Response {
@@ -112,5 +124,30 @@ object ParkingService {
         }
         return ServiceUtil.convertResponse(Method.Stop, result)
     }
+
+    private val historyStart = DateUtil.dateTime.format(Date(0))
+
+    suspend fun history(call: ApplicationCall): HistoryResponse {
+        val sessionCookie = call.request.cookies["session"]!!
+        val session = Session(sessionCookie)
+
+        val customerId = call.request.cookies["customerid"]!!
+
+        val result = ApiHelper.client.post<GetParkingSessions>(ApiHelper.getUrl("Customer/ParkingSession/GetParkingSessions")) {
+            ApiHelper.addHeaders(this, session)
+            body = FormDataContent(formData = Parameters.build {
+                append("cstId", customerId)
+                append("start", "0")
+                append("length", "9999")
+                append("timeStartUtc", historyStart)
+                append("timeEndUtc", DateUtil.dateTime.format(Date()))
+            })
+        }
+        val history = result.data.sortedByDescending { getUnixTime(it.TimeStartUtc) }
+                                 .map { History(it.Id, it.LP, it.LPName, convertTime(it.TimeStartUtc), convertTime(it.TimeEndUtc), it.CostMoney) }
+
+        return HistoryResponse(history)
+    }
+
 
 }
