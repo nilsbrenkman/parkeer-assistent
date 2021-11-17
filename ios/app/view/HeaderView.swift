@@ -14,6 +14,7 @@ struct HeaderView: View {
     @EnvironmentObject var payment: Payment
     
     @Binding var showInfo: Bool
+    @Binding var showHistory: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -37,6 +38,10 @@ struct HeaderView: View {
                     Spacer()
                     if login.isLoggedIn {
                         Menu {
+                            Button(action: { showHistory = true }) {
+                                Text(Lang.Parking.history.localized())
+                                Image(systemName: "clock")
+                            }
                             Button(action: showPayment) {
                                 Text(Lang.User.addBalance.localized())
                                 Image(systemName: "eurosign.circle")
@@ -54,7 +59,6 @@ struct HeaderView: View {
                                             .stroke(Color.white, lineWidth: 1)
                                 )
                         }
-                        
                     }
                 }
                 .padding(.horizontal)
@@ -106,7 +110,8 @@ struct HeaderView: View {
 
 struct HeaderView_Previews: PreviewProvider {
     @State static var showInfo = false
+    @State static var showHistory = false
     static var previews: some View {
-        HeaderView(showInfo: $showInfo)
+        HeaderView(showInfo: $showInfo, showHistory: $showHistory)
     }
 }

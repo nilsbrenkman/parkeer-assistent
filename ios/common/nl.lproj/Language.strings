@@ -41,6 +41,8 @@
 "parking.minutes" = "Minuten";
 "parking.cost" = "Kosten";
 "parking.stop" = "Sessie beëindigen";
+"parking.history" = "Parkeer geschiedenis";
+"parking.noHistory" = "Geen parkeer geschiedenis gevonden";
 
 "payment.amount" = "Bedrag";
 "payment.bank" = "Bank";

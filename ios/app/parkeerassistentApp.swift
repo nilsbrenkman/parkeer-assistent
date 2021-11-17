@@ -28,6 +28,9 @@ struct parkeerassistentApp: App {
             ClientManager.instance.register(VisitorClient.self, client: VisitorClientApi.client)
             ClientManager.instance.register(PaymentClient.self, client: PaymentClientApi.client)
         }
+        
+        UINavigationBar.appearance().largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: 24, weight: .bold)]
+        UINavigationBar.appearance().titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .bold)]
     }
     
     private func useMockClient() -> Bool {

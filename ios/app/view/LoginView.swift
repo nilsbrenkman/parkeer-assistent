@@ -18,8 +18,8 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var storeCredentials: Bool = false
     @State private var isBackground: Bool = false
-
     @State private var wait: Bool = false
+    @State private var faceId: Bool = false
 
     var body: some View {
         Form {
@@ -38,7 +38,6 @@ struct LoginView: View {
                                 RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
-                            
                     }
                     VStack(alignment: .leading, spacing: Constants.spacing.small) {
                         Text("\(Lang.Login.password.localized()):")
@@ -52,7 +51,6 @@ struct LoginView: View {
                                 RoundedRectangle(cornerRadius: Constants.radius.small)
                                     .stroke(Color.ui.bw0, lineWidth: 1)
                             )
-                            
                     }
                 }
                 .padding(.vertical)
@@ -68,6 +66,20 @@ struct LoginView: View {
             }
             Section {
                 Toggle(Lang.Login.remember.localized(), isOn: $storeCredentials)
+            }
+            if faceId {
+                Section {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "faceid")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50)
+                            .onTapGesture(perform: authenticate)
+                        Spacer()
+                    }
+                }
+                .listRowBackground(Color.system.groupedBackground)
             }
         }
         .onAppear(perform: authenticate)
@@ -100,6 +112,12 @@ struct LoginView: View {
             guard let credentials = Keychain.store.retrieveCredentials() else {
                 return
             }
+            self.faceId = true
+            
+            if login.loggedOut {
+                login.loggedOut = false
+                return
+            }
             
             let reason = Lang.Login.reason.localized()
 
@@ -108,12 +126,7 @@ struct LoginView: View {
                     if success {
                         self.username = credentials.username
                         self.password = credentials.password
-                        
-                        if login.loggedOut {
-                            login.loggedOut = false
-                            return
-                        }
-                      
+
                         startLogin()
                     }
                 }

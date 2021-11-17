@@ -9,7 +9,8 @@ import SwiftUI
 
 extension Color {
     static let ui = Color.UI()
-    
+    static let system = Color.System()
+
     struct UI {
         let header = Color("Color-header")
         
@@ -45,5 +46,11 @@ extension Color {
         let focusBg = Color("Color-focus-bg")
         let noFocus = Color("Color-focus-no")
         let noFocusBg = Color("Color-focus-no-bg")
+        
     }
+    
+    struct System {
+        let groupedBackground = Color(UIColor.systemGroupedBackground)
+    }
+    
 }

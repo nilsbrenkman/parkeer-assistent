@@ -5,7 +5,6 @@
 //  Created by Nils Brenkman on 30/06/2021.
 //
 
-//import Foundation
 import SwiftUI
 
 struct Constants {

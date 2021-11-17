@@ -19,10 +19,11 @@ struct ContentView: View {
     
     @State var initialised = false
     @State var showInfo = false
+    @State var showHistory = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HeaderView(showInfo: $showInfo)
+            HeaderView(showInfo: $showInfo, showHistory: $showHistory)
             
             ZStack {
                 if login.isLoading || login.isBackground {
@@ -36,6 +37,11 @@ struct ContentView: View {
                     } else {
                         NavigationView {
                             UserView()
+                                .background(
+                                    NavigationLink(destination: HistoryListView(), isActive: $showHistory) {
+                                        EmptyView()
+                                    }
+                                )
                         }
                         .navigationViewStyle(StackNavigationViewStyle())
                     }

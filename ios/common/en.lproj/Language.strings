@@ -41,6 +41,8 @@
 "parking.minutes" = "Minutes";
 "parking.cost" = "Cost";
 "parking.stop" = "Stop session";
+"parking.history" = "Parking history";
+"parking.noHistory" = "No parking history found";
 
 "payment.amount" = "Amount";
 "payment.bank" = "Bank";
