@@ -99,3 +99,18 @@ struct AddVisitorRequest: Codable {
     var license: String
     var name: String
 }
+
+struct HistoryResponse: Codable {
+    var history: [History]
+}
+
+struct History: Codable, Hashable {
+    var id: Int
+    var license: String
+    var name: String?
+    var startTime: String
+    var endTime: String
+    var cost: Double
+    
+    var date: Date { get { try! Util.parseDate(startTime) } }
+}

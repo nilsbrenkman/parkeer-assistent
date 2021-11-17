@@ -9,14 +9,14 @@ import Foundation
 
 class Util {
         
-    static let dateTimeFormatter = createDateFormatter(format: "yyyy-MM-dd'T'HH:mm:ssZZZZZ")
-    static let timeFormatter = createDateFormatter(format: "HH:mm")
-    static let dateFormatter = createDateFormatter(format: "yyyy-MM-dd")
-    static let dayMonthFormatter = createDateFormatter(format: "d MMM")
-    static let dowDayMonthFormatter = createDateFormatter(format: "E d MMM")
-    static let parkingFormatter = createDateFormatter(format: "dd/MM HH:mm")
+    static let dateTimeFormatter = createDateFormatter("yyyy-MM-dd'T'HH:mm:ssZZZZZ")
+    static let timeFormatter = createDateFormatter("HH:mm")
+    static let dateFormatter = createDateFormatter("yyyy-MM-dd")
+    static let dayMonthFormatter = createDateFormatter("d MMM")
+    static let dowDayMonthFormatter = createDateFormatter("E d MMM")
+    static let parkingFormatter = createDateFormatter("dd/MM HH:mm")
 
-    static func createDateFormatter(format: String) -> DateFormatter {
+    static func createDateFormatter(_ format: String) -> DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = format
         return formatter

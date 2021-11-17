@@ -11,6 +11,7 @@ protocol ParkingClient {
     func get(onComplete: @escaping (ParkingResponse) -> Void)
     func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void)
     func stop(parkingId: Int, onComplete: @escaping (Response) -> Void)
+    func history(onComplete: @escaping (HistoryResponse) -> Void)
 }
 
 class ParkingClientApi: ParkingClient {
@@ -49,6 +50,15 @@ class ParkingClientApi: ParkingClient {
         }
     }
     
+    func history(onComplete: @escaping (HistoryResponse) -> Void) {
+        do {
+            try ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET, onComplete: onComplete)
+        } catch {
+            print("Error: \(error)")
+            onComplete(HistoryResponse(history: []))
+        }
+    }
+
 }
 
 class ParkingClientMock: ParkingClient {
@@ -115,12 +125,44 @@ class ParkingClientMock: ParkingClient {
     
     func stop(parkingId: Int, onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
-        
-        if parking.removeValue(forKey: parkingId) != nil {
+
+        if let p = parking[parkingId] {
+            guard let startDate = try? Util.parseDate(p.startTime) else {
+                onComplete(Response(success: false, message: "Invalid start time"))
+                return
+            }
+            if startDate > Date.now() {
+                parking.removeValue(forKey: parkingId)
+            } else {
+                let minutes = startDate.timeIntervalSinceNow / -60.0
+                let cost = minutes * hourRate / 60.0
+                parking.updateValue(Parking(id: p.id,
+                                            license: p.license,
+                                            startTime: p.startTime,
+                                            endTime: dateFormatter.string(from: Date.now()),
+                                            cost: cost),
+                                    forKey: parkingId)
+            }
             onComplete(Response(success: true))
         } else {
             onComplete(Response(success: false, message: "Not found"))
         }
+    }
+    
+    func history(onComplete: @escaping (HistoryResponse) -> Void) {
+        MockClient.mockDelay()
+
+        onComplete(HistoryResponse(history: Array(parking.values.filter({
+            guard let endDate = try? Util.parseDate($0.endTime) else {
+                return false
+            }
+            return endDate < Date.now()
+        }).sorted(by: {
+            try! Util.parseDate($0.startTime) > Util.parseDate($1.startTime)
+        }).map { p in
+            let visitor = MockVisitor.visitors.first(where: { $0.license == p.license })
+            return History(id: p.id, license: p.license, name: visitor?.name, startTime: p.startTime, endTime: p.endTime, cost: p.cost)
+        })))
     }
     
     func getBalance() -> Double {

@@ -69,12 +69,15 @@ class VisitorClientMock: VisitorClient {
         UserClientMock.client.regime(Date(timeInterval: 24*60*60, since: Date.now())) { regime in
             try? ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd) { response in }
         }
+        UserClientMock.client.regime(Date(timeInterval: -24*60*60, since: Date.now())) { regime in
+            try? ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 60, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd) { response in }
+        }
     }
     
     func get(onComplete: @escaping (VisitorResponse) -> Void) {
         MockClient.mockDelay()
 
-        onComplete(VisitorResponse(visitors: Array(visitors.values)))
+        onComplete(VisitorResponse(visitors: Array(visitors.values.sorted(by: { $0.id < $1.id } ))))
     }
     
     func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {

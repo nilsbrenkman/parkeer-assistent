@@ -15,9 +15,10 @@ struct Property: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.spacing.small) {
             Text("\(label):")
+                .font(Font.ui.propertyLabel)
                 .foregroundColor(Color.ui.bw30)
             Text(text)
-                .bold()
+                .font(Font.ui.propertyValue)
         }
     }
 }
