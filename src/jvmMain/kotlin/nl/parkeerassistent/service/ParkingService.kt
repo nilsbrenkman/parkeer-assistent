@@ -8,7 +8,7 @@ import io.ktor.http.Parameters
 import io.ktor.http.contentType
 import nl.parkeerassistent.ApiHelper
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.Monitoring
+import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.AddParkingSession
 import nl.parkeerassistent.external.BooleanResponse
@@ -48,7 +48,7 @@ object ParkingService {
         val active = getParkingSessions(session, customerId, "Customer/Dashboard/GetActiveParkingSessions")
         val scheduled = getParkingSessions(session, customerId, "Customer/Dashboard/GetReservedParkingSessions")
 
-        Monitoring.info(Method.Get, "SUCCESS")
+        Monitoring.info(call, Method.Get, "SUCCESS")
         return ParkingResponse(active, scheduled)
     }
 
@@ -108,7 +108,7 @@ object ParkingService {
             contentType(ContentType.Application.Json)
             body = requestBody
         }
-        return ServiceUtil.convertResponse(Method.Start, result)
+        return ServiceUtil.convertResponse(call, Method.Start, result)
     }
 
     suspend fun stop(call: ApplicationCall): Response {
@@ -122,7 +122,7 @@ object ParkingService {
             contentType(ContentType.Application.Json)
             body = StopParkingSession(parkingId.toInt())
         }
-        return ServiceUtil.convertResponse(Method.Stop, result)
+        return ServiceUtil.convertResponse(call, Method.Stop, result)
     }
 
     private val historyStart = DateUtil.dateTime.format(Date(0))

@@ -4,7 +4,7 @@ import io.ktor.application.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.Monitoring
+import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.RequestPaymentRequest
 import nl.parkeerassistent.external.RequestPaymentResponse
@@ -60,7 +60,7 @@ object PaymentService {
             issuers.add(Issuer(issuerId, name))
         }
 
-        Monitoring.info(Method.Ideal, "SUCCESS")
+        Monitoring.info(call, Method.Ideal, "SUCCESS")
         return IdealResponse(amounts, issuers)
     }
 
@@ -75,7 +75,7 @@ object PaymentService {
             contentType(ContentType.Application.Json)
             body = requestBody
         }
-        Monitoring.info(Method.Payment, "SUCCESS")
+        Monitoring.info(call, Method.Payment, "SUCCESS")
         return PaymentResponse(result.issuerAuthenticationUrl, result.transactionId)
     }
 
@@ -107,7 +107,7 @@ object PaymentService {
             }
         }
 
-        Monitoring.info(Method.Status, "SUCCESS")
+        Monitoring.info(call, Method.Status, "SUCCESS")
         return StatusResponse(result)
     }
 

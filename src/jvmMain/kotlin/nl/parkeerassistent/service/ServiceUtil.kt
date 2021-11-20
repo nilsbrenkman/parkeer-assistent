@@ -1,9 +1,9 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.*
-import io.ktor.client.features.*
-import io.ktor.http.*
-import nl.parkeerassistent.Monitoring
+import io.ktor.application.ApplicationCall
+import io.ktor.client.features.RedirectResponseException
+import io.ktor.http.HttpStatusCode
+import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
 import org.apache.log4j.Logger
@@ -21,11 +21,11 @@ object ServiceUtil {
         try {
             return function.invoke(call)
         } catch (e: RedirectResponseException) {
-            Monitoring.warn(method, "NOT_LOGGED_IN")
+            Monitoring.warn(call, method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
         } catch (e: Exception) {
             log.warn("Unexpected error", e)
-            Monitoring.warn(method, "ERROR")
+            Monitoring.warn(call, method, "ERROR")
             call.response.status(HttpStatusCode.ServiceUnavailable)
         }
         return errorResponse
@@ -41,25 +41,25 @@ object ServiceUtil {
         try {
             return function.invoke(call, request)
         } catch (e: RedirectResponseException) {
-            Monitoring.warn(method, "NOT_LOGGED_IN")
+            Monitoring.warn(call, method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
         } catch (e: ServiceException) {
             log.warn("Service error [" + e.type + "]", e)
-            Monitoring.warn(method, "SERVICE_ERROR")
+            Monitoring.warn(call, method, "SERVICE_ERROR")
             call.response.status(HttpStatusCode.ServiceUnavailable)
         } catch (e: Exception) {
             log.warn("Unexpected error", e)
-            Monitoring.warn(method, "ERROR")
+            Monitoring.error(call, method, "INTERNAL_ERROR")
             call.response.status(HttpStatusCode.InternalServerError)
         }
         return errorResponse
     }
 
-    fun convertResponse(method: Monitoring.Method, response: BooleanResponse): Response {
+    fun convertResponse(call: ApplicationCall, method: Monitoring.Method, response: BooleanResponse): Response {
         if (response.successful) {
-            Monitoring.info(method, "SUCCESS")
+            Monitoring.info(call, method, "SUCCESS")
         } else {
-            Monitoring.info(method, "FAILED")
+            Monitoring.warn(call, method, "FAILED")
         }
         return Response(response.successful)
     }
