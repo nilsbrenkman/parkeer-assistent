@@ -1,11 +1,13 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
+import io.ktor.application.ApplicationCall
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.Monitoring
+import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.AddNewLP
 import nl.parkeerassistent.external.BooleanResponse
@@ -46,7 +48,7 @@ object VisitorService {
                 append("length", "100")
             })
         }
-        Monitoring.info(Method.Get, "SUCCESS")
+        Monitoring.info(call, Method.Get, "SUCCESS")
         return VisitorResponse(result.data.map{ Visitor(it.LPId,it.PermitId, it.LP, it.FormattedLP, it.Comment) })
     }
 
@@ -66,7 +68,7 @@ object VisitorService {
                 request.license,
                 request.name)
         }
-        return ServiceUtil.convertResponse(Method.Add, result)
+        return ServiceUtil.convertResponse(call, Method.Add, result)
     }
 
     suspend fun delete(call: ApplicationCall): Response {
@@ -80,7 +82,7 @@ object VisitorService {
             contentType(ContentType.Application.Json)
             body = DeleteLP(id.toInt())
         }
-        return ServiceUtil.convertResponse(Method.Delete, result)
+        return ServiceUtil.convertResponse(call, Method.Delete, result)
     }
 
 }

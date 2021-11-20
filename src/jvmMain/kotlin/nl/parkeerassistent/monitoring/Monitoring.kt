@@ -1,5 +1,6 @@
-package nl.parkeerassistent
+package nl.parkeerassistent.monitoring
 
+import io.ktor.application.ApplicationCall
 import org.apache.log4j.Logger
 
 object Monitoring {
@@ -18,13 +19,27 @@ object Monitoring {
         fun method(): String
     }
 
+    enum class Level {
+        INFO,
+        WARN,
+        ERROR,
+        ;
+    }
+
     val log = Logger.getLogger("AnalyticEvent")
 
-    fun info(method: Method, message: String) {
+    fun info(call: ApplicationCall, method: Method, message: String) {
+        ES.log(call, method, Level.INFO, message)
         log.info(logMessage("INFO", method, message))
     }
-    fun warn(method: Method, message: String) {
+    fun warn(call: ApplicationCall, method: Method, message: String) {
+        ES.log(call, method, Level.WARN, message)
         log.warn(logMessage("WARN", method, message))
+    }
+
+    fun error(call: ApplicationCall, method: Method, message: String) {
+        ES.log(call, method, Level.ERROR, message)
+        log.error(logMessage("WARN", method, message))
     }
 
     private fun logMessage(severity: String, method: Method, message: String): String {

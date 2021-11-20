@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ApiClient {
       
@@ -43,10 +44,11 @@ class ApiClient {
             throw ClientError.InvalidPath
         }
         
-        let cookieHeaders = HTTPCookie.requestHeaderFields(with: getCookies())
+        var headers = HTTPCookie.requestHeaderFields(with: getCookies())
+        addAnalyticHeaders(&headers)
 
         var request = URLRequest(url: url)
-        request.allHTTPHeaderFields = cookieHeaders
+        request.allHTTPHeaderFields = headers
         request.httpMethod = method.rawValue
         
         if body != nil {
@@ -156,7 +158,7 @@ class ApiClient {
     
     private func updateCookies(_ httpResponse: HTTPURLResponse) {
         var updated = false
-        if let responseHeaderFields = httpResponse.allHeaderFields as? [String :String] {
+        if let responseHeaderFields = httpResponse.allHeaderFields as? [String : String] {
             let responseCookies = HTTPCookie.cookies(withResponseHeaderFields: responseHeaderFields, for: url)
             
             for responseCookie in responseCookies {
@@ -167,6 +169,15 @@ class ApiClient {
         }
         if updated {
             persistCookies()
+        }
+    }
+    
+    private func addAnalyticHeaders(_ headers: inout [String : String]) {
+        if let uuid = UIDevice.current.identifierForVendor?.uuidString,
+           let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+            headers["PA-UserId"] = uuid
+            headers["PA-OS"] = "iOS"
+            headers["PA-Build"] = build
         }
     }
     

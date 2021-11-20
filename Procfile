@@ -1,1 +1,1 @@
-web:    java -Dserver.host=0.0.0.0 -Dserver.port=$PORT -Dserver.trustStore=/app/keystore.jks -Dserver.forceSsl=true -cp "build/install/ParkeerAssistent/lib/*:build/libs/ParkeerAssistent-jvm-1.0.jar" ServerKt
+web:    java -Dserver.host=0.0.0.0 -Dserver.port=$PORT -Dserver.trustStore=/app/keystore.jks -Dserver.forceSsl=true -Des.url=$BONSAI_URL -cp "build/install/ParkeerAssistent/lib/*:build/libs/ParkeerAssistent-jvm-1.0.jar" ServerKt

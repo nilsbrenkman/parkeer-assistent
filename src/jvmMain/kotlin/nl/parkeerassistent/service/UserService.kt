@@ -1,12 +1,17 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
+import io.ktor.application.ApplicationCall
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.Cookie
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
+import io.ktor.http.formUrlEncode
 import nl.parkeerassistent.ApiHelper
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.Monitoring
+import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.CalculateBalanceRequest
 import nl.parkeerassistent.external.CalculateBalanceResponse
@@ -15,7 +20,7 @@ import nl.parkeerassistent.external.GetPermitsByCustomer
 import nl.parkeerassistent.model.BalanceResponse
 import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
-import java.util.*
+import java.util.Calendar
 import java.util.Calendar.HOUR
 import java.util.Calendar.MINUTE
 
@@ -49,7 +54,7 @@ object UserService {
 
         val info = getInfo(session, customerId, permitId.toString())
 
-        Monitoring.info(Method.Get, "SUCCESS")
+        Monitoring.info(call, Method.Get, "SUCCESS")
         return UserResponse(balance, info.hourRate, info.regimeStartTime, info.regimeEndTime)
     }
 
@@ -59,7 +64,7 @@ object UserService {
 
         val balance = getBalance(session)
 
-        Monitoring.info(Method.Balance, "SUCCESS")
+        Monitoring.info(call, Method.Balance, "SUCCESS")
         return BalanceResponse(balance)
     }
 
@@ -91,7 +96,7 @@ object UserService {
             body = requestBody
         }
 
-        Monitoring.info(Method.Regime, "SUCCESS")
+        Monitoring.info(call, Method.Regime, "SUCCESS")
         return RegimeResponse(result.regimeStartTime, result.regimeEndTime)
     }
 
