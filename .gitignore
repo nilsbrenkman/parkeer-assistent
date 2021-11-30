@@ -13,3 +13,4 @@ out/
 ios/parkeerassistent.xcodeproj/
 ios/app/.build
 ios/app/.swiftpm
+android/local.properties
