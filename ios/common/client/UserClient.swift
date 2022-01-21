@@ -88,9 +88,9 @@ class UserClientMock: UserClient {
     }
     
     private func getRegimeEnd(_ date: Date) -> Date {
-//        if Calendar.current.isDateInWeekend(date) {
-//            return Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: date) ?? date
-//        }
+        if Calendar.current.isDateInWeekend(date) {
+            return Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: date) ?? date
+        }
         let tomorrow = Date(timeInterval: 24*60*60, since: date)
         return Calendar.current.startOfDay(for: tomorrow)
     }

@@ -5,7 +5,7 @@ object License {
 
     fun normalise(license: String): String {
         val normalised = license.replace("![0-9a-zA-z]".toRegex(), "").replace("-", "")
-        return normalised.toUpperCase()
+        return normalised.uppercase()
     }
 
     fun format(license: String) : String {

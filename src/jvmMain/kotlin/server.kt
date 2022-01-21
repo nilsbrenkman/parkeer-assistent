@@ -55,13 +55,13 @@ import java.io.File
 
 fun main() {
     org.apache.log4j.BasicConfigurator.configure()
-    if (System.getProperty("log.debug", "false") != "true") {
+    if ("true" != System.getenv("DEBUG_LOG")) {
         Logger.getRootLogger().level = Level.INFO
     }
 
     val log = Logger.getLogger("Server.kt")
 
-    val trustStore = System.getProperty("server.trustStore", "keystore.jks")
+    val trustStore = System.getenv("TRUST_STORE")
     val trustStoreFile = File(trustStore)
     if (trustStoreFile.exists()) {
         log.info("Using trust store: ${trustStoreFile.absolutePath}")
@@ -71,8 +71,8 @@ fun main() {
         log.info("Trust store not found: ${trustStoreFile.absolutePath}")
     }
 
-    val host = System.getProperty("server.host", "192.168.178.74")
-    val port = System.getProperty("server.port", "3000").toInt()
+    val host = System.getenv("HOST")
+    val port = System.getenv("PORT").toInt()
 
     log.info("Starting server: $host:$port")
 
@@ -83,7 +83,7 @@ fun main() {
         install(Compression) {
             gzip()
         }
-        if ("true" == System.getProperty("server.forceSsl")) {
+        if ("true" == System.getenv("FORCE_SSL")) {
             install(XForwardedHeaderSupport)
             install((HttpsRedirect))
         }

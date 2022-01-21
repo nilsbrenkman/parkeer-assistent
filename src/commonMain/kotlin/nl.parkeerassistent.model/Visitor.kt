@@ -8,7 +8,7 @@ data class Visitor(
     val permitId: Int,
     val license: String,
     val formattedLicense: String,
-    val name: String?
+    val name: String? = null
 ) {
 
     fun full(): String {
