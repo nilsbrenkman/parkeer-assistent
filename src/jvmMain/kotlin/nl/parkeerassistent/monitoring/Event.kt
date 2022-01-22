@@ -7,6 +7,7 @@ data class Event(
     val date: String,
     val userId: String,
     val os: String,
+    val version: String,
     val build: Int,
     val service: String,
     val method: String,

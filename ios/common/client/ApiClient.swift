@@ -174,9 +174,11 @@ class ApiClient {
     
     private func addAnalyticHeaders(_ headers: inout [String : String]) {
         if let uuid = UIDevice.current.identifierForVendor?.uuidString,
+           let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
            let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
             headers["PA-UserId"] = uuid
             headers["PA-OS"] = "iOS"
+            headers["PA-Version"] = version
             headers["PA-Build"] = build
         }
     }

@@ -2,11 +2,14 @@ package nl.parkeerassistent.service
 
 import io.ktor.application.ApplicationCall
 import io.ktor.client.features.RedirectResponseException
+import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
 import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
 import org.apache.log4j.Logger
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 object ServiceUtil {
 
@@ -19,6 +22,7 @@ object ServiceUtil {
         function: suspend (call: ApplicationCall) -> RESPONSE
     ): RESPONSE {
         try {
+            ensureWebUserId(call)
             return function.invoke(call)
         } catch (e: RedirectResponseException) {
             Monitoring.warn(call, method, "NOT_LOGGED_IN")
@@ -39,6 +43,7 @@ object ServiceUtil {
         function: suspend (call: ApplicationCall, request: REQUEST) -> RESPONSE
     ): RESPONSE {
         try {
+            ensureWebUserId(call)
             return function.invoke(call, request)
         } catch (e: RedirectResponseException) {
             Monitoring.warn(call, method, "NOT_LOGGED_IN")
@@ -62,6 +67,16 @@ object ServiceUtil {
             Monitoring.warn(call, method, "FAILED")
         }
         return Response(response.successful)
+    }
+
+    fun ensureWebUserId(call: ApplicationCall) {
+        if (call.request.headers["PA-OS"] == "Web") {
+            val userId = call.request.cookies["userid"]
+            if (userId == null) {
+                val userIdCookie = Cookie("userid", UUID.randomUUID().toString(), maxAge = TimeUnit.DAYS.toSeconds(365).toInt())
+                call.response.cookies.append(userIdCookie)
+            }
+        }
     }
 
 }
