@@ -23,7 +23,7 @@ object ES {
     val url: String
     val basicAuth: String
 
-    val index = "parkeer-assistent"
+    val index = System.getenv("ELASTIC_SEARCH_INDEX")
 
     private val executor = ThreadPoolExecutor(1, 10, 1, TimeUnit.MINUTES, LinkedBlockingQueue(1000))
 
@@ -45,22 +45,29 @@ object ES {
     }
 
     init {
-        val config = System.getProperty("es.url", "https://username:password@elasticsearch.host")
+        val config = System.getenv("BONSAI_URL")
         val urlBuilder = URLBuilder(config)
         url = urlBuilder.protocol.name + "://" + urlBuilder.host
         basicAuth = "Basic " + Base64.getEncoder().encodeToString((urlBuilder.user!! + ":" + urlBuilder.password!!).toByteArray(Charsets.UTF_8))
     }
+
     fun log(call: ApplicationCall, method: Monitoring.Method, level: Monitoring.Level, message: String) {
         val date = DateUtil.dateTime.format(Date())
-        val userId = call.request.headers["PA-UserId"]
-        val os = call.request.headers["PA-OS"]
-        val build = call.request.headers["PA-Build"]
-        if (listOf(userId, os, build).any { it == null }) return
-        val event = Event(date, userId!!, os!!, build!!.toInt(), method.service().name, method.method(), level.name, message)
+        val os = call.request.headers["PA-OS"] ?: "null"
+        val userId = (if (os == "Web") call.request.cookies["userid"] else call.request.headers["PA-UserId"]) ?: "null"
+        val version = call.request.headers["PA-Version"] ?: "null"
+        val build = call.request.headers["PA-Build"] ?: "0"
+        val event = Event(date, userId.lowercase(), os, version, build.toInt(), method.service().name, method.method(), level.name, message)
         try {
             executor.submit(ESEvent(event))
         } catch (e: RejectedExecutionException) {
             log.warn("Unable to submit event", e)
+        }
+    }
+
+    fun retry(event: ESEvent) {
+        if (event.retry()) {
+            executor.submit(event)
         }
     }
 

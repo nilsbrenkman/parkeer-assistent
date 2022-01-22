@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-
 plugins {
     kotlin("multiplatform") version "1.6.10"
     kotlin("plugin.serialization") version "1.6.10"
@@ -15,7 +13,7 @@ repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 }
 
-val ktorVersion = "1.5.2"
+val ktorVersion = "1.6.3"
 val serializationVersion = "1.1.0"
 
 kotlin {
@@ -29,19 +27,10 @@ kotlin {
         withJava()
     }
     js(LEGACY) {
+        binaries.executable()
         browser {
-            binaries.executable()
-            webpackTask {
+            commonWebpackConfig {
                 cssSupport.enabled = true
-            }
-            runTask {
-                cssSupport.enabled = true
-            }
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
             }
         }
     }
@@ -102,33 +91,29 @@ kotlin {
 }
 
 application {
-    mainClassName = "ServerKt"
-}
-
-tasks.register("stage") {
-    dependsOn("build", "assembleDist", "installDist")
+    mainClass.set("ServerKt")
 }
 
 tasks.register("docker") {
     dependsOn("build", "assembleDist", "installDist")
 }
 
-tasks.getByName<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>("compileKotlinJs") {
-    kotlinOptions.sourceMap = true
-    kotlinOptions.sourceMapEmbedSources = "always"
+tasks.named<Copy>("jvmProcessResources") {
+    val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
+    from(jsBrowserDistribution)
 }
 
-tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack") {
-    outputFileName = "ParkeerAssistent.js"
-}
-
-tasks.getByName<Jar>("jvmJar") {
-    dependsOn(tasks.getByName("jsBrowserProductionWebpack"))
-    val jsBrowserProductionWebpack = tasks.getByName<KotlinWebpack>("jsBrowserProductionWebpack")
-    from(File(jsBrowserProductionWebpack.destinationDirectory, jsBrowserProductionWebpack.outputFileName))
-}
-
-tasks.getByName<JavaExec>("run") {
-    dependsOn(tasks.getByName<Jar>("jvmJar"))
-    classpath(tasks.getByName<Jar>("jvmJar"))
+tasks.named<JavaExec>("run") {
+    dependsOn(tasks.named<Jar>("jvmJar"))
+    classpath(tasks.named<Jar>("jvmJar"))
+    environment(
+        "HOST" to "192.168.178.74",
+        "PORT" to "3000",
+        "TRUST_STORE" to "keystore.jks",
+        "FORCE_SSL" to "false",
+        "DEBUG_LOG" to "false",
+        "VERSION" to "1.1.5",
+        "BONSAI_URL" to "https://d2ch8szwsp:d15i2t8w5a@privet-924117750.eu-west-1.bonsaisearch.net:443",
+        "ELASTIC_SEARCH_INDEX" to "parkeer-assistent-dev"
+    )
 }

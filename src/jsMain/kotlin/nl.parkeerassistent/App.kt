@@ -6,6 +6,8 @@ import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
+import io.ktor.http.cookies
+import io.ktor.util.pipeline.PipelinePhase
 import kotlinext.js.jsObject
 import kotlinx.browser.window
 import kotlinx.coroutines.launch
@@ -27,6 +29,11 @@ import styled.styledImg
 
 val client = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer() }
+    install("CustomHeaders") {
+        requestPipeline.intercept(HttpRequestPipeline.State) {
+            context.header("PA-OS", "Web")
+        }
+    }
 }
 
 fun api(path: String): String {
