@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name" translatable="false">Parkeer Assistent</string>
+    <string name="app_local" translatable="false">P Amsterdam</string>
+    <string name="preferences" translatable="false">nl.parkeerassistent.android.preferences</string>
+    <string name="secure_preferences" translatable="false">nl.parkeerassistent.android.secure_preferences</string>
+    <string name="notification_channel_id" translatable="false">ParkeerAssistent_Amsterdam</string>
+
+    <string name="notification_channel_name">Parkeren Amsterdam</string>
+    <string name="notification_channel_description">Ontvang notificaties wanneer je parkeersessies beginnen en eindigen</string>
+    <string name="notification_title_start">Parkeer sessie begint</string>
+    <string name="notification_title_end">Parkeer sessie loopt af</string>
+
+    <string name="common_ok">OK</string>
+    <string name="common_add">Toevoegen</string>
+    <string name="common_delete">Verwijderen</string>
+    <string name="common_back">Terug</string>
+    <string name="common_cancel">Annuleren</string>
+    <string name="common_select">Selecteer</string>
+    <string name="common_stop">Beëindigen</string>
+    <string name="common_continue">Doorgaan</string>
+    <string name="common_error">Er is iets fout gegaan</string>
+
+    <string name="login_login">Inloggen</string>
+    <string name="login_logout">Uitloggen</string>
+    <string name="login_username">Meldcode</string>
+    <string name="login_password">Pincode</string>
+    <string name="login_remember">Onthoud inlog gegevens</string>
+    <string name="login_rememberShort">Onthouden</string>
+    <string name="login_reason">Opgeslagen inlog gegevens laden</string>
+    <string name="login_authenticate_title">Identificatie</string>
+    <string name="login_authenticate_subtitle">Identificeer je om opgeslagen inloggegevens te laden</string>
+
+    <string name="user_balance">Saldo</string>
+    <string name="user_addBalance">Saldo opwaarderen</string>
+    <string name="user_main">Startpagina</string>
+
+    <string name="visitor_header">Bezoekers</string>
+    <string name="visitor_noVisitors">Voeg een bezoeker toe</string>
+    <string name="visitor_add">Nieuwe bezoeker</string>
+    <string name="visitor_delete">Verwijder bezoeker</string>
+    <string name="visitor_license">Kenteken</string>
+    <string name="visitor_name">Naam</string>
+    <string name="visitor_tooManyMsg">Je kan maximaal 9 bezoekers bewaren. Verwijder een bezoeker om een nieuwe toe te kunnen voegen.</string>
+    <string name="visitor_successMsg">Bezoeker toegevoegd</string>
+    <string name="visitor_errorMsg">Bezoeker toevoegen mislukt</string>
+
+    <string name="parking_header">Parkeren</string>
+    <string name="parking_active">Actieve sessies</string>
+    <string name="parking_scheduled">Geplande sessies</string>
+    <string name="parking_noSessions">Geen actieve of geplande sessies</string>
+    <string name="parking_date">Datum</string>
+    <string name="parking_startTime">Start tijd</string>
+    <string name="parking_endTime">Eind tijd</string>
+    <string name="parking_minutes">Minuten</string>
+    <string name="parking_cost">Kosten</string>
+    <string name="parking_start">Start parkeren</string>
+    <string name="parking_stop">Sessie beëindigen</string>
+    <string name="parking_history">Parkeergeschiedenis</string>
+    <string name="parking_noHistory">Geen parkeergeschiedenis gevonden</string>
+
+    <string name="parking_validation_regime_in_past">Er is vandaag geen betaald parkeren meer</string>
+    <string name="parking_validation_start_in_past">Start tijd kan niet in het verleden zijn</string>
+    <string name="parking_validation_start_before_regime">Start tijd is voor het begin van betaald parkeren</string>
+    <string name="parking_validation_start_after_regime">Start tijd is na het eind van betaald parkeren</string>
+    <string name="parking_validation_end_before_start">Eind tijd kan niet voor de start tijd zijn</string>
+    <string name="parking_validation_end_after_regime">Eind tijd is na het eind van betaald parkeren</string>
+    <string name="parking_validation_not_enough_balance">Je hebt onvoldoende parkeertegoed</string>
+
+    <string name="payment_header">Saldo opwaarderen</string>
+    <string name="payment_amount">Bedrag</string>
+    <string name="payment_bank">Bank</string>
+    <string name="payment_start">Opwaarderen</string>
+    <string name="payment_status">Controleer status</string>
+    <string name="payment_recipientMsg">Let op: controleer altijd of de begunstigde van de betaling Gemeente Amsterdam is.</string>
+    <string name="payment_redirectMsg">Na afloop van de betaling zal je doorgestuurd worden naar de website van de gemeente. Log niet in maar open deze app om de betaling af te ronden.</string>
+    <string name="payment_redirectErrorMsg">Fout bij het starten van de betaling.</string>
+    <string name="payment_successMsg">Opwaarderen van het geldsaldo is gelukt.</string>
+    <string name="payment_pendingMsg">Opwaarderen van het geldsaldo is nog bezig.</string>
+    <string name="payment_errorMsg">Er is een fout opgetreden tijdens de betaling.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.</string>
+    <string name="payment_unknownMsg">Status van de betaling kan niet worden geverifieerd.\n\nControleer in je bank app of de betaling geslaagd is voor je het opnieuw probeert. Het kan enige tijd duren voor de betaling verwerkt is.</string>
+
+    <string name="info_header">Over deze app</string>
+    <string name="info_text1">Parkeren Amsterdam is een persoonlijke app die niet verbonden is aan de gemeente Amsterdam.</string>
+    <string name="info_text2">Het doel van de app is het bieden van een alternatieve, meer gebruiksvriendelijke interface voor de <a href="https://aanmeldenparkeren.amsterdam.nl/">website van de gemeente</a>.</string>
+    <string name="info_text3">De app verzamelt geen gebruikersdata zoals meldcode, pincode of enige andere persoonlijke gegevens. Als je ervoor kiest je inlog gegevens te onthouden worden deze lokaal en veilig bewaard.</string>
+    <string name="info_text4">De maker van de app is niet aansprakelijk voor enige vorm van gebruik.</string>
+    <string name="info_text5">De broncode van deze app is open source en beschikbaar via <a href="https://github.com/nilsbrenkman/parkeer-assistent">GitHub</a>.</string>
+    <string name="info_text6">Werkt iets niet of heb je een suggestie? Laat me weten wat je van de app vindt via het <a href="https://parkeerassistent.nl/feedback">feedback formulier</a>.</string>
+    <string name="info_version">Versie: %1$s (%2$d)</string>
+
+    <string name="minute_picker_hour">Uren</string>
+    <string name="minute_picker_minute">Minuten</string>
+
+    <string name="error_authentication">Je bent uitgelogd</string>
+    <string name="error_connection">Kan geen connectie maken met server</string>
+    <string name="error_add_parking">Parkeer sessie starten mislukt</string>
+
+</resources>

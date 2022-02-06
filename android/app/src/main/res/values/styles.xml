@@ -1,0 +1,205 @@
+<resources>
+
+    <style name="ParkeerAssistent.Group" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/group_margin</item>
+        <item name="android:background">@drawable/background_group</item>
+    </style>
+
+    <style name="ParkeerAssistent.License" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">@dimen/license_width</item>
+        <item name="android:layout_height">@dimen/license_height</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/background_license</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ParkeerAssistent.Name" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">10</item>
+        <item name="android:layout_marginStart">@dimen/zero</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ParkeerAssistent.Text" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginEnd">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin_small</item>
+        <item name="android:layout_marginBottom">@dimen/vertical_margin_small</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="ParkeerAssistent.Header" parent="ParkeerAssistent.Text">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ParkeerAssistent.SubHeader" parent="ParkeerAssistent.Header">
+        <item name="android:layout_marginBottom">@dimen/vertical_margin_xsmall</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+
+    <style name="ParkeerAssistent.Label" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginTop">@dimen/vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/zero</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ParkeerAssistent.Empty" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/vertical_margin</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="ParkeerAssistent.Date" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">-2dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ParkeerAssistent.Time" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="ParkeerAssistent.DayOfWeek" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">-4dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <style name="ParkeerAssistent.DayOfMonth" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginStart">0dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="ParkeerAssistent.Version" parent="ParkeerAssistent.Text">
+        <item name="android:layout_marginBottom">@dimen/vertical_margin_large</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ParkeerAssistent.Input" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin_small</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="ParkeerAssistent.Grid.Label" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_marginRight">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ParkeerAssistent.Grid.Input" parent="ParkeerAssistent.Text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_marginRight">@dimen/horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/vertical_margin_xsmall</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/background_input</item>
+    </style>
+
+    <style name="ParkeerAssistent.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="iconTint">@color/button_text</item>
+    </style>
+
+    <style name="ParkeerAssistent.Button.Success" parent="ParkeerAssistent.Button">
+        <item name="android:backgroundTint">@color/button_success</item>
+    </style>
+
+    <style name="ParkeerAssistent.Loading" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+
+    <style name="ParkeerAssistent.Dialog" parent="ThemeOverlay.AppCompat.Dialog.Alert" />
+
+    <style name="ParkeerAssistent.ContinueDialog" parent="ParkeerAssistent.Dialog" />
+
+    <style name="ParkeerAssistent.CancelDialog" parent="ParkeerAssistent.Dialog" />
+
+    <style name="ParkeerAssistent.DeleteDialog" parent="ParkeerAssistent.Dialog">
+        <item name="android:buttonBarNeutralButtonStyle">@style/ParkeerAssistent.Dialog.Button.Neutral</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/ParkeerAssistent.Dialog.Button.Negative</item>
+    </style>
+
+    <style name="ParkeerAssistent.MinutePickerDialog" parent="ParkeerAssistent.Dialog">
+        <item name="android:buttonBarNeutralButtonStyle">@style/ParkeerAssistent.Dialog.Button.Neutral</item>
+    </style>
+
+    <style name="ParkeerAssistent.Dialog.Button" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog" />
+
+    <style name="ParkeerAssistent.Dialog.Button.Neutral" parent="ParkeerAssistent.Dialog.Button">
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <style name="ParkeerAssistent.Dialog.Button.Negative" parent="ParkeerAssistent.Dialog.Button">
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <style name="ParkeerAssistent.MinutePickerDialog.Label" parent="ParkeerAssistent.Dialog">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">@dimen/vertical_margin_small</item>
+        <item name="android:paddingBottom">@dimen/vertical_margin_small</item>
+        <item name="android:background">@color/grouped_background</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ParkeerAssistent.MinutePickerDialog.NumberPicker" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">140dp</item>
+        <item name="android:descendantFocusability">blocksDescendants</item>
+    </style>
+
+</resources>

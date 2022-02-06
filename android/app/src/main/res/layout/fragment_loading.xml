@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:gravity="center"
+    tools:context=".ui.LoadingFragment">
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="@style/ParkeerAssistent.Loading"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

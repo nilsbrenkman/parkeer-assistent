@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/opaque_background"
+    tools:context=".ui.InfoFragment">
+
+    <ScrollView
+        android:id="@+id/fragment_content_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/background_info"
+        android:layout_marginStart="@dimen/horizontal_margin"
+        android:layout_marginEnd="@dimen/horizontal_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.7">
+
+        <LinearLayout
+            android:id="@+id/info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/ParkeerAssistent.Header"
+                android:layout_marginTop="@dimen/vertical_margin_large"
+                android:text="@string/info_header" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text1" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text2" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text3" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text4" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text5" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Text"
+                android:text="@string/info_text6" />
+
+            <TextView
+                android:id="@+id/version"
+                style="@style/ParkeerAssistent.Version" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <ImageButton
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/vertical_margin_xsmall"
+        android:src="@drawable/icon_close"
+        android:background="@color/transparent"
+        app:layout_constraintEnd_toEndOf="@id/fragment_content_scrollview"
+        app:layout_constraintBottom_toTopOf="@id/fragment_content_scrollview"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

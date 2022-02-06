@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/date_time"
+        android:layout_width="@dimen/datetime_size"
+        android:layout_height="@dimen/datetime_size"
+        android:layout_marginStart="@dimen/horizontal_margin"
+        android:layout_marginTop="@dimen/vertical_margin_small"
+        android:layout_marginBottom="@dimen/vertical_margin_small"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/dow"
+            style="@style/ParkeerAssistent.DayOfWeek" />
+
+        <TextView
+            android:id="@+id/day"
+            style="@style/ParkeerAssistent.DayOfMonth" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/license"
+        style="@style/ParkeerAssistent.License" />
+
+    <TextView
+        android:id="@+id/cost"
+        style="@style/ParkeerAssistent.Text"
+        android:layout_marginStart="0dp"
+        android:layout_width="0dp"
+        android:layout_weight="6"
+        android:gravity="end"
+        android:textSize="22sp" />
+
+</LinearLayout>

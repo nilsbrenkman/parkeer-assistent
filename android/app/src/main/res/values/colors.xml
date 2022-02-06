@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#007CBC</color>
+    <color name="text">#444444</color>
+    <color name="text_secondary">#888888</color>
+    <color name="background">#FFFFFF</color>
+    <color name="grouped_background">#F2F2F7</color>
+    <color name="opaque_background">#B3AAAAAA</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="license">#F2BA00</color>
+
+    <color name="enabled">#FFFFFF</color>
+    <color name="disabled">#DDDDDD</color>
+
+    <color name="info">#007CBC</color>
+    <color name="info_bg">#E8F3F9</color>
+    <color name="success">#198754</color>
+    <color name="success_bg">#EAF4EF</color>
+    <color name="success_disabled">#7BB299</color>
+    <color name="warning">#F2BA00</color>
+    <color name="warning_bg">#FEF9E8</color>
+    <color name="danger">#FF2601</color>
+    <color name="danger_bg">#FFEBE8</color>
+    <color name="unknown">#888888</color>
+    <color name="unknown_bg">#F2F2F7</color>
+
+    <color name="logo_launcher_background">#007CBC</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+</resources>

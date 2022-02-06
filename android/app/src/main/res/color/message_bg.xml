@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:color="@color/info_bg"    app:level_info="true"/>
+    <item android:color="@color/success_bg" app:level_success="true"/>
+    <item android:color="@color/warning_bg" app:level_warn="true"/>
+    <item android:color="@color/danger_bg"  app:level_error="true"/>
+    <item android:color="@color/unknown_bg" />
+
+</selector>

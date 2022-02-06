@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/vertical_margin_large"
+    android:orientation="vertical"
+    tools:context=".ui.login.LoginFragment">
+
+    <LinearLayout
+        style="@style/ParkeerAssistent.Group"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label_username"
+            style="@style/ParkeerAssistent.Label"
+            android:text="@string/login_username" />
+
+        <EditText
+            android:id="@+id/username"
+            style="@style/ParkeerAssistent.Input"
+            android:inputType="number"
+            android:selectAllOnFocus="true" />
+
+        <TextView
+            android:id="@+id/label_password"
+            style="@style/ParkeerAssistent.Label"
+            android:text="@string/login_password" />
+
+        <EditText
+            android:id="@+id/password"
+            style="@style/ParkeerAssistent.Input"
+            android:inputType="numberPassword"
+            android:selectAllOnFocus="true" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/ParkeerAssistent.Group">
+
+        <TextView
+            android:id="@+id/label_remember_credentials"
+            style="@style/ParkeerAssistent.Label"
+            android:text="@string/login_remember"
+            android:layout_marginTop="@dimen/zero"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/remember_credentials"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/horizontal_margin"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/login"
+        style="@style/ParkeerAssistent.Button.Success"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:enabled="false"
+        android:text="@string/login_login" />
+
+    <ImageButton
+        android:id="@+id/authenticate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/vertical_margin_large"
+        android:background="@drawable/background_fingerprint"
+        android:src="@drawable/icon_fingerprint" />
+
+</LinearLayout>
