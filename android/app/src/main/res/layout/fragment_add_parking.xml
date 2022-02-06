@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.visitor.AddVisitorFragment">
+
+    <LinearLayout
+        style="@style/ParkeerAssistent.Group"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/license"
+            style="@style/ParkeerAssistent.License"
+            android:layout_marginTop="@dimen/vertical_margin"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/name"
+            style="@style/ParkeerAssistent.Name"
+            android:layout_marginTop="@dimen/vertical_margin_small"
+            android:layout_width="match_parent"
+            android:layout_marginStart="@dimen/horizontal_margin"
+            android:gravity="center_horizontal" />
+
+        <GridLayout
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/horizontal_margin"
+            android:columnCount="3"
+            android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <TextView
+                android:id="@+id/label_date"
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:text="@string/parking_date" />
+
+            <TextView
+                android:id="@+id/label_start"
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:text="@string/parking_startTime" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/date"
+                style="@style/ParkeerAssistent.Grid.Input" />
+
+            <TextView
+                android:id="@+id/start"
+                style="@style/ParkeerAssistent.Grid.Input"
+                android:layout_marginStart="@dimen/horizontal_margin" />
+
+            <TextView
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/label_minutes"
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:text="@string/parking_minutes" />
+
+            <TextView
+                android:id="@+id/label_end"
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:text="@string/parking_endTime" />
+
+            <TextView
+                android:id="@+id/label_cost"
+                style="@style/ParkeerAssistent.Grid.Label"
+                android:text="@string/parking_cost" />
+
+            <TextView
+                android:id="@+id/minutes"
+                style="@style/ParkeerAssistent.Grid.Input" />
+
+            <TextView
+                android:id="@+id/end"
+                style="@style/ParkeerAssistent.Grid.Input"
+                android:layout_marginStart="@dimen/horizontal_margin" />
+
+            <TextView
+                android:id="@+id/cost"
+                style="@style/ParkeerAssistent.Grid.Input"
+                android:layout_marginStart="@dimen/horizontal_margin" />
+
+        </GridLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:text="@string/common_add"
+        style="@style/ParkeerAssistent.Button.Success"
+        android:enabled="false" />
+
+</LinearLayout>

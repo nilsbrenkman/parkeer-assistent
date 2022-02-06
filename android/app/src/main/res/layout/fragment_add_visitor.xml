@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".ui.visitor.AddVisitorFragment">
+
+    <LinearLayout
+        style="@style/ParkeerAssistent.Group"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/label_license"
+            style="@style/ParkeerAssistent.Label"
+            android:text="@string/visitor_license" />
+
+        <EditText
+            android:id="@+id/license"
+            style="@style/ParkeerAssistent.License"
+            android:layout_marginTop="@dimen/vertical_margin_small"
+            android:layout_width="@dimen/license_width"
+            android:inputType="textCapCharacters" />
+
+        <TextView
+            android:id="@+id/label_name"
+            style="@style/ParkeerAssistent.Label"
+            android:text="@string/visitor_name" />
+
+        <EditText
+            android:id="@+id/name"
+            style="@style/ParkeerAssistent.Input"
+            android:inputType="textCapWords" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add"
+        style="@style/ParkeerAssistent.Button.Success"
+        android:layout_marginTop="@dimen/vertical_margin_large"
+        android:text="@string/common_add"
+        android:enabled="false" />
+
+</LinearLayout>

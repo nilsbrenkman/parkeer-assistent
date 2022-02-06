@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_channel_name">Parking Amsterdam</string>
+    <string name="notification_channel_description">Receive notifications when your parking sessions start and end</string>
+    <string name="notification_title_start">Parking session is starting</string>
+    <string name="notification_title_end">Parking session has ended</string>
+
+    <string name="common_ok">OK</string>
+    <string name="common_add">Add</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_back">Back</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_select">Select</string>
+    <string name="common_stop">Stop</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_error">Something went wrong</string>
+
+    <string name="login_login">Login</string>
+    <string name="login_logout">Logout</string>
+    <string name="login_username">Permit code</string>
+    <string name="login_password">Pin code</string>
+    <string name="login_remember">Remember login credentials</string>
+    <string name="login_rememberShort">Remember</string>
+    <string name="login_reason">Loading stored login credentials</string>
+    <string name="login_authenticate_title">Authentication</string>
+    <string name="login_authenticate_subtitle">Please authenticate to load stored credentials</string>
+
+    <string name="user_balance">Balance</string>
+    <string name="user_addBalance">Add balance</string>
+    <string name="user_main">Main page</string>
+
+    <string name="visitor_header">Visitors</string>
+    <string name="visitor_noVisitors">No visitors</string>
+    <string name="visitor_add">Add visitor</string>
+    <string name="visitor_delete">Delete visitor</string>
+    <string name="visitor_license">License</string>
+    <string name="visitor_name">Name</string>
+    <string name="visitor_tooManyMsg">You have stored the maximum number of visitors. Delete a visitor to be able to add a new one.</string>
+    <string name="visitor_successMsg">Visitor added</string>
+    <string name="visitor_errorMsg">Failed to add visitor</string>
+
+    <string name="parking_header">Parking</string>
+    <string name="parking_active">Active sessions</string>
+    <string name="parking_scheduled">Scheduled sessions</string>
+    <string name="parking_noSessions">No active or scheduled sessions</string>
+    <string name="parking_date">Date</string>
+    <string name="parking_startTime">Start</string>
+    <string name="parking_endTime">End</string>
+    <string name="parking_minutes">Minutes</string>
+    <string name="parking_cost">Cost</string>
+    <string name="parking_start">Start session</string>
+    <string name="parking_stop">Stop session</string>
+    <string name="parking_history">Parking history</string>
+    <string name="parking_noHistory">No parking history found</string>
+
+    <string name="parking_validation_regime_in_past">Paid parking has ended for today</string>
+    <string name="parking_validation_start_in_past">Start time can not be in the past</string>
+    <string name="parking_validation_start_before_regime">Start time is before paid parking starts</string>
+    <string name="parking_validation_start_after_regime">Start time is after paid parking ends</string>
+    <string name="parking_validation_end_before_start">End time can not be before start time</string>
+    <string name="parking_validation_end_after_regime">End time is after paid parking ends</string>
+    <string name="parking_validation_not_enough_balance">You have insufficient balance</string>
+
+    <string name="payment_header">Add balance</string>
+    <string name="payment_amount">Amount</string>
+    <string name="payment_bank">Bank</string>
+    <string name="payment_start">Start payment</string>
+    <string name="payment_status">Check status</string>
+    <string name="payment_recipientMsg">Attention: always check whether the beneficiary of the payment is the Municipality of Amsterdam</string>
+    <string name="payment_redirectMsg">After authorising the payment, you will be forwarded to the municipality\'s website. Do not log in but open this app to complete the payment.</string>
+    <string name="payment_redirectErrorMsg">Error during payment initialization.</string>
+    <string name="payment_successMsg">Successfully added funds to your balance.</string>
+    <string name="payment_pendingMsg">Payment is still in progress.</string>
+    <string name="payment_errorMsg">An error occurred during payment.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.</string>
+    <string name="payment_unknownMsg">Status of the payment can not be verified.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.</string>
+
+    <string name="info_header">About this app</string>
+    <string name="info_text1">Parking Amsterdam is a personal app that is not affiliated with the Municipality of Amsterdam.</string>
+    <string name="info_text2">The purpose of the app is to provide an alternative, more user-friendly interface to the <a href="https://aanmeldenparkeren.amsterdam.nl/">municipality\'s website</a>.</string>
+    <string name="info_text3">The app does not collect user data such as permit code, pin code or any other personal data. If you choose to remember your login credentials, they will be stored locally and securely.</string>
+    <string name="info_text4">The creator of this app is not liable for any kind of use.</string>
+    <string name="info_text5">You can inspect the source code of this app on <a href="https://github.com/nilsbrenkman/parkeer-assistent">GitHub</a>.</string>
+    <string name="info_text6">Did you encounter an issue or do you have a suggestion? Please let me know using the <a href="https://parkeerassistent.nl/feedback">feedback form</a>.</string>
+    <string name="info_version">Version: %1$s (%2$d)</string>
+
+    <string name="minute_picker_hour">Hours</string>
+    <string name="minute_picker_minute">Minutes</string>
+
+    <string name="error_authentication">Your login session has expired</string>
+    <string name="error_connection">Unable to connect to server</string>
+    <string name="error_add_parking">Unable to start parking session</string>
+
+</resources>

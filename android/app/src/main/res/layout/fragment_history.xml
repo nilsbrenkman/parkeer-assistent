@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/history_header"
+        style="@style/ParkeerAssistent.Header"
+        android:text="@string/parking_history"
+        android:layout_marginTop="@dimen/vertical_margin" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="@style/ParkeerAssistent.Loading"
+        android:layout_marginTop="@dimen/vertical_margin_xlarge" />
+
+    <TextView
+        android:id="@+id/empty"
+        style="@style/ParkeerAssistent.Empty"
+        android:text="@string/parking_noHistory" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_group"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:visibility="gone"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.parking.HistoryFragment"
+        tools:listitem="@layout/item_history_group" />
+
+</LinearLayout>

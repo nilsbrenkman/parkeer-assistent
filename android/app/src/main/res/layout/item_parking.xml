@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/date_time"
+        android:layout_width="@dimen/datetime_size"
+        android:layout_height="@dimen/datetime_size"
+        android:layout_marginStart="@dimen/horizontal_margin"
+        android:layout_marginEnd="@dimen/zero"
+        android:layout_marginTop="@dimen/vertical_margin_small"
+        android:layout_marginBottom="@dimen/vertical_margin_small"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/background_datetime_scheduled">
+
+        <TextView
+            android:id="@+id/date"
+            style="@style/ParkeerAssistent.Date" />
+
+        <TextView
+            android:id="@+id/time"
+            style="@style/ParkeerAssistent.Time" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/license"
+        style="@style/ParkeerAssistent.License"
+        android:layout_width="@dimen/license_width_small"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/ParkeerAssistent.Name"
+        android:layout_marginStart="0dp"
+        android:textSize="22sp"
+        android:singleLine="true" />
+
+    <ImageButton
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/horizontal_margin"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/icon_more"
+        android:background="@color/transparent" />
+
+</LinearLayout>

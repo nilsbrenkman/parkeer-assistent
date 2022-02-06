@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/main"
+        android:icon="@drawable/icon_main"
+        android:title="@string/user_main" />
+
+    <item
+        android:id="@+id/history"
+        android:icon="@drawable/icon_history"
+        android:title="@string/parking_history" />
+
+    <item
+        android:id="@+id/payment"
+        android:icon="@drawable/icon_payment"
+        android:title="@string/payment_start" />
+
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/icon_logout"
+        android:title="@string/login_logout" />
+
+</menu>

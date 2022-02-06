@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="parkingList" format="enum">
+        <enum name="active" value="0"/>
+        <enum name="scheduled" value="1"/>
+    </attr>
+
+    <declare-styleable name="ParkingFragment_MembersInjector">
+        <attr name="parkingList"/>
+    </declare-styleable>
+
+    <declare-styleable name="Message">
+        <attr name="level_info" format="boolean"/>
+        <attr name="level_success" format="boolean"/>
+        <attr name="level_warn" format="boolean"/>
+        <attr name="level_error" format="boolean"/>
+    </declare-styleable>
+
+</resources>

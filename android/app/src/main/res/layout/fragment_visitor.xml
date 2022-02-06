@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/visitor_header"
+        style="@style/ParkeerAssistent.Header"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:text="@string/visitor_header" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="@style/ParkeerAssistent.Loading"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginBottom="@dimen/vertical_margin" />
+
+    <TextView
+        android:id="@+id/empty"
+        style="@style/ParkeerAssistent.Empty"
+        android:text="@string/visitor_noVisitors" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/visitor_list"
+        android:name="nl.parkeerassistent.android.ui.visitor.VisitorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/vertical_margin"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".ui.visitor.VisitorFragment"
+        tools:listitem="@layout/item_visitor"
+        android:visibility="gone" />
+
+</LinearLayout>

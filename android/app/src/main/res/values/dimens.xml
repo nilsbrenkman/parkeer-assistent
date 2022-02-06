@@ -1,0 +1,36 @@
+<resources>
+
+    <dimen name="zero">0dp</dimen>
+
+    <dimen name="horizontal_margin">16dp</dimen>
+    <dimen name="horizontal_margin_small">8dp</dimen>
+    <dimen name="vertical_margin">16dp</dimen>
+    <dimen name="vertical_margin_large">32dp</dimen>
+    <dimen name="vertical_margin_xlarge">64dp</dimen>
+    <dimen name="vertical_margin_small">8dp</dimen>
+    <dimen name="vertical_margin_xsmall">4dp</dimen>
+
+    <dimen name="group_radius">8dp</dimen>
+    <dimen name="group_margin">16dp</dimen>
+    <dimen name="group_padding">0dp</dimen>
+
+    <dimen name="message_radius">8dp</dimen>
+    <dimen name="message_padding_horizonal">16dp</dimen>
+    <dimen name="message_padding_vertical">12dp</dimen>
+
+    <dimen name="datetime_size">48dp</dimen>
+    <dimen name="datetime_radius">8dp</dimen>
+    <dimen name="datetime_padding">0dp</dimen>
+
+    <dimen name="license_width">160dp</dimen>
+    <dimen name="license_height">48dp</dimen>
+    <dimen name="license_width_small">140dp</dimen>
+
+    <dimen name="header_logo_size">48dp</dimen>
+    <dimen name="header_logo_vertical_margin">10dp</dimen>
+    <dimen name="balance_loading_vertical_margin">4dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="number_picker_text_size">14sp</dimen>
+
+</resources>
