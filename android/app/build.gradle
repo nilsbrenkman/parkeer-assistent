@@ -14,8 +14,10 @@ android {
         applicationId "nl.parkeerassistent.android"
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 3
+        versionCode 4
         versionName "1.1.6"
+
+        buildConfigField "String", "NOTIFICATION_CHANNEL_ID", '"ParkeerAssistent_Amsterdam"'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

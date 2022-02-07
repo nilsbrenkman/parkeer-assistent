@@ -1,9 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false">Parkeer Assistent</string>
+    <string name="app_name" translatable="false">Parkeren Amsterdam</string>
     <string name="app_local" translatable="false">P Amsterdam</string>
-    <string name="preferences" translatable="false">nl.parkeerassistent.android.preferences</string>
-    <string name="secure_preferences" translatable="false">nl.parkeerassistent.android.secure_preferences</string>
-    <string name="notification_channel_id" translatable="false">ParkeerAssistent_Amsterdam</string>
 
     <string name="notification_channel_name">Parkeren Amsterdam</string>
     <string name="notification_channel_description">Ontvang notificaties wanneer je parkeersessies beginnen en eindigen</string>
