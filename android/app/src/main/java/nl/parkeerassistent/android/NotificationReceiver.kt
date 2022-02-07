@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.media.RingtoneManager
 import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -33,11 +32,11 @@ class NotificationReceiver : BroadcastReceiver() {
             Log.i("NotificationReceiver", "Showing notification: $content")
 
             val sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.applicationContext.packageName + "/raw/car_horn")
-            RingtoneManager.getRingtone(this.applicationContext, sound).play()
 
-            val builder = NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
+            val builder = NotificationCompat.Builder(this, BuildConfig.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(IconCompat.createWithResource(context, R.drawable.logo_notification))
                 .setLargeIcon(getLargeIcon(context))
+                .setSound(sound)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
