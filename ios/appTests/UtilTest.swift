@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import parkeerassistent
+@testable import app
 
 class UtilTest: XCTestCase {
 

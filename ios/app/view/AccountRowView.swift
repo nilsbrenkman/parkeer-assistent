@@ -26,7 +26,7 @@ struct AccountRowView: View {
                     Text(Lang.Login.username.localized())
                     Spacer()
                     TextField("", text: $username, onEditingChanged: updateAccount)
-                        .foregroundColor(Color.ui.bw30)
+                        .foregroundColor(Color.system.secondaryLabel)
                         .multilineTextAlignment(.trailing)
                 }
                 
@@ -36,7 +36,7 @@ struct AccountRowView: View {
                     Text(Lang.Login.password.localized())
                     Spacer()
                     TextField("", text: $password, onEditingChanged: updateAccount)
-                        .foregroundColor(Color.ui.bw30)
+                        .foregroundColor(Color.system.secondaryLabel)
                         .multilineTextAlignment(.trailing)
                 }
                 
@@ -46,7 +46,7 @@ struct AccountRowView: View {
                     Text(Lang.Account.alias.localized())
                     Spacer()
                     TextField("", text: $alias, onEditingChanged: updateAccount)
-                        .foregroundColor(Color.ui.bw30)
+                        .foregroundColor(Color.system.secondaryLabel)
                         .multilineTextAlignment(.trailing)
                 }
             }
@@ -92,7 +92,7 @@ struct AccountRowView: View {
         }
         .padding(.all)
         .background(RoundedRectangle(cornerRadius: Constants.radius.normal)
-                        .fill(Color.ui.bw100))
+                        .fill(Color.system.groupedRowBackground))
         .onAppear {
             self.alias = credentials.alias ?? ""
             self.username = credentials.username

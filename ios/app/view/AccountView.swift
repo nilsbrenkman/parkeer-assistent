@@ -45,7 +45,7 @@ struct AccountView: View {
                     .padding(.vertical, Constants.padding.small)
                     .padding(.horizontal)
                     .background(RoundedRectangle(cornerRadius: Constants.radius.normal)
-                                    .fill(Color.ui.bw100))
+                                    .fill(Color.system.groupedRowBackground))
                 
             }
             .padding(.all)

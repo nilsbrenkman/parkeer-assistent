@@ -51,6 +51,8 @@ extension Color {
     
     struct System {
         let groupedBackground = Color(UIColor.systemGroupedBackground)
+        let groupedRowBackground = Color(UIColor.secondarySystemGroupedBackground)
+        let secondaryLabel = Color(UIColor.secondaryLabel)
     }
     
 }

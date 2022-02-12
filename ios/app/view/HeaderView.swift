@@ -51,7 +51,7 @@ struct HeaderView: View {
                                 Image(systemName: "square.and.arrow.up")
                             }
                         } label: {
-                            Text("Menu")
+                            Text(Lang.Menu.button.localized())
                                 .frame(height: 46)
                                 .padding(.horizontal)
                                 .foregroundColor(Color.white)

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import parkeerassistent
+@testable import app
 
 class LangTest: XCTestCase {
 
@@ -20,6 +20,8 @@ class LangTest: XCTestCase {
 
     static let localizations: [Localized.Type] = [Lang.Common.self,
                                                   Lang.Login.self,
+                                                  Lang.Account.self,
+                                                  Lang.Menu.self,
                                                   Lang.User.self,
                                                   Lang.Visitor.self,
                                                   Lang.Parking.self,

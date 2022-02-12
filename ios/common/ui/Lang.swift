@@ -19,7 +19,11 @@ struct Lang {
     }
     
     enum Account: String, Localization {
-        case header, alias, autoLogin, confirmDelete, errorUnavailable, errorFailed
+        case header, label, alias, autoLogin, confirmDelete, errorUnavailable, errorFailed
+    }
+    
+    enum Menu: String, Localization {
+        case button
     }
 
     enum User: String, Localization {

@@ -93,7 +93,7 @@ struct LoginView: View {
                 Section {
                     NavigationLink(destination: AccountView()) {
                         HStack {
-                            Text("Account")
+                            Text(Lang.Account.label.localized())
                             Spacer()
                             Text(account)
                                 .foregroundColor(Color.ui.bw30)
