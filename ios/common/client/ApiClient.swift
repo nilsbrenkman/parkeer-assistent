@@ -176,8 +176,12 @@ class ApiClient {
         if let uuid = UIDevice.current.identifierForVendor?.uuidString,
            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
            let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+            
+            let os = ProcessInfo.processInfo.operatingSystemVersion
+            
             headers["PA-UserId"] = uuid
             headers["PA-OS"] = "iOS"
+            headers["PA-SDK"] = String(os.majorVersion) + "." + String(os.minorVersion) + "." + String(os.patchVersion)
             headers["PA-Version"] = version
             headers["PA-Build"] = build
         }

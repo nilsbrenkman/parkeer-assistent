@@ -9,6 +9,7 @@
 "common.ok" = "OK";
 "common.add" = "Toevoegen";
 "common.back" = "Terug";
+"common.delete" = "Verwijderen";
 "common.cancel" = "Annuleren";
 "common.select" = "Selecteer";
 "common.stop" = "Beëindigen";
@@ -20,6 +21,13 @@
 "login.remember" = "Onthoud inlog gegevens";
 "login.rememberShort" = "Onthouden";
 "login.reason" = "Opgeslagen inlog gegevens laden";
+
+"account.header" = "Accounts";
+"account.alias" = "Omschrijving";
+"account.autoLogin" = "Automatisch inloggen";
+"account.confirmDelete" = "Account verwijderen?";
+"account.errorUnavailable" = "FaceID is niet beschikbaar";
+"account.errorFailed" = "Authenticatie mislukt";
 
 "user.balance" = "Saldo";
 "user.addBalance" = "Saldo opwaarderen";

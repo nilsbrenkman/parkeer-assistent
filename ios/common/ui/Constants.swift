@@ -20,6 +20,8 @@ struct Constants {
     }
 
     struct Spacing {
+        let xLarge: CGFloat = 36
+        let large:  CGFloat = 30
         let normal: CGFloat = 20
         let small:  CGFloat = 10
         let xSmall: CGFloat = 5
@@ -47,4 +49,9 @@ struct Constants {
 enum GenericError: Error {
     case VisitorNotFound
     case InvalidDate
+}
+
+enum AuthenticationError: Error {
+    case Unavailable
+    case Failed
 }

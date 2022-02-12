@@ -54,10 +54,11 @@ object ES {
     fun log(call: ApplicationCall, method: Monitoring.Method, level: Monitoring.Level, message: String) {
         val date = DateUtil.dateTime.format(Date())
         val os = call.request.headers["PA-OS"] ?: "null"
+        val sdk = call.request.headers["PA-SDK"] ?: "null"
         val userId = (if (os == "Web") call.request.cookies["userid"] else call.request.headers["PA-UserId"]) ?: "null"
         val version = call.request.headers["PA-Version"] ?: "null"
         val build = call.request.headers["PA-Build"] ?: "0"
-        val event = Event(date, userId.lowercase(), os, version, build.toInt(), method.service().name, method.method(), level.name, message)
+        val event = Event(date, userId.lowercase(), os, sdk, version, build.toInt(), method.service().name, method.method(), level.name, message)
         try {
             executor.submit(ESEvent(event))
         } catch (e: RejectedExecutionException) {

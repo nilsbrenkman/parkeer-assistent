@@ -7,13 +7,18 @@
 
 import Foundation
 import SwiftUI
+import LocalAuthentication
 
 class Login: ObservableObject {
     
     @Published var isLoading: Bool = true
     @Published var isBackground: Bool = false
     @Published var isLoggedIn: Bool = false
-    @Published var loggedOut: Bool = false
+    
+    public var autoLogin: Bool = true
+    
+    private var credentials: [Credentials] = []
+    private var authenticated: Date? = nil
 
     let loginClient: LoginClient
 
@@ -43,7 +48,8 @@ class Login: ObservableObject {
                     Stats.user.loginCount += 1
                     if storeCredentials {
                         do {
-                            try Keychain.store.storeCredentials(username: username, password: password)
+                            try Keychain.storeCredentials(username: username, password: password)
+                            Keychain.setRecent(username)
                         } catch {
                             print("Store credentials failed: \(error)")
                         }
@@ -68,7 +74,6 @@ class Login: ObservableObject {
             self.loginClient.logout() { response in
                 if response.success {
                     DispatchQueue.main.async {
-                        self.loggedOut = true
                         self.isLoggedIn = false
                     }
                 } else {
@@ -79,6 +84,67 @@ class Login: ObservableObject {
                     self.isLoading = false
                 }
             }
+        }
+    }
+    
+    func accounts() throws -> [Credentials] {
+        let context = LAContext()
+        var error: NSError?
+
+        if authenticated != nil && authenticated!.addingTimeInterval(5 * 60) > Date.now() {
+            return self.credentials
+        }
+        
+        if !context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            throw AuthenticationError.Unavailable
+        }
+        
+        let stored = Keychain.retrieveCredentials()
+        if stored.isEmpty {
+            return []
+        }
+            
+        let reason = Lang.Login.reason.localized()
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        var success: Bool = false
+        
+        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { authentication, error in
+            success = authentication
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        
+        if success {
+            self.credentials = stored
+            self.authenticated = Date.now()
+        } else {
+            throw AuthenticationError.Failed
+        }
+        return self.credentials
+    }
+    
+    func addAccount() {
+        try? Keychain.storeCredentials(username: "", password: "")
+        self.credentials = Keychain.retrieveCredentials()
+    }
+    
+    func updateAccount(_ account: Credentials, username: String, password: String, alias: String?) {
+        let isRecent = Keychain.getRecent(self.credentials)?.username == account.username
+        try? Keychain.updateCredentials(account, username: username, password: password, alias: alias)
+        self.credentials = Keychain.retrieveCredentials()
+        if isRecent {
+            Keychain.setRecent(username)
+        }
+    }
+
+    func deleteAccount(_ account: Credentials) {
+        let isRecent = Keychain.getRecent(self.credentials)?.username == account.username
+        try? Keychain.deleteCredentials(account: account)
+        self.credentials = Keychain.retrieveCredentials()
+        if isRecent {
+            Keychain.setRecent(self.credentials.first?.username)
         }
     }
 

@@ -46,9 +46,14 @@ struct ContentView: View {
                         .navigationViewStyle(StackNavigationViewStyle())
                     }
                 } else {
-                    LoginView()
+                    NavigationView {
+                        LoginView()
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
             }
+            .ignoresSafeArea()
         }
         .environmentObject(login)
         .environmentObject(user)

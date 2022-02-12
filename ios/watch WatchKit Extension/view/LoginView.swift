@@ -34,12 +34,13 @@ struct LoginView: View {
     }
     
     private func retrieveCredentials() {
-        guard let credentials = Keychain.store.retrieveCredentials() else {
+        let credentials = Keychain.retrieveCredentials()
+        if credentials.isEmpty {
             return
         }
 
-        self.username = credentials.username
-        self.password = credentials.password
+        self.username = credentials[0].username
+        self.password = credentials[0].password
     }
 }
 
