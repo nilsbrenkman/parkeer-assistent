@@ -17,3 +17,4 @@ ios/app/.swiftpm
 
 .env
 kotlin-js-store
+private_key.pepk
