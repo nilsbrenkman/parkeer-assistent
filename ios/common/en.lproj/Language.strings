@@ -9,6 +9,7 @@
 "common.ok" = "OK";
 "common.add" = "Add";
 "common.back" = "Back";
+"common.delete" = "Delete";
 "common.cancel" = "Cancel";
 "common.select" = "Select";
 "common.stop" = "Stop";
@@ -20,6 +21,13 @@
 "login.remember" = "Remember login credentials";
 "login.rememberShort" = "Remember";
 "login.reason" = "Loading stored login credentials";
+
+"account.header" = "Accounts";
+"account.alias" = "Description";
+"account.autoLogin" = "Automatic login";
+"account.confirmDelete" = "Delete account?";
+"account.errorUnavailable" = "FaceID is not available";
+"account.errorFailed" = "Authentication failed";
 
 "user.balance" = "Balance";
 "user.addBalance" = "Add balance";

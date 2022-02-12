@@ -11,11 +11,15 @@ import SwiftUI
 struct Lang {
     
     enum Common: String, Localization {
-        case ok, add, back, cancel, select, stop
+        case ok, add, back, delete, cancel, select, stop
     }
 
     enum Login: String, Localization {
         case login, logout, username, password, remember, rememberShort, reason
+    }
+    
+    enum Account: String, Localization {
+        case header, alias, autoLogin, confirmDelete, errorUnavailable, errorFailed
     }
 
     enum User: String, Localization {

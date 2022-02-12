@@ -66,12 +66,12 @@ class ApiClient(val applicationContext: Context) {
                 sessionCookies[cookie.type] = cookie
             }
         }
-        val uuid = applicationContext.getPreferenceOrDefault(Preference.UUID, UUID::randomUUID::toString)
+        val uuid = applicationContext.getPreferenceOrDefault(Preference.UUID) { UUID.randomUUID().toString() }
         analytics = listOf(
             "PA-UserId" to uuid,
             "PA-OS" to "Android",
             "PA-SDK" to Build.VERSION.SDK_INT.toString(),
-            "PA-Version" to BuildConfig.VERSION_NAME,
+            "PA-Version" to BuildConfig.VERSION_NAME,''
             "PA-Build" to BuildConfig.VERSION_CODE.toString()
         )
     }
