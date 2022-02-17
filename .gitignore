@@ -13,7 +13,7 @@ out/
 ios/parkeerassistent.xcodeproj/
 ios/app/.build
 ios/app/.swiftpm
-
+ios/parkeerassistent.xcodeproj.zip
 
 .env
 kotlin-js-store
