@@ -63,6 +63,7 @@ class LoginFragment : BaseFragment() {
         val hasCredentials = KeyChain.hasCredentials(activity)
 
         val onCredentials: (KeyChain.Credentials) -> Unit = { credentials ->
+            loginViewModel.credentials = null
             username.setText(credentials.username)
             password.setText(credentials.password)
             login.performClick()
@@ -92,11 +93,8 @@ class LoginFragment : BaseFragment() {
         val executor = context?.run { ContextCompat.getMainExecutor(this) } ?: return
         val biometricPrompt = BiometricPrompt(this, executor, LoginAuthenticationCallback { result ->
             KeyChain.loadCredentials(activity) { credentials ->
-                if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL) {
-                    loginViewModel.credentials = credentials
-                } else {
-                    onCredentials(credentials)
-                }
+                loginViewModel.credentials = credentials
+                onCredentials(credentials)
             }
         })
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
