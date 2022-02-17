@@ -51,9 +51,12 @@ struct HeaderView: View {
                                 Image(systemName: "square.and.arrow.up")
                             }
                         } label: {
-                            Text(Lang.Menu.button.localized())
-                                .frame(height: 46)
-                                .padding(.horizontal)
+                            Image(systemName: "list.bullet")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 32, height: 38)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 8)
                                 .foregroundColor(Color.white)
                                 .overlay(RoundedRectangle(cornerRadius: Constants.radius.small)
                                             .stroke(Color.white, lineWidth: 1)
@@ -113,5 +116,6 @@ struct HeaderView_Previews: PreviewProvider {
     @State static var showHistory = false
     static var previews: some View {
         HeaderView(showInfo: $showInfo, showHistory: $showHistory)
+            .setupPreview(loggedIn: true)
     }
 }
