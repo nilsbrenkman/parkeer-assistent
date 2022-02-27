@@ -22,30 +22,16 @@ class VisitorClientApi: VisitorClient {
     }
 
     func get(onComplete: @escaping (VisitorResponse) -> Void) {
-        do {
-            try ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET, onComplete: onComplete)
     }
     
     func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {
         let body = AddVisitorRequest(license: license, name: name)
-        do {
-            try ApiClient.client.call(Response.self, path: "visitor", method: Method.POST, body: body, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "visitor", method: Method.POST, body: body, onComplete: onComplete)
     }
     
     func delete(visitorId: Int, onComplete: @escaping (Response) -> Void) {
-        do {
-            try ApiClient.client.call(Response.self, path: "visitor/\(visitorId)", method: Method.DELETE, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "visitor/\(visitorId)", method: Method.DELETE, onComplete: onComplete)
     }
 
 }
@@ -75,14 +61,14 @@ class VisitorClientMock: VisitorClient {
     }
     
     func get(onComplete: @escaping (VisitorResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
 
         onComplete(VisitorResponse(visitors: Array(visitors.values.sorted(by: { $0.id < $1.id } ))))
     }
     
     func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {
-        MockClient.mockDelay()
-
+        guard MockClient.client.authorized() else { return }
+        
         if (License.normalise(license).count != 6) {
             onComplete(Response(success: false, message: "Invalid license"))
             return
@@ -95,7 +81,7 @@ class VisitorClientMock: VisitorClient {
     }
     
     func delete(visitorId: Int, onComplete: @escaping (Response) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
 
         guard let visitor = visitors[visitorId] else {
             onComplete(Response(success: false, message: "Not found"))

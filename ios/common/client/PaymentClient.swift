@@ -22,29 +22,16 @@ class PaymentClientApi: PaymentClient {
     }
     
     func ideal(onComplete: @escaping (IdealResponse) -> Void) {
-        do {
-            try ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET, onComplete: onComplete)
     }
     
     func payment(amount: String, issuerId: String, onComplete: @escaping (PaymentResponse) -> Void) {
-        do {
-            let body = PaymentRequest(amount: amount, issuerId: issuerId)
-            try ApiClient.client.call(PaymentResponse.self, path: "payment", method: Method.POST, body: body, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        let body = PaymentRequest(amount: amount, issuerId: issuerId)
+        ApiClient.client.call(PaymentResponse.self, path: "payment", method: Method.POST, body: body, onComplete: onComplete)
     }
     
     func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void) {
-        do {
-            try ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(StatusResponse(status: "error"))
-        }
+        ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET, onComplete: onComplete)
     }
     
 }
@@ -61,7 +48,8 @@ class PaymentClientMock: PaymentClient {
     }
  
     func ideal(onComplete: @escaping (IdealResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
+        
         onComplete(IdealResponse(amounts: ["5,00",
                                            "10,00",
                                            "15,00",
@@ -84,7 +72,8 @@ class PaymentClientMock: PaymentClient {
     }
     
     func payment(amount: String, issuerId: String, onComplete: @escaping (PaymentResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
+        
         let transactionId = String(nextId)
         nextId += 1
         let t = MockTransaction(transactionId: transactionId, amount: amount, issuerId: issuerId, creationDate: Date.now())
@@ -93,7 +82,7 @@ class PaymentClientMock: PaymentClient {
     }
 
     func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
         
         guard let transaction = transactions[transactionId] else {
             onComplete(StatusResponse(status: "error"))

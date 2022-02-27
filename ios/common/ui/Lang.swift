@@ -45,6 +45,10 @@ struct Lang {
     enum Info: String, Localization {
         case header, text1, text2, text3, text4, text5, text6, website, sourceCode, feedback, version
     }
+    
+    enum Error: String, Localization {
+        case unauthorized, serverUnknown
+    }
 }
 
 protocol Localized {

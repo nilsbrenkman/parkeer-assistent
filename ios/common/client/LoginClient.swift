@@ -22,31 +22,16 @@ class LoginClientApi: LoginClient {
     }
 
     func loggedId(onComplete: @escaping (Response) -> Void) {
-        do {
-            try ApiClient.client.call(Response.self, path: "login", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "login", method: Method.GET, onComplete: onComplete)
     }
     
     func login(username: String, password: String, onComplete: @escaping (Response) -> Void) {
         let body = LoginRequest(username: username, password: password)
-        do {
-            try ApiClient.client.call(Response.self, path: "login", method: Method.POST, body: body, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "login", method: Method.POST, body: body, onComplete: onComplete)
     }
     
     func logout(onComplete: @escaping (Response) -> Void) {
-        do {
-            try ApiClient.client.call(Response.self, path: "logout", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "logout", method: Method.GET, onComplete: onComplete)
     }
     
 }
@@ -55,8 +40,6 @@ class LoginClientMock: LoginClient {
 
     static let client = LoginClientMock()
 
-    private var loggedIn = false
-    private var timeout = Date()
 
     private init() {
         //
@@ -65,29 +48,20 @@ class LoginClientMock: LoginClient {
     func loggedId(onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
 
-        let delay = Date(timeIntervalSinceNow: -60)
-        if delay > timeout {
-            loggedIn = false
-            onComplete(Response(success: false, message: "Timeout"))
-            return
-        }
-
-        timeout = Date()
-        onComplete(Response(success: loggedIn))
+        onComplete(Response(success: MockClient.client.isLoggedIn()))
     }
     
     func login(username: String, password: String, onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
 
-        if loggedIn {
+        if MockClient.client.isLoggedIn() {
             onComplete(Response(success: false, message: "Already logged in"))
         } else {
             if password.count != 4 {
                 onComplete(Response(success: false, message: "Login failed"))
                 return
             }
-            loggedIn = true
-            timeout = Date()
+            MockClient.client.login(true)
             onComplete(Response(success: true))
         }
     }
@@ -95,8 +69,8 @@ class LoginClientMock: LoginClient {
     func logout(onComplete: @escaping (Response) -> Void) {
         MockClient.mockDelay()
 
-        if loggedIn {
-            loggedIn = false
+        if MockClient.client.isLoggedIn() {
+            MockClient.client.login(false)
             onComplete(Response(success: true))
         } else {
             onComplete(Response(success: false, message: "Not logged in"))

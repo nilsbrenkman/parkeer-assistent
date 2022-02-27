@@ -22,27 +22,15 @@ class UserClientApi: UserClient {
     }
 
     func get(onComplete: @escaping (UserResponse) -> Void) {
-        do {
-            try ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET, onComplete: onComplete)
     }
     
     func balance(onComplete: @escaping (BalanceResponse) -> Void) {
-        do {
-            try ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET, onComplete: onComplete)
     }
     
     func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void) {
-        do {
-            try ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET, onComplete: onComplete)
     }
     
 }
@@ -58,7 +46,8 @@ class UserClientMock: UserClient {
     }
 
     func get(onComplete: @escaping (UserResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
+        
         onComplete(UserResponse(balance: getBalance(),
                                 hourRate: hourRate,
                                 regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(Date.now())),
@@ -66,12 +55,14 @@ class UserClientMock: UserClient {
     }
     
     func balance(onComplete: @escaping (BalanceResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
+        
         onComplete(BalanceResponse(balance: getBalance()))
     }
  
     func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
+        
         onComplete(RegimeResponse(regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(date)),
                                   regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(date))))
     }

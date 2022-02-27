@@ -21,11 +21,13 @@ class User: ObservableObject {
     @Published var addVisitor: Bool = false
     @Published var selectedVisitor: Visitor?
     
+    let loginClient: LoginClient
     let userClient: UserClient
     let parkingClient: ParkingClient
     let visitorClient: VisitorClient
 
     init() throws {
+        loginClient   = try ClientManager.instance.get(LoginClient.self)
         userClient    = try ClientManager.instance.get(UserClient.self)
         parkingClient = try ClientManager.instance.get(ParkingClient.self)
         visitorClient = try ClientManager.instance.get(VisitorClient.self)
