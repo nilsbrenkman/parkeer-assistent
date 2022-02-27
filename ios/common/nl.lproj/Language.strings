@@ -78,3 +78,6 @@
 "info.sourceCode" = "Broncode";
 "info.feedback" = "Feedback";
 "info.version" = "Versie";
+
+"error.unauthorized" = "Je bent uitgelogd";
+"error.serverUnknown" = "Onbekende server fout";

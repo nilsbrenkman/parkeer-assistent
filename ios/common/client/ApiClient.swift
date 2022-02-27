@@ -20,6 +20,8 @@ class ApiClient {
     private let url: URL
     private var cookies: SessionCookies
 
+    weak var errorHandler: ErrorHandler?
+    
     private init() {
         baseUrl = Util.getSetting("ServerBaseURL")
         session = URLSession(configuration: .default)
@@ -31,17 +33,25 @@ class ApiClient {
         }
     }
 
-    func call<RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, onComplete: @escaping (RESPONSE) -> Void) throws {
+    func registerErrorHandler(_ errorHandler: ErrorHandler) {
+        self.errorHandler = errorHandler
+    }
+    
+    func throwError(_ error: ClientError) {
+        self.errorHandler?.handleError(error)
+    }
+    
+    func call<RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, onComplete: @escaping (RESPONSE) -> Void) {
         let body: Response? = nil
-        try! call(result, path: path, method: method, body: body) { response in
+        call(result, path: path, method: method, body: body) { response in
             onComplete(response)
         }
     }
     
-    func call<REQUEST: Encodable, RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, body: REQUEST? = nil, onComplete: @escaping (RESPONSE) -> Void) throws {
+    func call<REQUEST: Encodable, RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, body: REQUEST? = nil, onComplete: @escaping (RESPONSE) -> Void) {
         
         guard let url = URL(string: baseUrl + path) else {
-            throw ClientError.InvalidPath
+            return self.throwError(.InvalidPath)
         }
         
         var headers = HTTPCookie.requestHeaderFields(with: getCookies())
@@ -53,7 +63,7 @@ class ApiClient {
         
         if body != nil {
             guard let json = try? JSONEncoder().encode(body) else {
-                throw ClientError.RequestSerialization
+                return self.throwError(.RequestSerialization)
             }
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = json
@@ -61,27 +71,30 @@ class ApiClient {
         
         session.dataTask(with: request) { data, response, error in
             
-            if let httpResponse = response as? HTTPURLResponse {
-                self.updateCookies(httpResponse)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return self.throwError(.NoHttpResponse)
+            }
+
+            self.updateCookies(httpResponse)
+
+            if httpResponse.statusCode / 100 != 2 {
+                switch httpResponse.statusCode {
+                    case 401, 403:
+                        return self.throwError(.Unauthorized)
+                    default:
+                        return self.throwError(.ServerError)
+                }
             }
             
             guard let data = data else {
-                print("no data")
-                if result == Response.self {
-                    onComplete(Response(success: false, message: "No data") as! RESPONSE)
-                }
-                return
+                return self.throwError(.EmptyResponse)
             }
 
-            guard let res = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
-                print("unable to decode")
-                if result == Response.self {
-                    onComplete(Response(success: false, message: "Decode error") as! RESPONSE)
-                }
-                return
+            guard let result = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
+                return self.throwError(.ResponseSerialization)
             }
             
-            onComplete(res)
+            onComplete(result)
 
         }.resume()
 
@@ -195,10 +208,17 @@ enum Method: String {
     case DELETE
 }
 
+protocol ErrorHandler: AnyObject {
+    func handleError(_ error: ClientError)
+}
+
 enum ClientError: Error {
     case InvalidPath
     case RequestSerialization
     case ResponseSerialization
+    case NoHttpResponse
+    case Unauthorized
+    case ServerError
     case EmptyResponse
 }
 

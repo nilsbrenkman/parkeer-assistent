@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import LocalAuthentication
 
-class Login: ObservableObject {
+class Login: ObservableObject, ErrorHandler {
     
     @Published var isLoading: Bool = true
     @Published var isBackground: Bool = false
@@ -24,6 +24,26 @@ class Login: ObservableObject {
 
     init() throws {
         loginClient = try ClientManager.instance.get(LoginClient.self)
+        ApiClient.client.registerErrorHandler(self)
+    }
+    
+    func handleError(_ error: ClientError) {
+        if error == .Unauthorized {
+            if self.isLoggedIn {
+                MessageManager.instance.addMessage(Lang.Error.unauthorized.localized(), type: Type.WARN)
+            }
+                
+            DispatchQueue.main.async {
+                self.isLoggedIn = false
+                self.isLoading = false
+                self.isBackground = false
+            }
+            return
+        }
+        if error == .NoHttpResponse {
+            MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
+        }
+        MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
     }
     
     func loggedIn() {

@@ -23,40 +23,21 @@ class ParkingClientApi: ParkingClient {
     }
 
     func get(onComplete: @escaping (ParkingResponse) -> Void) {
-        do {
-            try ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-        }
+        ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET, onComplete: onComplete)
     }
     
     func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
         let startTime = Util.dateTimeFormatter.string(from: start)
         let body = AddParkingRequest(visitor: visitor, timeMinutes: timeMinutes, start: startTime, regimeTimeEnd: regimeTimeEnd)
-        do {
-            try ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body, onComplete: onComplete)
     }
     
     func stop(parkingId: Int, onComplete: @escaping (Response) -> Void) {
-        do {
-            try ApiClient.client.call(Response.self, path: "parking/\(parkingId)", method: Method.DELETE, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(Response(success: false, message: "Client error"))
-        }
+        ApiClient.client.call(Response.self, path: "parking/\(parkingId)", method: Method.DELETE, onComplete: onComplete)
     }
     
     func history(onComplete: @escaping (HistoryResponse) -> Void) {
-        do {
-            try ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET, onComplete: onComplete)
-        } catch {
-            print("Error: \(error)")
-            onComplete(HistoryResponse(history: []))
-        }
+        ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET, onComplete: onComplete)
     }
 
 }
@@ -76,7 +57,7 @@ class ParkingClientMock: ParkingClient {
     }
 
     func get(onComplete: @escaping (ParkingResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
         
         onComplete(ParkingResponse(
             active: Array(parking.values.filter({ parking in
@@ -97,7 +78,7 @@ class ParkingClientMock: ParkingClient {
     }
     
     func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
         
         if visitor.name == "Invalid visitor" {
             onComplete(Response(success: false, message: "Visitor is not allowed to park"))
@@ -124,7 +105,7 @@ class ParkingClientMock: ParkingClient {
     }
     
     func stop(parkingId: Int, onComplete: @escaping (Response) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
 
         if let p = parking[parkingId] {
             guard let startDate = try? Util.parseDate(p.startTime) else {
@@ -150,7 +131,7 @@ class ParkingClientMock: ParkingClient {
     }
     
     func history(onComplete: @escaping (HistoryResponse) -> Void) {
-        MockClient.mockDelay()
+        guard MockClient.client.authorized() else { return }
 
         onComplete(HistoryResponse(history: Array(parking.values.filter({
             guard let endDate = try? Util.parseDate($0.endTime) else {
