@@ -1,5 +1,6 @@
 package nl.parkeerassistent.android
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ContentResolver
 import android.content.Context
@@ -12,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
+import nl.parkeerassistent.android.ui.AppActivity
 import kotlin.random.Random
 
 class NotificationReceiver : BroadcastReceiver() {
@@ -19,6 +21,8 @@ class NotificationReceiver : BroadcastReceiver() {
     companion object {
         const val NOTIFICATION_TITTLE_KEY = "title"
         const val NOTIFICATION_CONTENT_KEY = "content"
+
+        val NOTIFICATION_SOUND = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + BuildConfig.APPLICATION_ID + "/raw/car_horn")
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -31,16 +35,15 @@ class NotificationReceiver : BroadcastReceiver() {
         with(context) {
             Log.i("NotificationReceiver", "Showing notification: $content")
 
-            val sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.applicationContext.packageName + "/raw/car_horn")
-
             val builder = NotificationCompat.Builder(this, BuildConfig.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(IconCompat.createWithResource(context, R.drawable.logo_notification))
                 .setLargeIcon(getLargeIcon(context))
-                .setSound(sound)
+                .setSound(NOTIFICATION_SOUND)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setContentIntent(getContentIntent(context))
 
             with(NotificationManagerCompat.from(this)) {
                 notify(Random.Default.nextInt(), builder.build())
@@ -55,6 +58,12 @@ class NotificationReceiver : BroadcastReceiver() {
         drawable.setBounds(0,0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
+    }
+
+    private fun getContentIntent(context: Context): PendingIntent {
+        val notificationIntent = Intent(context, AppActivity::class.java)
+        val contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        return contentIntent
     }
 
 }

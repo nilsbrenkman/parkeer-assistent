@@ -31,8 +31,8 @@ class NotificationUtil @Inject constructor() {
             intent.putExtra(NotificationReceiver.NOTIFICATION_TITTLE_KEY, title)
             intent.putExtra(NotificationReceiver.NOTIFICATION_CONTENT_KEY, content)
 
-            val pending = PendingIntent.getBroadcast(context, p.id * n.idMultiplier, intent, PendingIntent.FLAG_IMMUTABLE)
-            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, n.dateProperty(p).time, pending)
+            val notification = PendingIntent.getBroadcast(context, p.id * n.idMultiplier, intent, PendingIntent.FLAG_IMMUTABLE)
+            manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, n.dateProperty(p).time, notification)
         }
 
         parking.active.forEach { p ->
