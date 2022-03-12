@@ -24,6 +24,10 @@ fun HTML.application() {
             name = "viewport"
             content = "width=375, initial-scale=1"
         }
+        meta {
+            name = "apple-itunes-app"
+            content = "app-id=1581183813"
+        }
     }
     body {
         div {

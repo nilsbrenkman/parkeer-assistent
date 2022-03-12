@@ -9,6 +9,7 @@ import io.ktor.features.gzip
 import io.ktor.html.respondHtml
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.file
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
 import io.ktor.request.receive
@@ -284,6 +285,9 @@ fun main() {
                 get("/style.css") {
                     call.respondText(Style.toString(), ContentType.Text.CSS)
                 }
+            }
+            static("/.well-known") {
+                file("apple-app-site-association", File(System.getenv("APPLE_APP_SITE_ASSOCIATION")))
             }
         }
     }.start(wait = true)
