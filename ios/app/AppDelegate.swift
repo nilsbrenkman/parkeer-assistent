@@ -13,6 +13,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = self
         return true
     }
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        return true
+    }
     func applicationDidFinishLaunching(_ application: UIApplication) {
         if Util.isUITest() {
             UIView.setAnimationsEnabled(false)

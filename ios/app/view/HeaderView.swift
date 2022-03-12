@@ -116,6 +116,6 @@ struct HeaderView_Previews: PreviewProvider {
     @State static var showHistory = false
     static var previews: some View {
         HeaderView(showInfo: $showInfo, showHistory: $showHistory)
-            .setupPreview(loggedIn: true)
+//            .setupPreview(loggedIn: true)
     }
 }
