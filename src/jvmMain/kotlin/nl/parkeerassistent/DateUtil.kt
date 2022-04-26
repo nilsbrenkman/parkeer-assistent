@@ -1,7 +1,8 @@
 package nl.parkeerassistent
 
 import java.text.SimpleDateFormat
-import java.util.*
+import java.time.format.DateTimeFormatter
+import java.util.TimeZone
 
 object DateUtil {
 
@@ -9,5 +10,7 @@ object DateUtil {
 
     val dateTime = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX")
     val date = SimpleDateFormat("yyyy-MM-dd")
+
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX").withZone(amsterdam.toZoneId())
 
 }

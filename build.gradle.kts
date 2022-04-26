@@ -113,7 +113,8 @@ tasks.named<JavaExec>("run") {
         "FORCE_SSL" to "false",
         "DEBUG_LOG" to "false",
         "VERSION" to "1.1.5",
-        "BONSAI_URL" to "https://d2ch8szwsp:d15i2t8w5a@privet-924117750.eu-west-1.bonsaisearch.net:443",
-        "ELASTIC_SEARCH_INDEX" to "parkeer-assistent-dev"
+        "BONSAI_URL" to "...",
+        "ELASTIC_SEARCH_INDEX" to "parkeer-assistent-dev",
+        "APPLE_APP_SITE_ASSOCIATION" to "apple-app-site-association.json"
     )
 }

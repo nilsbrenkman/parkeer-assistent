@@ -16,3 +16,11 @@ heroku container:login
 heroku container:push web -a parkeer-assistent-staging
 heroku container:release web -a parkeer-assistent-staging
 ```
+
+### Setup Elasticsearch
+
+Provision an Elasticsearch cluster and create an index
+
+```
+curl -X PUT <elasticsearch-url>/parkeer-assistent-staging
+```
