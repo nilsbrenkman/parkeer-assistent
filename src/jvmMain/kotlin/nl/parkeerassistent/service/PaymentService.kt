@@ -1,16 +1,27 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.application.ApplicationCall
+import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.post
+import io.ktor.http.ContentType
+import io.ktor.http.Parameters
+import io.ktor.http.contentType
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.monitoring.Monitoring
+import nl.parkeerassistent.DateUtil
 import nl.parkeerassistent.Session
+import nl.parkeerassistent.external.GetTransactionsHistoryByCustomer
 import nl.parkeerassistent.external.RequestPaymentRequest
 import nl.parkeerassistent.external.RequestPaymentResponse
-import nl.parkeerassistent.model.*
+import nl.parkeerassistent.model.IdealResponse
+import nl.parkeerassistent.model.Issuer
+import nl.parkeerassistent.model.PaymentRequest
+import nl.parkeerassistent.model.PaymentResponse
+import nl.parkeerassistent.model.StatusResponse
+import nl.parkeerassistent.monitoring.Monitoring
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 object PaymentService {
 
@@ -33,7 +44,7 @@ object PaymentService {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
-        val ideal = session.send(Jsoup.connect(ApiHelper.baseUrl + "Customer/Payment/IdealPayment").method(Connection.Method.GET))
+        val ideal = session.send(Jsoup.connect(ApiHelper.baseUrl + "Customer/OmniKassaPayment/OmniKassaPayment").method(Connection.Method.GET))
 
         if ("Geldsaldo opwaarderen - Parkeerapplicatie" != ideal.title()) {
             throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to load ideal page")
@@ -49,16 +60,8 @@ object PaymentService {
             amounts.add(amount)
         }
 
-        val issuerSelect = ideal.select("select[name=\"IssuerId\"]")
-        if (issuerSelect.size != 1) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find issuer options")
-        }
         val issuers = ArrayList<Issuer>()
-        for (option in issuerSelect[0].select("option")) {
-            val issuerId = option.attr("value")
-            val name = option.text()
-            issuers.add(Issuer(issuerId, name))
-        }
+        issuers.addAll(IdealBanks.values().map { i -> Issuer(i.name, i.displayName) })
 
         Monitoring.info(call, Method.Ideal, "SUCCESS")
         return IdealResponse(amounts, issuers)
@@ -68,47 +71,82 @@ object PaymentService {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
-        val requestBody = RequestPaymentRequest(request.amount, request.issuerId)
+        val requestBody = RequestPaymentRequest(request.amount)
 
-        val result = ApiHelper.client.post<RequestPaymentResponse>(ApiHelper.getUrl("Customer/Payment/RequestPayment")) {
-            ApiHelper.addHeaders(this, session, referer = "Customer/Payment/IdealPayment")
+        val result = ApiHelper.client.post<RequestPaymentResponse>(ApiHelper.getUrl("Customer/OmniKassaPayment/RequestPayment")) {
+            ApiHelper.addHeaders(this, session, referer = "Customer/OmniKassaPayment/OmniKassaPayment")
             contentType(ContentType.Application.Json)
             body = requestBody
         }
+
+        val rabo = Jsoup.connect(result.issuerAuthenticationUrl).method(Connection.Method.GET).execute().parse()
+        val issuer = rabo.select("a#issuer-" + request.issuerId)
+        if (issuer.size != 1) {
+            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find issuer")
+        }
+        val link = issuer[0].attr("href")
+
+        val order = rabo.select("div.ordernumber")
+        if (order.size != 1) {
+            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find order")
+        }
+        val orderId = order[0].text().replace(Regex("\\D"), "")
+
         Monitoring.info(call, Method.Payment, "SUCCESS")
-        return PaymentResponse(result.issuerAuthenticationUrl, result.transactionId)
+        return PaymentResponse(link, orderId)
     }
 
-    fun status(call: ApplicationCall): StatusResponse {
+    suspend fun status(call: ApplicationCall): StatusResponse {
         val sessionCookie = call.request.cookies["session"]!!
         val session = Session(sessionCookie)
 
+        val customerId = call.request.cookies["customerid"]!!
         val transactionId = call.parameters["transactionId"]!!
 
-        val status = session.send(Jsoup.connect(ApiHelper.baseUrl + "Customer/Payment/PaymentStatus?trxid=" + transactionId).method(Connection.Method.GET))
-
-        if ("Betalingsstatus - Parkeerapplicatie" != status.title()) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to load status page")
+        val result = ApiHelper.client.post<GetTransactionsHistoryByCustomer>(ApiHelper.getUrl("Customer/Transaction/GetTransactionsHistoryByCustomer")) {
+            ApiHelper.addHeaders(this, session)
+            body = FormDataContent(formData = Parameters.build {
+                append("cstId", customerId)
+                append("start", "0")
+                append("length", "9999")
+                append("startDate", DateUtil.dateFormatter.format(Instant.now().minus(24, ChronoUnit.HOURS)))
+                append("endDate", DateUtil.dateFormatter.format(Instant.now()))
+            })
         }
 
-        var result = "unknown"
-        val transactionIdInfo = status.select("span.transactionIdInfo")
-
-        outer@ for (info in transactionIdInfo) {
-            for (sibling in info.parent().children()) {
-                if (sibling.text().contains("Opwaarderen van het geldsaldo is nog bezig")) {
-                    result = "pending"
-                    break@outer
+        for (transaction in result.data) {
+            if (transactionId == transaction.TransactionId) {
+                if (transaction.Status == "success") {
+                    Monitoring.info(call, Method.Status, "SUCCESS")
+                    return StatusResponse("success")
                 }
-                if (sibling.text().contains("Opwaarderen van het geldsaldo is gelukt")) {
-                    result = "success"
-                    break@outer
+                if (transaction.Status == "cancelled") {
+                    Monitoring.info(call, Method.Status, "CANCELLED")
+                    return StatusResponse("error")
                 }
+                if (transaction.Status == "open") {
+                    Monitoring.info(call, Method.Status, "PENDING")
+                    return StatusResponse("pending")
+                }
+                Monitoring.info(call, Method.Status, "UNKNOWN")
+                return StatusResponse("unknown")
             }
         }
-
-        Monitoring.info(call, Method.Status, "SUCCESS")
-        return StatusResponse(result)
+        Monitoring.info(call, Method.Status, "NOT_FOUND")
+        return StatusResponse("unknown")
     }
+}
 
+enum class IdealBanks(val displayName: String) {
+    ABNANL2A("ABN AMRO"),
+    ASNBNL21("ASN Bank"),
+    BUNQNL2A("bunq"),
+    HANDNL2A("Handelsbanken"),
+    INGBNL2A("ING"),
+    KNABNL2H("Knab"),
+    RABONL2U("Rabobank"),
+    RBRBNL21("RegioBank"),
+    SNSBNL2A("SNS"),
+    TRIONL2U("Triodos Bank"),
+    FVLBNL22("Van Lanschot"),
 }

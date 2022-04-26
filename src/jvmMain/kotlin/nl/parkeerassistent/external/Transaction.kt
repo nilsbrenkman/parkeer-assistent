@@ -3,6 +3,7 @@ package nl.parkeerassistent.external
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RequestPaymentResponse(
-    val issuerAuthenticationUrl: String
+data class Transaction(
+    val TransactionId: String,
+    val Status: String
 )
