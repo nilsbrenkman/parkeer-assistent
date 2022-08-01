@@ -24,3 +24,18 @@ Provision an Elasticsearch cluster and create an index
 ```
 curl -X PUT <elasticsearch-url>/parkeer-assistent-staging
 ```
+
+Clean up old data
+
+```POST /parkeer-assistent/_delete_by_query```
+```json
+{
+  "query": {
+    "range": {
+      "date": {
+        "lte": "2022-07-01T00:00:00"
+      }
+    }
+  }
+}
+```

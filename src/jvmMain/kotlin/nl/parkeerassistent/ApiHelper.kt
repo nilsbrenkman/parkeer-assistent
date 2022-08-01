@@ -1,11 +1,16 @@
 package nl.parkeerassistent
 
-import io.ktor.client.*
-import io.ktor.client.engine.java.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.request.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.java.Java
+import io.ktor.client.features.HttpResponseValidator
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.LogLevel
+import io.ktor.client.features.logging.Logging
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.header
 import kotlinx.serialization.json.Json
+import nl.parkeerassistent.service.ServiceException
 
 object ApiHelper {
 
@@ -25,6 +30,16 @@ object ApiHelper {
         }
         install(JsonFeature) {
             serializer = KotlinxSerializer(jsonConfig)
+        }
+        install(Logging) {
+            level = LogLevel.INFO
+        }
+        HttpResponseValidator {
+            validateResponse { response ->
+                if (response.status.value / 100 != 2) {
+                    throw ServiceException(ServiceException.Type.API, "Request failed [status=${response.status.value}]")
+                }
+            }
         }
     }
 
