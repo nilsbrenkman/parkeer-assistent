@@ -8,18 +8,16 @@ import io.ktor.http.ContentType
 import io.ktor.http.Cookie
 import io.ktor.http.Parameters
 import io.ktor.http.contentType
-import io.ktor.http.formUrlEncode
 import nl.parkeerassistent.ApiHelper
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.monitoring.Monitoring
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.external.CalculateBalanceRequest
 import nl.parkeerassistent.external.CalculateBalanceResponse
-import nl.parkeerassistent.external.GetBalanceInfo
 import nl.parkeerassistent.external.GetPermitsByCustomer
 import nl.parkeerassistent.model.BalanceResponse
 import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
+import nl.parkeerassistent.monitoring.Monitoring
 import java.util.Calendar
 import java.util.Calendar.HOUR
 import java.util.Calendar.MINUTE
@@ -52,7 +50,7 @@ object UserService {
         val permitIdCookie = Cookie("permitid", permitId.toString())
         call.response.cookies.append(permitIdCookie)
 
-        val info = getInfo(session, customerId, permitId.toString())
+        val info = getInfo(session, permitId.toString())
 
         Monitoring.info(call, Method.Get, "SUCCESS")
         return UserResponse(balance, info.hourRate, info.regimeStartTime, info.regimeEndTime)
@@ -120,14 +118,28 @@ object UserService {
         return result.data[0].Id
     }
 
-    suspend fun getInfo(session: Session, customerId: String, permitId: String): GetBalanceInfo {
-        val params = Parameters.build {
-            append("customerId", customerId)
-            append("permitId", permitId)
-        }.formUrlEncode()
-        return ApiHelper.client.get(ApiHelper.getUrl("Customer/Dashboard/GetBalanceInfo?$params")) {
+    suspend fun getInfo(session: Session, permitId: String): CalculateBalanceResponse {
+        val calendar = Calendar.getInstance()
+        calendar.timeZone = DateUtil.amsterdam
+        calendar.set(HOUR, 0)
+        calendar.set(MINUTE, 1)
+        val start = calendar.time
+        calendar.set(HOUR, 23)
+        calendar.set(MINUTE, 59)
+        val end = calendar.time
+
+        val requestBody = CalculateBalanceRequest(
+            permitId.toInt(),
+            DateUtil.dateTime.format(start),
+            DateUtil.dateTime.format(end)
+        )
+
+        return ApiHelper.client.post(ApiHelper.getUrl("Customer/Dashboard/CalculateBalance")) {
             ApiHelper.addHeaders(this, session)
+            contentType(ContentType.Application.Json)
+            body = requestBody
         }
+
     }
 
 }
