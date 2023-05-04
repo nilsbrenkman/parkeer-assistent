@@ -2,6 +2,7 @@ package nl.parkeerassistent
 
 import org.jsoup.Connection
 import org.jsoup.nodes.Document
+import kotlin.collections.set
 
 class Session(cookieString: String?) {
 

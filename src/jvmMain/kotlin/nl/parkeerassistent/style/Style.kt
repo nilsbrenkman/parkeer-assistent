@@ -1,8 +1,49 @@
 package nl.parkeerassistent.style
 
-import kotlinx.css.*
+import kotlinx.css.BorderStyle
+import kotlinx.css.CSSBuilder
+import kotlinx.css.Color
+import kotlinx.css.Display
+import kotlinx.css.FontWeight
+import kotlinx.css.LinearDimension
+import kotlinx.css.Outline
+import kotlinx.css.Position
+import kotlinx.css.TextAlign
+import kotlinx.css.backgroundColor
+import kotlinx.css.body
+import kotlinx.css.borderColor
+import kotlinx.css.borderLeftWidth
+import kotlinx.css.borderRadius
+import kotlinx.css.borderRightWidth
+import kotlinx.css.color
+import kotlinx.css.display
+import kotlinx.css.fontFamily
+import kotlinx.css.fontSize
+import kotlinx.css.fontWeight
+import kotlinx.css.h3
+import kotlinx.css.h4
+import kotlinx.css.height
+import kotlinx.css.input
+import kotlinx.css.label
+import kotlinx.css.left
+import kotlinx.css.margin
+import kotlinx.css.marginLeft
+import kotlinx.css.marginRight
+import kotlinx.css.marginTop
+import kotlinx.css.maxWidth
+import kotlinx.css.outline
+import kotlinx.css.padding
+import kotlinx.css.pct
+import kotlinx.css.position
 import kotlinx.css.properties.border
 import kotlinx.css.properties.boxShadow
+import kotlinx.css.px
+import kotlinx.css.rem
+import kotlinx.css.textAlign
+import kotlinx.css.top
+import kotlinx.css.vh
+import kotlinx.css.width
+import kotlinx.css.zIndex
 
 var Style = CSSBuilder().apply {
 

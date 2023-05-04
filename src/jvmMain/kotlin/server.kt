@@ -31,6 +31,7 @@ import nl.parkeerassistent.html.open
 import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.AddVisitorRequest
 import nl.parkeerassistent.model.BalanceResponse
+import nl.parkeerassistent.model.CompleteRequest
 import nl.parkeerassistent.model.HistoryResponse
 import nl.parkeerassistent.model.IdealResponse
 import nl.parkeerassistent.model.LoginRequest
@@ -65,9 +66,9 @@ fun main() {
     val trustStore = System.getenv("TRUST_STORE")
     val trustStoreFile = File(trustStore)
     if (trustStoreFile.exists()) {
-        log.info("Using trust store: ${trustStoreFile.absolutePath}")
-        System.setProperty("javax.net.ssl.trustStore", trustStoreFile.absolutePath)
-        System.setProperty("javax.net.ssl.trustStorePassword", "parkeerassistent")
+//        log.info("Using trust store: ${trustStoreFile.absolutePath}")
+//        System.setProperty("javax.net.ssl.trustStore", trustStoreFile.absolutePath)
+//        System.setProperty("javax.net.ssl.trustStorePassword", "parkeerassistent")
     } else {
         log.info("Trust store not found: ${trustStoreFile.absolutePath}")
     }
@@ -266,6 +267,18 @@ fun main() {
                             request,
                             PaymentResponse("", ""),
                             PaymentService::payment
+                        )
+                    )
+                }
+                post("/complete") {
+                    val request = call.receive<CompleteRequest>()
+                    call.respond(
+                        ServiceUtil.execute(
+                            PaymentService.Method.Complete,
+                            call,
+                            request,
+                            Response(false),
+                            PaymentService::complete
                         )
                     )
                 }

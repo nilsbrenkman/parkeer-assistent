@@ -8,4 +8,4 @@ data class UserResponse(
     val hourRate: Double,
     val regimeTimeStart: String,
     val regimeTimeEnd: String
-) {}
+)

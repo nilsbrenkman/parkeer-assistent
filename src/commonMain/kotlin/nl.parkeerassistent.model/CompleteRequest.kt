@@ -3,4 +3,7 @@ package nl.parkeerassistent.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VisitorResponse(val visitors: List<Visitor>)
+data class CompleteRequest(
+    val transactionId: String,
+    val data: String
+)

@@ -4,7 +4,19 @@ import kotlinx.css.CSSBuilder
 import kotlinx.css.body
 import kotlinx.css.padding
 import kotlinx.css.px
-import kotlinx.html.*
+import kotlinx.html.ButtonType
+import kotlinx.html.FormMethod
+import kotlinx.html.HTML
+import kotlinx.html.body
+import kotlinx.html.button
+import kotlinx.html.classes
+import kotlinx.html.div
+import kotlinx.html.form
+import kotlinx.html.head
+import kotlinx.html.link
+import kotlinx.html.meta
+import kotlinx.html.style
+import kotlinx.html.title
 
 private var Style = CSSBuilder().apply {
     body {

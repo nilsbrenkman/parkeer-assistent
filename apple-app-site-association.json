@@ -7,6 +7,10 @@
           {
             "/": "/",
             "comment": "Matches the main app url"
+          },
+          {
+            "/payment": "/payment",
+            "comment": "Completes a balance top up"
           }
         ]
       }
