@@ -8,13 +8,20 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.features.logging.LogLevel
 import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import nl.parkeerassistent.external.Order
 import nl.parkeerassistent.service.ServiceException
 
 object ApiHelper {
 
-    val baseUrl = "https://aanmeldenparkeren.amsterdam.nl/"
+    val mainBaseUrl = "https://aanmeldenparkeren.amsterdam.nl/"
+    val cloudBaseUrl = "https://evs-ssp.mendixcloud.com/rest/sspapi/"
 
     val jsonConfig: Json = Json {
         isLenient = false
@@ -43,17 +50,38 @@ object ApiHelper {
         }
     }
 
-    fun getUrl(url: String):String {
-        return baseUrl + url
+    fun getMainUrl(url: String):String {
+        return mainBaseUrl + url
     }
 
-    fun addHeaders(httpRequestBuilder: HttpRequestBuilder,
-                   session: Session,
-                   referer: String = "Customer/Dashboard") {
-        httpRequestBuilder.header("Cookie", session.header())
-        httpRequestBuilder.header("Host", "aanmeldenparkeren.amsterdam.nl")
-        httpRequestBuilder.header("Referer", baseUrl + referer)
-        httpRequestBuilder.header("Cache-Control", "no-cache")
+    fun getCloudUrl(url: String):String {
+        return cloudBaseUrl + url
     }
 
+    fun addCloudHeaders(httpRequestBuilder: HttpRequestBuilder, session: CallSession) {
+        val token = ensureData(session.user?.token, "token")
+        httpRequestBuilder.header("Authorization", token)
+        httpRequestBuilder.contentType(ContentType.Application.Json)
+    }
+
+    suspend fun waitForOrder(session: CallSession, orderId: Long): Boolean {
+        repeat(5) {
+            withContext(Dispatchers.IO) {
+                Thread.sleep(200L * (it + 1))
+            }
+            val order = client.get<Order>(getCloudUrl("v1/orders/$orderId")) {
+                addCloudHeaders(this, session)
+            }
+            if (order.orderStatus == "Completed") {
+                Log.debug("Order confirmed in ${it + 1} tries")
+                return true
+            }
+        }
+        return false
+    }
+
+}
+
+inline fun <reified T> ensureData(data: T?, name: String): T {
+    return data ?: throw ServiceException(ServiceException.Type.MISSING_DATA, "No $name")
 }

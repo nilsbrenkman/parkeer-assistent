@@ -4,9 +4,10 @@ import io.ktor.application.ApplicationCall
 import io.ktor.client.features.RedirectResponseException
 import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
-import nl.parkeerassistent.monitoring.Monitoring
+import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.external.BooleanResponse
 import nl.parkeerassistent.model.Response
+import nl.parkeerassistent.monitoring.Monitoring
 import org.apache.log4j.Logger
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -19,11 +20,14 @@ object ServiceUtil {
         method: Monitoring.Method,
         call: ApplicationCall,
         errorResponse: RESPONSE,
-        function: suspend (call: ApplicationCall) -> RESPONSE
+        function: suspend (session: CallSession) -> RESPONSE
     ): RESPONSE {
         try {
+            val session = CallSession(call)
             ensureWebUserId(call)
-            return function.invoke(call)
+            val response = function.invoke(session)
+            session.updateSessionCookie()
+            return response
         } catch (e: RedirectResponseException) {
             Monitoring.warn(call, method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
@@ -40,11 +44,14 @@ object ServiceUtil {
         call: ApplicationCall,
         request: REQUEST,
         errorResponse: RESPONSE,
-        function: suspend (call: ApplicationCall, request: REQUEST) -> RESPONSE
+        function: suspend (session: CallSession, request: REQUEST) -> RESPONSE
     ): RESPONSE {
         try {
+            val session = CallSession(call)
             ensureWebUserId(call)
-            return function.invoke(call, request)
+            val response = function.invoke(session, request)
+            session.updateSessionCookie()
+            return response
         } catch (e: RedirectResponseException) {
             Monitoring.warn(call, method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
@@ -67,6 +74,15 @@ object ServiceUtil {
             Monitoring.warn(call, method, "FAILED")
         }
         return Response(response.successful)
+    }
+
+    fun convertResponse(call: ApplicationCall, method: Monitoring.Method, response: Boolean): Response {
+        if (response) {
+            Monitoring.info(call, method, "SUCCESS")
+        } else {
+            Monitoring.warn(call, method, "FAILED")
+        }
+        return Response(response)
     }
 
     fun ensureWebUserId(call: ApplicationCall) {

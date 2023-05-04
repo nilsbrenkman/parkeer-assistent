@@ -1,17 +1,19 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.ApplicationCall
-import io.ktor.client.features.RedirectResponseException
+import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.get
-import io.ktor.http.Cookie
+import io.ktor.client.request.post
+import io.ktor.http.Parameters
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.monitoring.Monitoring
-import nl.parkeerassistent.Session
+import nl.parkeerassistent.CallSession
+import nl.parkeerassistent.Log
+import nl.parkeerassistent.Permit
+import nl.parkeerassistent.User
+import nl.parkeerassistent.external.Credentials
+import nl.parkeerassistent.external.Csrf
 import nl.parkeerassistent.model.LoginRequest
 import nl.parkeerassistent.model.Response
-import org.jsoup.Connection
-import org.jsoup.Jsoup
-import org.jsoup.nodes.FormElement
+import nl.parkeerassistent.monitoring.Monitoring
 
 object LoginService {
 
@@ -28,91 +30,76 @@ object LoginService {
         }
     }
 
-    suspend fun isLoggedIn(call: ApplicationCall): Response {
-        val sessionCookie = call.request.cookies["session"]
-        if (sessionCookie == null) {
-            Monitoring.info(call, Method.LoggedIn, "NO_SESSION")
-            return Response(false, "Geen sessie cookie")
-        }
-        val session = Session(sessionCookie)
+    suspend fun isLoggedIn(session: CallSession): Response {
 
-        try {
-            ApiHelper.client.get<String>(ApiHelper.getUrl("General/GetExpirationTimeInSeconds")) {
-                ApiHelper.addHeaders(this, session)
+        val result = session.client.get<nl.parkeerassistent.external.Session>(ApiHelper.getMainUrl("api/auth/session")) {}
+
+        result.user?.let {
+            Log.debug("token: ${it.access_token}")
+            session.user = User(it.access_token)
+            Log.debug("reportcode: ${it.reportcode}")
+            if (session.permit == null) {
+                session.permit = Permit(it.reportcode, null)
             }
-            Monitoring.info(call, Method.LoggedIn, "LOGGED_IN")
+            Monitoring.info(session.call, Method.LoggedIn, "LOGGED_IN")
             return Response(true, "Ingelogd")
-        } catch (e: RedirectResponseException) {
-            Monitoring.info(call, Method.LoggedIn, "NOT_LOGGED_IN")
-            return Response(false, "Niet ingelogd")
         }
+
+        Monitoring.info(session.call, Method.LoggedIn, "NOT_LOGGED_IN")
+        return Response(false, "Niet ingelogd")
+
     }
 
-    fun login(call: ApplicationCall, request: LoginRequest): Response {
+    suspend fun login(session: CallSession, request: LoginRequest): Response {
 
-        val session = Session(call.request.cookies["session"])
+        session.client.get<nl.parkeerassistent.external.Session>(ApiHelper.getMainUrl("api/auth/session")) {}
 
-        val login = session.send(Jsoup.connect(ApiHelper.baseUrl).method(Connection.Method.GET))
+        val csrfToken = getCsrfToken(session)
 
-        if ("Inloggen - Parkeerapplicatie" != login.title()) {
-            Monitoring.warn(call, Method.Login, "UNABLE_TO_LOAD_PAGE")
-            return Response(false, "Kan login pagina niet laden")
+        val result = session.client.post<Credentials>(ApiHelper.getMainUrl("api/auth/callback/credentials")) {
+            body = FormDataContent(formData = Parameters.build {
+                append("reportCode", request.username)
+                append("pin", request.password)
+                append("csrfToken", csrfToken)
+                append("json", "true")
+                append("callbackUrl", "https://aanmeldenparkeren.amsterdam.nl/login")
+            })
         }
 
-        val connection = login.select(".account-wall").forms()[0].submit()
-        connection.data("Email").value(request.username)
-        connection.data("Password").value(request.password)
-        val home = session.send(connection)
+        Log.debug("credentials: ${result}")
 
-        if ("Klant startpagina - Parkeerapplicatie" != home.title()) {
-            Monitoring.info(call, Method.Login, "LOGIN_FAILED")
-            return Response(false, "Inloggen mislukt")
+        val loggedIn = isLoggedIn(session)
+
+        Monitoring.info(session.call, Method.Login, if (loggedIn.success) "LOGIN_SUCCESS" else "LOGIN_FAILED")
+        return loggedIn
+    }
+
+    suspend fun logout(session: CallSession): Response {
+        val csrfToken = getCsrfToken(session)
+
+        val result = session.client.post<Credentials>(ApiHelper.getMainUrl("api/auth/signout")) {
+            body = FormDataContent(formData = Parameters.build {
+                append("csrfToken", csrfToken)
+                append("json", "true")
+                append("callbackUrl", "https://aanmeldenparkeren.amsterdam.nl/login")
+            })
         }
 
-        val sessionCookie = Cookie("session", session.header())
-        call.response.cookies.append(sessionCookie)
-
-        val customerId = findCustomerId(home.body().html())
-        if (customerId == null) {
-            Monitoring.warn(call, Method.Login, "CUSTOMER_ID_NOT_FOUND")
-            return Response(false, "Kan klantnummer niet vinden")
+        if (result.url != "https://aanmeldenparkeren.amsterdam.nl/") {
+            Monitoring.info(session.call, Method.Login, "LOGOUT_FAILED")
         }
-        val customerIdCookie = Cookie("customerid", customerId)
-        call.response.cookies.append(customerIdCookie)
 
-        Monitoring.info(call, Method.Login, "LOGIN_SUCCESS")
+        session.cookieStore.clear()
+        session.user = null
+        session.permit = null
+
         return Response(true)
     }
 
-    private val regex = "\\\\\"customerId\\\\\":([0-9]{6})".toRegex()
-
-    fun findCustomerId(html: String): String? {
-        val match = regex.find(html)
-        return match?.groupValues?.get(1)
+    suspend fun getCsrfToken(session: CallSession): String {
+        val result = session.client.get<Csrf>(ApiHelper.getMainUrl("api/auth/csrf")) {}
+        return result.csrfToken
     }
 
-    fun logout(call: ApplicationCall): Response {
-        val session = Session(call.request.cookies["session"])
-
-        val logout = session.send(Jsoup.connect(ApiHelper.baseUrl).method(Connection.Method.GET))
-
-        if ("Klant startpagina - Parkeerapplicatie" != logout.title()) {
-            Monitoring.info(call, Method.Logout, "NOT_LOGGED_IN")
-            return Response(false, "Niet ingelogd")
-        }
-
-        val connection = (logout.select("#logoutForm")[0] as FormElement).submit()
-        val login = session.send(connection)
-
-        if ("Inloggen - Parkeerapplicatie" != login.title()) {
-            Monitoring.warn(call, Method.Logout, "LOGOUT_FAILED")
-            return Response(false, "Uitloggen mislukt")
-        }
-
-        call.response.cookies.append(Cookie("session", session.header()))
-
-        Monitoring.info(call, Method.Logout, "LOGOUT_SUCCESS")
-        return Response(true)
-    }
 
 }

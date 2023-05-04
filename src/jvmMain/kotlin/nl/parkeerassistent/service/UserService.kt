@@ -1,26 +1,20 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.ApplicationCall
-import io.ktor.client.request.forms.FormDataContent
 import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.Cookie
-import io.ktor.http.Parameters
-import io.ktor.http.contentType
+import io.ktor.client.request.parameter
 import nl.parkeerassistent.ApiHelper
+import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.Session
-import nl.parkeerassistent.external.CalculateBalanceRequest
-import nl.parkeerassistent.external.CalculateBalanceResponse
-import nl.parkeerassistent.external.GetPermitsByCustomer
+import nl.parkeerassistent.ensureData
+import nl.parkeerassistent.external.Permit
+import nl.parkeerassistent.external.Permits
 import nl.parkeerassistent.model.BalanceResponse
 import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
 import nl.parkeerassistent.monitoring.Monitoring
+import java.time.Instant
 import java.util.Calendar
-import java.util.Calendar.HOUR
-import java.util.Calendar.MINUTE
+import java.util.Date
 
 object UserService {
 
@@ -39,107 +33,75 @@ object UserService {
         }
     }
 
-    suspend fun get(call: ApplicationCall): UserResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun get(session: CallSession): UserResponse {
 
-        val customerId = call.request.cookies["customerid"]!!
+        val permits = getPermits(session)
 
-        val balance = getBalance(session)
-        val permitId = getPermitId(session, customerId)
-        val permitIdCookie = Cookie("permitid", permitId.toString())
-        call.response.cookies.append(permitIdCookie)
+        if (permits.permits.size != 1) {
+            Monitoring.warn(session.call, Method.Get, "PERMIT_NOT_ONE")
+            throw ServiceException(ServiceException.Type.API, "Response contained wrong number of permits [permits=${permits.permits.size}]")
+        }
+        val permit = permits.permits.first()
 
-        val info = getInfo(session, permitId.toString())
+        if (session.permit?.paymentZoneId == null) {
+            session.permit = nl.parkeerassistent.Permit(permit.reportCode, permit.paymentZones.first().id)
+        }
 
-        Monitoring.info(call, Method.Get, "SUCCESS")
-        return UserResponse(balance, info.hourRate, info.regimeStartTime, info.regimeEndTime)
+        val regime = getRegime(permit, Instant.now())
+
+        Monitoring.info(session.call, Method.Get, "SUCCESS")
+        return UserResponse(formatBalance(permits), permit.parkingRate.value, regime.regimeTimeStart, regime.regimeTimeEnd)
     }
 
-    suspend fun balance(call: ApplicationCall): BalanceResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun balance(session: CallSession): BalanceResponse {
+        val permits = getPermits(session)
 
-        val balance = getBalance(session)
-
-        Monitoring.info(call, Method.Balance, "SUCCESS")
-        return BalanceResponse(balance)
+        Monitoring.info(session.call, Method.Balance, "SUCCESS")
+        return BalanceResponse(formatBalance(permits))
     }
 
-    suspend fun regime(call: ApplicationCall): RegimeResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    private fun formatBalance(permits: Permits) = "%.2f".format(permits.wallet.balance)
 
-        val permitId = call.request.cookies["permitid"]!!
-        val regimeDate = call.parameters["date"]!!
+    suspend fun regime(session: CallSession): RegimeResponse {
+        val regimeDate = ensureData(session.call.parameters["date"], "date")
+
+        val permits = getPermits(session)
+
+        val regime = getRegime(permits.permits.first(), DateUtil.date.parse(regimeDate).toInstant())
+
+        Monitoring.info(session.call, Method.Regime, "SUCCESS")
+        return regime
+    }
+
+    suspend fun getPermits(session: CallSession): Permits {
+        return ApiHelper.client.get(ApiHelper.getCloudUrl("v1/permits")) {
+            ApiHelper.addCloudHeaders(this, session)
+            parameter("status", "Actief")
+        }
+    }
+
+    fun getRegime(permit: Permit, date: Instant): RegimeResponse {
         val calendar = Calendar.getInstance()
-        calendar.time = DateUtil.date.parse(regimeDate)
-        calendar.timeZone = DateUtil.amsterdam
-        calendar.set(HOUR, 0)
-        calendar.set(MINUTE, 1)
-        val start = calendar.time
-        calendar.set(HOUR, 23)
-        calendar.set(MINUTE, 59)
-        val end = calendar.time
-
-        val requestBody = CalculateBalanceRequest(
-            permitId.toInt(),
-            DateUtil.dateTime.format(start),
-            DateUtil.dateTime.format(end)
-        )
-
-        val result = ApiHelper.client.post<CalculateBalanceResponse>(ApiHelper.getUrl("Customer/Dashboard/CalculateBalance")) {
-            ApiHelper.addHeaders(this, session)
-            contentType(ContentType.Application.Json)
-            body = requestBody
-        }
-
-        Monitoring.info(call, Method.Regime, "SUCCESS")
-        return RegimeResponse(result.regimeStartTime, result.regimeEndTime)
+        calendar.time = Date.from(date)
+        val dayOfWeek = DayOfWeek.values().get(calendar.get(Calendar.DAY_OF_WEEK) - 1)
+        val day = permit.paymentZones.first().days.first{ it.dayOfWeek == dayOfWeek.name }
+        val startTime = getTime(calendar, day.startTime)
+        val endTime = getTime(calendar, day.endTime)
+        return RegimeResponse(startTime, endTime)
     }
 
-    suspend fun getBalance(session: Session): String {
-        val result = ApiHelper.client.get<String>(ApiHelper.getUrl("Customer/Dashboard/GetMoneyBalanceForCustomer")) {
-            ApiHelper.addHeaders(this, session)
-        }
-        val dot = result.indexOf(".")
-        return result.substring(0, dot + 3)
+    fun getTime(calendar: Calendar, time: String): String {
+        val hour = time.substring(0, 2).toInt()
+        val minutes = time.substring(3, 5).toInt()
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minutes)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return DateUtil.dateTime.format(calendar.time)
     }
 
-    suspend fun getPermitId(session: Session, customerId: String): Int {
-        val result =
-            ApiHelper.client.post<GetPermitsByCustomer>(ApiHelper.getUrl("Customer/Permit/GetPermitsByCustomer")) {
-                ApiHelper.addHeaders(this, session)
-                body = FormDataContent(formData = Parameters.build {
-                    append("cstId", customerId)
-                    append("length", "100")
-                })
-            }
-        return result.data[0].Id
-    }
-
-    suspend fun getInfo(session: Session, permitId: String): CalculateBalanceResponse {
-        val calendar = Calendar.getInstance()
-        calendar.timeZone = DateUtil.amsterdam
-        calendar.set(HOUR, 0)
-        calendar.set(MINUTE, 1)
-        val start = calendar.time
-        calendar.set(HOUR, 23)
-        calendar.set(MINUTE, 59)
-        val end = calendar.time
-
-        val requestBody = CalculateBalanceRequest(
-            permitId.toInt(),
-            DateUtil.dateTime.format(start),
-            DateUtil.dateTime.format(end)
-        )
-
-        return ApiHelper.client.post(ApiHelper.getUrl("Customer/Dashboard/CalculateBalance")) {
-            ApiHelper.addHeaders(this, session)
-            contentType(ContentType.Application.Json)
-            body = requestBody
-        }
-
+    enum class DayOfWeek {
+        Zondag, Maandag, Dinsdag, Woensdag, Donderdag, Vrijdag, Zaterdag
     }
 
 }

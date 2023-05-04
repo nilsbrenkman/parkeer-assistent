@@ -1,10 +1,24 @@
 package nl.parkeerassistent
 
-import io.ktor.client.request.*
+import io.ktor.client.request.delete
+import io.ktor.client.request.url
 import kotlinext.js.jsObject
 import kotlinx.coroutines.launch
-import kotlinx.css.*
+import kotlinx.css.Display
+import kotlinx.css.Position
+import kotlinx.css.VerticalAlign
+import kotlinx.css.bottom
+import kotlinx.css.display
+import kotlinx.css.fontSize
+import kotlinx.css.height
+import kotlinx.css.lineHeight
+import kotlinx.css.marginRight
+import kotlinx.css.pct
+import kotlinx.css.position
 import kotlinx.css.properties.LineHeight
+import kotlinx.css.px
+import kotlinx.css.right
+import kotlinx.css.verticalAlign
 import nl.parkeerassistent.message.Message
 import nl.parkeerassistent.message.messageBroker
 import nl.parkeerassistent.model.Parking
@@ -66,7 +80,8 @@ val ParkingList = functionalComponent<ParkingListProps> { props ->
     child(Elements.Separator) {}
 
     for (parking in props.parkingList) {
-        val visitor = props.visitorList.find{it.license==parking.license}!!
+        val visitor = props.visitorList.find{it.license==parking.license}
+        val formattedLicense = visitor?.formattedLicense ?: License.format(parking.license)
         child(SwipeOption, props = jsObject<SwipeOptionProps> {
             left = arrayOf({
                 child(Delete, props = jsObject<DeleteProps> {
@@ -94,7 +109,7 @@ val ParkingList = functionalComponent<ParkingListProps> { props ->
                     verticalAlign = VerticalAlign.top
                     +MainStyles.license
                 }
-                +visitor.formattedLicense
+                +formattedLicense
             }
             styledDiv {
                 css {
@@ -112,7 +127,7 @@ val ParkingList = functionalComponent<ParkingListProps> { props ->
                         css {
                             +MainStyles.visitorName
                         }
-                        +visitor.name.orEmpty()
+                        +visitor?.name.orEmpty()
                     }
                     styledSpan {
                         css {

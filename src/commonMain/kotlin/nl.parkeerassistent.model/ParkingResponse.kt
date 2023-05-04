@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 data class ParkingResponse(
     val active: List<Parking>,
     val scheduled: List<Parking>
-) {}
+)

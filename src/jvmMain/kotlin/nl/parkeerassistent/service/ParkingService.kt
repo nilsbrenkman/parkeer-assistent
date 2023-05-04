@@ -1,25 +1,28 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.ApplicationCall
-import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.Parameters
-import io.ktor.http.contentType
 import nl.parkeerassistent.ApiHelper
+import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.monitoring.Monitoring
-import nl.parkeerassistent.Session
+import nl.parkeerassistent.Log
+import nl.parkeerassistent.ensureData
+import nl.parkeerassistent.external.AddParking
 import nl.parkeerassistent.external.AddParkingSession
-import nl.parkeerassistent.external.BooleanResponse
-import nl.parkeerassistent.external.GetParkingSessions
+import nl.parkeerassistent.external.ParkingOrder
+import nl.parkeerassistent.external.ParkingSession
+import nl.parkeerassistent.external.ParkingSessions
+import nl.parkeerassistent.external.StopParking
 import nl.parkeerassistent.external.StopParkingSession
 import nl.parkeerassistent.model.AddParkingRequest
-import nl.parkeerassistent.model.History
 import nl.parkeerassistent.model.HistoryResponse
 import nl.parkeerassistent.model.Parking
 import nl.parkeerassistent.model.ParkingResponse
 import nl.parkeerassistent.model.Response
+import nl.parkeerassistent.monitoring.Monitoring
+import java.time.Instant
+import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 
@@ -39,37 +42,41 @@ object ParkingService {
         }
     }
 
-    suspend fun get(call: ApplicationCall): ParkingResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun get(session: CallSession): ParkingResponse {
 
-        val customerId = call.request.cookies["customerid"]!!
+        val active = getParkingSessions(session, ParkingSessionType.Active)
+        val scheduled = getParkingSessions(session, ParkingSessionType.Scheduled)
 
-        val active = getParkingSessions(session, customerId, "Customer/Dashboard/GetActiveParkingSessions")
-        val scheduled = getParkingSessions(session, customerId, "Customer/Dashboard/GetReservedParkingSessions")
-
-        Monitoring.info(call, Method.Get, "SUCCESS")
+        Monitoring.info(session.call, Method.Get, "SUCCESS")
         return ParkingResponse(active, scheduled)
     }
 
-    private suspend fun getParkingSessions(session: Session, customerId: String, url: String): List<Parking> {
-        val result = ApiHelper.client.post<GetParkingSessions>(ApiHelper.getUrl(url)) {
-            ApiHelper.addHeaders(this, session)
-            body = FormDataContent(formData = Parameters.build {
-                append("cstId", customerId)
-                append("length", "100")
-            })
+    private suspend fun getParkingSessions(session: CallSession, type: ParkingSessionType): List<Parking> {
+
+        val result = parkingSessions(session, type)
+
+        val parkingSessions = if (type != ParkingSessionType.Completed) {
+            result.sortedBy { ZonedDateTime.parse(it.startDate, DateUtil.gmtDateFormatter) }
+        } else {
+            result.sortedByDescending { ZonedDateTime.parse(it.startDate, DateUtil.gmtDateFormatter) }
         }
-        return result.data.map {
-            Parking(it.Id, it.LP, convertTime(it.TimeStartUtc), convertTime(it.TimeEndUtc), it.CostMoney)
+
+        return parkingSessions.map {
+            Parking(it.psRightId, it.vehicleId, it.visitorName, convertTime(it.startDate), convertTime(it.endDate), it.parkingCost.value)
         }
+    }
+
+    enum class ParkingSessionType(val status: String) {
+        Active("Actief"),
+        Scheduled("Toekomstig"),
+        Completed("Voltooid")
     }
 
     private val regex = "/Date\\(([0-9]+)\\)/".toRegex()
 
-    private fun convertTime(utc: String): String {
-        val date = Date(getUnixTime(utc))
-        return DateUtil.dateTime.format(date)
+    private fun convertTime(gmt: String): String {
+        val date = DateUtil.gmtDateFormatter.parse(gmt)
+        return DateUtil.dateFormatter.format(date)
     }
 
     private fun getUnixTime(utc: String): Long {
@@ -77,9 +84,9 @@ object ParkingService {
         return match.groupValues[1].toLong()
     }
 
-    suspend fun start(call: ApplicationCall, request: AddParkingRequest): Response {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun start(session: CallSession, request: AddParkingRequest): Response {
+        val reportCode = ensureData(session.permit?.reportCode, "report code")
+        val paymentZoneId = ensureData(session.permit?.paymentZoneId, "payment zone id")
 
         val calendar = Calendar.getInstance()
         calendar.time = request.start?.let { start -> DateUtil.dateTime.parse(start) } ?: run { Date() }
@@ -93,58 +100,78 @@ object ParkingService {
             end = regimeEnd
         }
 
-        val requestBody = AddParkingSession(
-            request.visitor.permitId,
-            request.visitor.full(),
-            DateUtil.dateTime.format(start),
-            DateUtil.dateTime.format(end),
-            DateUtil.dateTime.format(regimeEnd),
-            true,
-            true
+        val parkingSession = AddParking(
+            AddParkingSession(
+                reportCode,
+                paymentZoneId,
+                request.visitor.license,
+                DateUtil.gmtDateFormatter.format(start.toInstant()),
+                DateUtil.gmtDateFormatter.format(end.toInstant())
+            )
         )
 
-        val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/AddParkingSession")) {
-            ApiHelper.addHeaders(this, session)
-            contentType(ContentType.Application.Json)
-            body = requestBody
+        Log.json("parkingSession", parkingSession)
+
+        val result = ApiHelper.client.post<ParkingOrder>(ApiHelper.getCloudUrl("v1/orders")) {
+            ApiHelper.addCloudHeaders(this, session)
+            body = parkingSession
         }
-        return ServiceUtil.convertResponse(call, Method.Start, result)
+
+        Log.json("result", result)
+
+        val completed = ApiHelper.waitForOrder(session, result.frontendId)
+
+        return ServiceUtil.convertResponse(session.call, Method.Start, completed)
     }
 
-    suspend fun stop(call: ApplicationCall): Response {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun stop(session: CallSession): Response {
+        val parkingId = ensureData(session.call.parameters["id"]?.toLong(), "parking id")
+        val reportCode = ensureData(session.permit?.reportCode, "report code")
 
-        val parkingId = call.parameters["id"]!!
+        val original = findParkingSession(session, parkingId) ?: throw ServiceException(ServiceException.Type.MISSING_DATA, "Session not found)")
 
-        val result = ApiHelper.client.post<BooleanResponse>(ApiHelper.getUrl("Customer/Dashboard/StopParkingSession")) {
-            ApiHelper.addHeaders(this, session)
-            contentType(ContentType.Application.Json)
-            body = StopParkingSession(parkingId.toInt())
+        val parkingSession = StopParking(
+            StopParkingSession(
+                reportCode,
+                parkingId,
+                original.startDate,
+                DateUtil.gmtDateFormatter.format(Instant.now())
+            )
+        )
+
+        Log.json("parkingSession", parkingSession)
+
+        val result = ApiHelper.client.post<ParkingOrder>(ApiHelper.getCloudUrl("v1/orders")) {
+            ApiHelper.addCloudHeaders(this, session)
+            body = parkingSession
         }
-        return ServiceUtil.convertResponse(call, Method.Stop, result)
+
+        Log.json("result", result)
+
+        val completed = ApiHelper.waitForOrder(session, result.frontendId)
+
+        return ServiceUtil.convertResponse(session.call, Method.Stop, completed)
     }
 
-    private val historyStart = DateUtil.dateTime.format(Date(0))
+    private suspend fun findParkingSession(session: CallSession, parkingId: Long): ParkingSession? {
+        val parkingSession = parkingSessions(session, ParkingSessionType.Active)
+            .find { p -> (p.psRightId == parkingId) }
+        return parkingSession ?: parkingSessions(session, ParkingSessionType.Scheduled)
+            .find { p -> (p.psRightId == parkingId) }
+    }
 
-    suspend fun history(call: ApplicationCall): HistoryResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
-
-        val customerId = call.request.cookies["customerid"]!!
-
-        val result = ApiHelper.client.post<GetParkingSessions>(ApiHelper.getUrl("Customer/ParkingSession/GetParkingSessions")) {
-            ApiHelper.addHeaders(this, session)
-            body = FormDataContent(formData = Parameters.build {
-                append("cstId", customerId)
-                append("start", "0")
-                append("length", "9999")
-                append("timeStartUtc", historyStart)
-                append("timeEndUtc", DateUtil.dateTime.format(Date()))
-            })
+    private suspend fun parkingSessions(session: CallSession, type: ParkingSessionType): List<ParkingSession> {
+        val result = ApiHelper.client.get<ParkingSessions>(ApiHelper.getCloudUrl("v2/parkingsessions")) {
+            ApiHelper.addCloudHeaders(this, session)
+            parameter("status", type.status)
+            parameter("itemsPerPage", 100)
+            parameter("page", 1)
         }
-        val history = result.data.sortedByDescending { getUnixTime(it.TimeStartUtc) }
-                                 .map { History(it.Id, it.LP, it.LPName, convertTime(it.TimeStartUtc), convertTime(it.TimeEndUtc), it.CostMoney) }
+        return result.parkingSession.filterNot {p -> p.isCancelled && p.parkingCost.value == 0.0}
+    }
+
+    suspend fun history(session: CallSession): HistoryResponse {
+        val history = getParkingSessions(session, ParkingSessionType.Completed)
 
         return HistoryResponse(history)
     }

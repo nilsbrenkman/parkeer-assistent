@@ -1,8 +1,33 @@
 package nl.parkeerassistent.html
 
-import kotlinx.css.*
+import kotlinx.css.CSSBuilder
+import kotlinx.css.Color
+import kotlinx.css.LinearDimension
+import kotlinx.css.backgroundColor
+import kotlinx.css.body
+import kotlinx.css.borderWidth
+import kotlinx.css.height
+import kotlinx.css.margin
+import kotlinx.css.marginLeft
+import kotlinx.css.marginRight
+import kotlinx.css.maxWidth
+import kotlinx.css.padding
+import kotlinx.css.pct
 import kotlinx.css.properties.boxShadow
-import kotlinx.html.*
+import kotlinx.css.px
+import kotlinx.css.rem
+import kotlinx.css.vh
+import kotlinx.css.width
+import kotlinx.html.HTML
+import kotlinx.html.body
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.id
+import kotlinx.html.iframe
+import kotlinx.html.img
+import kotlinx.html.meta
+import kotlinx.html.style
+import kotlinx.html.title
 
 private var Style = CSSBuilder().apply {
     body {

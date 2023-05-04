@@ -1,33 +1,34 @@
 package nl.parkeerassistent.service
 
-import io.ktor.application.ApplicationCall
-import io.ktor.client.request.forms.FormDataContent
+import io.ktor.client.features.RedirectResponseException
+import io.ktor.client.request.get
 import io.ktor.client.request.post
-import io.ktor.http.ContentType
-import io.ktor.http.Parameters
-import io.ktor.http.contentType
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.Session
-import nl.parkeerassistent.external.GetTransactionsHistoryByCustomer
-import nl.parkeerassistent.external.RequestPaymentRequest
-import nl.parkeerassistent.external.RequestPaymentResponse
+import nl.parkeerassistent.CallSession
+import nl.parkeerassistent.Log
+import nl.parkeerassistent.ensureData
+import nl.parkeerassistent.external.Balance
+import nl.parkeerassistent.external.Order
+import nl.parkeerassistent.external.Payment
+import nl.parkeerassistent.external.PaymentOrder
+import nl.parkeerassistent.external.Redirect
+import nl.parkeerassistent.model.CompleteRequest
 import nl.parkeerassistent.model.IdealResponse
 import nl.parkeerassistent.model.Issuer
 import nl.parkeerassistent.model.PaymentRequest
 import nl.parkeerassistent.model.PaymentResponse
+import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.model.StatusResponse
 import nl.parkeerassistent.monitoring.Monitoring
 import org.jsoup.Connection
 import org.jsoup.Jsoup
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 object PaymentService {
 
     enum class Method : Monitoring.Method {
         Ideal,
         Payment,
+        Complete,
         Status,
         ;
 
@@ -40,101 +41,90 @@ object PaymentService {
         }
     }
 
-    fun ideal(call: ApplicationCall): IdealResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    val amounts = arrayListOf("2.50", "5.00", "10.00", "15.00", "20.00", "30.00", "40.00", "50.00", "100.00")
 
-        val ideal = session.send(Jsoup.connect(ApiHelper.baseUrl + "Customer/OmniKassaPayment/OmniKassaPayment").method(Connection.Method.GET))
-
-        if ("Geldsaldo opwaarderen - Parkeerapplicatie" != ideal.title()) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to load ideal page")
-        }
-
-        val amountSelect = ideal.select("select[name=\"Amount\"]")
-        if (amountSelect.size != 1) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find amount options")
-        }
-        val amounts = ArrayList<String>()
-        for (option in amountSelect[0].select("option")) {
-            val amount = option.attr("value")
-            amounts.add(amount)
-        }
+    fun ideal(session: CallSession): IdealResponse {
 
         val issuers = ArrayList<Issuer>()
         issuers.addAll(IdealBanks.values().map { i -> Issuer(i.name, i.displayName) })
 
-        Monitoring.info(call, Method.Ideal, "SUCCESS")
+        Monitoring.info(session.call, Method.Ideal, "SUCCESS")
         return IdealResponse(amounts, issuers)
     }
 
-    suspend fun payment(call: ApplicationCall, request: PaymentRequest): PaymentResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun payment(session: CallSession, request: PaymentRequest): PaymentResponse {
 
-        val requestBody = RequestPaymentRequest(request.amount)
+        val payment = Payment(
+            Balance(request.amount.toDouble(), "EUR"),
+            Redirect("https://www.parkeerassistent.nl/")
+        )
 
-        val result = ApiHelper.client.post<RequestPaymentResponse>(ApiHelper.getUrl("Customer/OmniKassaPayment/RequestPayment")) {
-            ApiHelper.addHeaders(this, session, referer = "Customer/OmniKassaPayment/OmniKassaPayment")
-            contentType(ContentType.Application.Json)
-            body = requestBody
+        val order = ApiHelper.client.post<PaymentOrder>(ApiHelper.getCloudUrl("v1/orders")) {
+            ApiHelper.addCloudHeaders(this, session)
+            body = payment
         }
 
-        val rabo = Jsoup.connect(result.issuerAuthenticationUrl).method(Connection.Method.GET).execute().parse()
+        Log.json("order", order)
+
+        val rabo = Jsoup.connect(order.redirectUrl).method(Connection.Method.GET).execute().parse()
         val issuer = rabo.select("a#issuer-" + request.issuerId)
         if (issuer.size != 1) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find issuer")
+            Monitoring.warn(session.call, Method.Payment, "ISSUER_NOT_FOUND")
+            return PaymentResponse(order.redirectUrl, order.frontendId.toString())
         }
         val link = issuer[0].attr("href")
 
-        val order = rabo.select("div.ordernumber")
-        if (order.size != 1) {
-            throw ServiceException(ServiceException.Type.SCREENSCRAPING, "Unable to find order")
-        }
-        val orderId = order[0].text().replace(Regex("\\D"), "")
-
-        Monitoring.info(call, Method.Payment, "SUCCESS")
-        return PaymentResponse(link, orderId)
+        return PaymentResponse(link, order.frontendId.toString())
     }
 
-    suspend fun status(call: ApplicationCall): StatusResponse {
-        val sessionCookie = call.request.cookies["session"]!!
-        val session = Session(sessionCookie)
+    suspend fun complete(session: CallSession, request: CompleteRequest): Response {
+        try {
+            val order = session.client.get<String>("https://aanmeldenparkeren.amsterdam.nl/api/orders?transactionType=topUpBalance&${request.data}")
+            Log.debug(order)
+        } catch(e: RedirectResponseException) {
+            if (e.response.status.value == 302) {
+                if (e.response.headers["Location"]?.startsWith("/top-up-balance/success") == true) {
+                    if (ApiHelper.waitForOrder(session, request.transactionId.toLong())) {
+                        Monitoring.info(session.call, Method.Complete, "SUCCESS")
+                        return Response(true)
+                    }
+                    Monitoring.info(session.call, Method.Complete, "PENDING")
+                    return Response(false)
+                }
+                Monitoring.info(session.call, Method.Complete, "FAILED")
+                return Response(false)
+            }
+        }
+        Monitoring.info(session.call, Method.Complete, "ERROR")
+        return Response(false)
+    }
 
-        val customerId = call.request.cookies["customerid"]!!
-        val transactionId = call.parameters["transactionId"]!!
+    suspend fun status(session: CallSession): StatusResponse {
+        val transactionId = ensureData(session.call.parameters["transactionId"], "transaction id")
 
-        val result = ApiHelper.client.post<GetTransactionsHistoryByCustomer>(ApiHelper.getUrl("Customer/Transaction/GetTransactionsHistoryByCustomer")) {
-            ApiHelper.addHeaders(this, session)
-            body = FormDataContent(formData = Parameters.build {
-                append("cstId", customerId)
-                append("start", "0")
-                append("length", "9999")
-                append("startDate", DateUtil.dateFormatter.format(Instant.now().minus(24, ChronoUnit.HOURS)))
-                append("endDate", DateUtil.dateFormatter.format(Instant.now()))
-            })
+        val order = ApiHelper.client.get<Order>(ApiHelper.getCloudUrl("v1/orders/$transactionId")) {
+            ApiHelper.addCloudHeaders(this, session)
         }
 
-        for (transaction in result.data) {
-            if (transactionId == transaction.TransactionId) {
-                if (transaction.Status == "success") {
-                    Monitoring.info(call, Method.Status, "SUCCESS")
-                    return StatusResponse("success")
-                }
-                if (transaction.Status == "cancelled") {
-                    Monitoring.info(call, Method.Status, "CANCELLED")
-                    return StatusResponse("error")
-                }
-                if (transaction.Status == "open") {
-                    Monitoring.info(call, Method.Status, "PENDING")
-                    return StatusResponse("pending")
-                }
-                Monitoring.info(call, Method.Status, "UNKNOWN")
+        Log.json("order", order)
+
+        when(order.orderStatus) {
+            "Completed" -> {
+                Monitoring.info(session.call, Method.Status, "SUCCESS")
+                return StatusResponse("success")
+            }
+            "Processing" -> {
+                Monitoring.info(session.call, Method.Status, "PENDING")
+                return StatusResponse("pending")
+            }
+            else -> {
+                Monitoring.info(session.call, Method.Status, "UNKNOWN")
                 return StatusResponse("unknown")
             }
         }
-        Monitoring.info(call, Method.Status, "NOT_FOUND")
-        return StatusResponse("unknown")
+
     }
+
 }
 
 enum class IdealBanks(val displayName: String) {
