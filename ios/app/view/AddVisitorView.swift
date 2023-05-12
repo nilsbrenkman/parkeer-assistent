@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct AddVisitorView: View {
     
     @EnvironmentObject var user: User
@@ -97,10 +98,9 @@ struct AddVisitorView: View {
     
     private func handleAddVisitor(success: Bool) {
         if success {
-            DispatchQueue.main.async {
-                user.visitors = nil
-                user.addVisitor = false
-            }
+            user.visitors = nil
+            user.addVisitor = false
+            
             user.getVisitors()
         } else {
             wait = false

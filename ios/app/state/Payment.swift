@@ -13,6 +13,7 @@ class Payment: ObservableObject {
     @Published var transactionId: String?
     @Published var show: Bool = false
     @Published var inProgress: Bool = false
+    @Published var completeData: String?
 
     @Published var amounts: [String]?
     @Published var issuers: [Issuer]?
@@ -31,27 +32,26 @@ class Payment: ObservableObject {
     
     func ideal() {
         if amounts == nil || issuers == nil {
-            DispatchQueue.global().async {
-                self.paymentClient.ideal { response in
-                    DispatchQueue.main.async {
-                        self.amounts = response.amounts
-                        self.issuers = response.issuers
-                        if let previousAmount = UserDefaults.standard.string(forKey: Payment.AMOUNT_KEY) {
-                            for i in 0 ..< response.amounts.count {
-                                if previousAmount == response.amounts[i] {
-                                    self.selectedAmount = i
-                                }
-                            }
-                        }
-                        if let previousIssuer = UserDefaults.standard.string(forKey: Payment.ISSUER_KEY) {
-                            for i in 0 ..< response.issuers.count {
-                                if previousIssuer == response.issuers[i].issuerId {
-                                    self.selectedIssuer = i
-                                }
-                            }
+            Task {
+                let response = try await self.paymentClient.ideal()
+                
+                self.amounts = response.amounts
+                self.issuers = response.issuers
+                if let previousAmount = UserDefaults.standard.string(forKey: Payment.AMOUNT_KEY) {
+                    for i in 0 ..< response.amounts.count {
+                        if previousAmount == response.amounts[i] {
+                            self.selectedAmount = i
                         }
                     }
                 }
+                if let previousIssuer = UserDefaults.standard.string(forKey: Payment.ISSUER_KEY) {
+                    for i in 0 ..< response.issuers.count {
+                        if previousIssuer == response.issuers[i].issuerId {
+                            self.selectedIssuer = i
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -63,14 +63,11 @@ class Payment: ObservableObject {
         UserDefaults.standard.set(amount, forKey: Payment.AMOUNT_KEY)
         UserDefaults.standard.set(issuerId, forKey: Payment.ISSUER_KEY)
         
-        DispatchQueue.global().async {
-            self.paymentClient.payment(amount: amount, issuerId: issuerId) { response in
-                DispatchQueue.main.async {
-                    self.transactionId = response.transactionId
-                    self.inProgress = true
-                    onComplete(response)
-                }
-            }
+        Task {
+            let response = try await self.paymentClient.payment(amount: amount, issuerId: issuerId)
+            self.transactionId = response.transactionId
+            self.inProgress = true
+            onComplete(response)
         }
     }
     
@@ -78,16 +75,19 @@ class Payment: ObservableObject {
         guard let transactionId = self.transactionId else {
             return
         }
-        DispatchQueue.global().async {
-            self.paymentClient.status(transactionId: transactionId) { response in
-                if response.status == "success" {
-                    Stats.user.paymentCount += 1
-                    UserDefaults.standard.set(true, forKey: Payment.COMPLETED_KEY)
-                }
-                DispatchQueue.main.async {
-                    onComplete(response)
-                }
+        Task {
+            if self.completeData != nil {
+                _ = try await self.paymentClient.complete(transactionId: transactionId,
+                                                          data: self.completeData!)
+                self.completeData = nil
             }
+            let response = try await self.paymentClient.status(transactionId)
+            
+            if response.status == "success" {
+                Stats.user.paymentCount += 1
+                UserDefaults.standard.set(true, forKey: Payment.COMPLETED_KEY)
+            }
+            onComplete(response)
         }
     }
  

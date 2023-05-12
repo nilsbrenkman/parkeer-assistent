@@ -8,6 +8,7 @@
 import SwiftUI
 import LocalAuthentication
 
+@MainActor
 struct AccountView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>

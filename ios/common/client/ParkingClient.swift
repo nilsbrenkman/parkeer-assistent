@@ -8,10 +8,10 @@
 import Foundation
 
 protocol ParkingClient {
-    func get(onComplete: @escaping (ParkingResponse) -> Void)
-    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void)
-    func stop(parkingId: Int, onComplete: @escaping (Response) -> Void)
-    func history(onComplete: @escaping (HistoryResponse) -> Void)
+    func get() async throws -> ParkingResponse
+    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String) async throws -> Response
+    func stop(_ parking: Parking) async throws -> Response
+    func history() async throws -> HistoryResponse
 }
 
 class ParkingClientApi: ParkingClient {
@@ -22,22 +22,22 @@ class ParkingClientApi: ParkingClient {
         //
     }
 
-    func get(onComplete: @escaping (ParkingResponse) -> Void) {
-        ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET, onComplete: onComplete)
+    func get() async throws -> ParkingResponse {
+        return try await ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET)
     }
     
-    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
+    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String) async throws -> Response {
         let startTime = Util.dateTimeFormatter.string(from: start)
         let body = AddParkingRequest(visitor: visitor, timeMinutes: timeMinutes, start: startTime, regimeTimeEnd: regimeTimeEnd)
-        ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body, onComplete: onComplete)
+        return try await ApiClient.client.call(Response.self, path: "parking", method: Method.POST, body: body)
     }
     
-    func stop(parkingId: Int, onComplete: @escaping (Response) -> Void) {
-        ApiClient.client.call(Response.self, path: "parking/\(parkingId)", method: Method.DELETE, onComplete: onComplete)
+    func stop(_ parking: Parking) async throws -> Response {
+        return try await ApiClient.client.call(Response.self, path: "parking/\(parking.id)", method: Method.DELETE)
     }
     
-    func history(onComplete: @escaping (HistoryResponse) -> Void) {
-        ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET, onComplete: onComplete)
+    func history() async throws -> HistoryResponse {
+        return try await ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET)
     }
 
 }
@@ -46,7 +46,7 @@ class ParkingClientMock: ParkingClient {
       
     static let client = ParkingClientMock()
     
-    public var parking: [Int:Parking] = [:]
+    public var parkingSessions: [Int:Parking] = [:]
 
     private var nextId = 0
     private let dateFormatter = Util.dateTimeFormatter
@@ -55,40 +55,38 @@ class ParkingClientMock: ParkingClient {
     private init() {
         //
     }
-
-    func get(onComplete: @escaping (ParkingResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    
+    func get() async throws -> ParkingResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
-        onComplete(ParkingResponse(
-            active: Array(parking.values.filter({ parking in
+        return ParkingResponse(
+            active: Array(parkingSessions.values.filter({ parking in
                 guard let startDate = try? Util.parseDate(parking.startTime),
                       let endDate = try? Util.parseDate(parking.endTime) else {
                     return false
                 }
                 return startDate < Date.now() && endDate > Date.now()
             })),
-            scheduled: Array(parking.values.filter({ parking in
+            scheduled: Array(parkingSessions.values.filter({ parking in
                 guard let startDate = try? Util.parseDate(parking.startTime),
                       let endDate = try? Util.parseDate(parking.endTime) else {
                     return false
                 }
                 return startDate > Date.now() && endDate > Date.now()
             }))
-        ))
+        )
     }
     
-    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String, onComplete: @escaping (Response) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String) async throws -> Response {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
         if visitor.name == "Invalid visitor" {
-            onComplete(Response(success: false, message: "Visitor is not allowed to park"))
-            return
+            return Response(success: false, message: "Visitor is not allowed to park")
         }
         
         let cost = Double(timeMinutes) * hourRate / 60.0
         if cost > getBalance() {
-            onComplete(Response(success: false, message: "Not enough balance"))
-            return
+            return Response(success: false, message: "Not enough balance")
         }
         
         nextId += 1
@@ -100,40 +98,39 @@ class ParkingClientMock: ParkingClient {
                         startTime: dateFormatter.string(from: start),
                         endTime: dateFormatter.string(from: end),
                         cost: cost)
-        parking[p.id] = p
-        onComplete(Response(success: true))
+        parkingSessions[p.id] = p
+        return Response(success: true)
     }
     
-    func stop(parkingId: Int, onComplete: @escaping (Response) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func stop(_ parking: Parking) async throws -> Response {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
 
-        if let p = parking[parkingId] {
+        if let p = parkingSessions[parking.id] {
             guard let startDate = try? Util.parseDate(p.startTime) else {
-                onComplete(Response(success: false, message: "Invalid start time"))
-                return
+                return Response(success: false, message: "Invalid start time")
             }
             if startDate > Date.now() {
-                parking.removeValue(forKey: parkingId)
+                parkingSessions.removeValue(forKey: parking.id)
             } else {
                 let minutes = startDate.timeIntervalSinceNow / -60.0
                 let cost = minutes * hourRate / 60.0
-                parking.updateValue(Parking(id: p.id,
-                                            license: p.license,
-                                            startTime: p.startTime,
-                                            endTime: dateFormatter.string(from: Date.now()),
-                                            cost: cost),
-                                    forKey: parkingId)
+                parkingSessions.updateValue(Parking(id: p.id,
+                                                    license: p.license,
+                                                    startTime: p.startTime,
+                                                    endTime: dateFormatter.string(from: Date.now()),
+                                                    cost: cost),
+                                            forKey: parking.id)
             }
-            onComplete(Response(success: true))
+            return Response(success: true)
         } else {
-            onComplete(Response(success: false, message: "Not found"))
+            return Response(success: false, message: "Not found")
         }
     }
     
-    func history(onComplete: @escaping (HistoryResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func history() async throws -> HistoryResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
 
-        onComplete(HistoryResponse(history: Array(parking.values.filter({
+        return HistoryResponse(history: Array(parkingSessions.values.filter({
             guard let endDate = try? Util.parseDate($0.endTime) else {
                 return false
             }
@@ -143,7 +140,7 @@ class ParkingClientMock: ParkingClient {
         }).map { p in
             let visitor = MockVisitor.visitors.first(where: { $0.license == p.license })
             return History(id: p.id, license: p.license, name: visitor?.name, startTime: p.startTime, endTime: p.endTime, cost: p.cost)
-        })))
+        }))
     }
     
     func getBalance() -> Double {
@@ -154,7 +151,7 @@ class ParkingClientMock: ParkingClient {
                 balance += amount
             }
         }
-        for p in parking.values {
+        for p in parkingSessions.values {
             balance -= p.cost
         }
         return balance

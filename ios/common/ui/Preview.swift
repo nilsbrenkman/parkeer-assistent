@@ -10,9 +10,10 @@ import SwiftUI
 #if DEBUG
 extension View {
     
-    func setupPreview(loggedIn: Bool = false) -> some View {
+    @MainActor func setupPreview(loggedIn: Bool = false) -> some View {
         let login = try! Login()
         login.isLoggedIn = loggedIn
+        
         let user = try! User()
         let payment = try! Payment()
         return self

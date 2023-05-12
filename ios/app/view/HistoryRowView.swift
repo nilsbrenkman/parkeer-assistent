@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct HistoryRowView: View {
     
     var history: History

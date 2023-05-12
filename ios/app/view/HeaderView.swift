@@ -100,12 +100,10 @@ struct HeaderView: View {
     
     private func logout() {
         login.logout() {
-            DispatchQueue.main.async {
-                user.selectedVisitor = nil
-                user.addVisitor = false
-                user.isLoaded = false
-                payment.show = false
-            }
+            user.selectedVisitor = nil
+            user.addVisitor = false
+            user.isLoaded = false
+            payment.show = false
         }
     }
 

@@ -8,9 +8,9 @@
 import Foundation
 
 protocol UserClient {
-    func get(onComplete: @escaping (UserResponse) -> Void)
-    func balance(onComplete: @escaping (BalanceResponse) -> Void)
-    func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void)
+    func get() async throws -> UserResponse
+    func balance() async throws -> BalanceResponse
+    func regime(_ date: Date) async throws -> RegimeResponse
 }
 
 class UserClientApi: UserClient {
@@ -20,17 +20,17 @@ class UserClientApi: UserClient {
     private init() {
         //
     }
-
-    func get(onComplete: @escaping (UserResponse) -> Void) {
-        ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET, onComplete: onComplete)
+    
+    func get() async throws -> UserResponse {
+        return try await ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET)
     }
     
-    func balance(onComplete: @escaping (BalanceResponse) -> Void) {
-        ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET, onComplete: onComplete)
+    func balance() async throws -> BalanceResponse {
+        return try await ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET)
     }
     
-    func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void) {
-        ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET, onComplete: onComplete)
+    func regime(_ date: Date) async throws -> RegimeResponse {
+        return try await ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET)
     }
     
 }
@@ -45,26 +45,26 @@ class UserClientMock: UserClient {
         //
     }
 
-    func get(onComplete: @escaping (UserResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func get() async throws -> UserResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
-        onComplete(UserResponse(balance: getBalance(),
-                                hourRate: hourRate,
-                                regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(Date.now())),
-                                regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(Date.now()))))
+        return UserResponse(balance: getBalance(),
+                            hourRate: hourRate,
+                            regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(Date.now())),
+                            regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(Date.now())))
     }
     
-    func balance(onComplete: @escaping (BalanceResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func balance() async throws -> BalanceResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
-        onComplete(BalanceResponse(balance: getBalance()))
+        return BalanceResponse(balance: getBalance())
     }
- 
-    func regime(_ date: Date, onComplete: @escaping (RegimeResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    
+    func regime(_ date: Date) async throws -> RegimeResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
-        onComplete(RegimeResponse(regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(date)),
-                                  regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(date))))
+        return RegimeResponse(regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(date)),
+                              regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(date)))
     }
     
     private func getBalance() -> String {

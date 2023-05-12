@@ -53,6 +53,11 @@ struct PaymentResponse: Codable {
     var transactionId: String
 }
 
+struct CompleteRequest: Codable {
+    var transactionId: String
+    var data: String
+}
+
 struct StatusResponse: Codable {
     var status: String
 }

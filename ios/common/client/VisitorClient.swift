@@ -8,9 +8,9 @@
 import Foundation
 
 protocol VisitorClient {
-    func get(onComplete: @escaping (VisitorResponse) -> Void)
-    func add(license: String, name: String, onComplete: @escaping (Response) -> Void)
-    func delete(visitorId: Int, onComplete: @escaping (Response) -> Void)
+    func get() async throws -> VisitorResponse
+    func add(license: String, name: String) async throws -> Response
+    func delete(_ visitor: Visitor) async throws -> Response
 }
 
 class VisitorClientApi: VisitorClient {
@@ -21,17 +21,17 @@ class VisitorClientApi: VisitorClient {
         //
     }
 
-    func get(onComplete: @escaping (VisitorResponse) -> Void) {
-        ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET, onComplete: onComplete)
+    func get() async throws -> VisitorResponse {
+        return try await ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET)
     }
     
-    func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {
+    func add(license: String, name: String) async throws -> Response {
         let body = AddVisitorRequest(license: license, name: name)
-        ApiClient.client.call(Response.self, path: "visitor", method: Method.POST, body: body, onComplete: onComplete)
+        return try await ApiClient.client.call(Response.self, path: "visitor", method: Method.POST, body: body)
     }
     
-    func delete(visitorId: Int, onComplete: @escaping (Response) -> Void) {
-        ApiClient.client.call(Response.self, path: "visitor/\(visitorId)", method: Method.DELETE, onComplete: onComplete)
+    func delete(_ visitor: Visitor) async throws -> Response {
+        return try await ApiClient.client.call(Response.self, path: "visitor/\(visitor.id)", method: Method.DELETE)
     }
 
 }
@@ -45,63 +45,64 @@ class VisitorClientMock: VisitorClient {
     private let permitId = 999
 
     private init() {
-        for visitor in MockVisitor.visitors {
-            add(license: visitor.license, name: visitor.name) { response in }
-        }
-        UserClientMock.client.regime(Date.now()) { regime in
-            ParkingClientMock.client.start(visitor: self.visitors[1]!, timeMinutes: 1, start: Date.now(), regimeTimeEnd: regime.regimeTimeEnd) { response in }
-            ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Date.now().addingTimeInterval(10.0), regimeTimeEnd: regime.regimeTimeEnd) { response in }
-        }
-        UserClientMock.client.regime(Date(timeInterval: 24*60*60, since: Date.now())) { regime in
-            try? ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd) { response in }
-        }
-        UserClientMock.client.regime(Date(timeInterval: -24*60*60, since: Date.now())) { regime in
-            try? ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 60, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd) { response in }
+        Task {
+            for visitor in MockVisitor.visitors {
+                _ = try await add(license: visitor.license, name: visitor.name)
+            }
+            var regime = try await UserClientMock.client.regime(Date.now())
+            _ = try await ParkingClientMock.client.start(visitor: self.visitors[1]!, timeMinutes: 1, start: Date.now(), regimeTimeEnd: regime.regimeTimeEnd)
+            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Date.now().addingTimeInterval(10.0), regimeTimeEnd: regime.regimeTimeEnd)
+            
+            regime = try await UserClientMock.client.regime(Date(timeInterval: 24*60*60, since: Date.now()))
+            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
+            
+            
+            regime = try await UserClientMock.client.regime(Date(timeInterval: -24*60*60, since: Date.now()))
+            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 60, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
+            
         }
     }
     
-    func get(onComplete: @escaping (VisitorResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func get() async throws -> VisitorResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
 
-        onComplete(VisitorResponse(visitors: Array(visitors.values.sorted(by: { $0.id < $1.id } ))))
+        return VisitorResponse(visitors: Array(visitors.values.sorted(by: { $0.id < $1.id } )))
     }
     
-    func add(license: String, name: String, onComplete: @escaping (Response) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func add(license: String, name: String) async throws -> Response {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
         if (License.normalise(license).count != 6) {
-            onComplete(Response(success: false, message: "Invalid license"))
-            return
+            return Response(success: false, message: "Invalid license")
         }
         
         nextId += 1
         let visitor = Visitor(visitorId: nextId, permitId: permitId, license: license, formattedLicense: License.formatLicense(license), name: name.count > 0 ? name : nil)
         visitors[visitor.visitorId] = visitor
-        onComplete(Response(success: true))
+        return Response(success: true)
     }
     
-    func delete(visitorId: Int, onComplete: @escaping (Response) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func delete(_ visitor: Visitor) async throws -> Response {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
 
-        guard let visitor = visitors[visitorId] else {
-            onComplete(Response(success: false, message: "Not found"))
-            return
+        guard let visitor = visitors[visitor.id] else {
+            return Response(success: false, message: "Not found")
         }
-        for parking in ParkingClientMock.client.parking.values {
+        for parking in ParkingClientMock.client.parkingSessions.values {
             guard let endDate = try? Util.parseDate(parking.endTime) else {
                 continue
             }
             if endDate > Date.now() && parking.license == visitor.license {
-                onComplete(Response(success: false, message: "Can't delete visitor with active or scheduled sessions"))
-                return
+                return Response(success: false, message: "Can't delete visitor with active or scheduled sessions")
             }
         }
         
-        if visitors.removeValue(forKey: visitorId) != nil {
-            onComplete(Response(success: true))
+        if visitors.removeValue(forKey: visitor.id) != nil {
+            return Response(success: true)
         } else {
-            onComplete(Response(success: false, message: "Not found"))
+            return Response(success: false, message: "Not found")
         }
+
     }
     
 }

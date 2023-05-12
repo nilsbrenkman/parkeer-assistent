@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct PaymentView: View {
     
     @Environment(\.scenePhase) private var scenePhase
@@ -131,10 +132,14 @@ struct PaymentView: View {
         case "pending":
             self.disableStatusCheck = 15
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                self.disableStatusCheck -= 1
-                if self.disableStatusCheck == 0 {
-                    timer.invalidate()
+                Task {
+                    await MainActor.run {
+                        self.disableStatusCheck -= 1
+                    }
                 }
+//                if self.disableStatusCheck == 0 {
+//                    timer.invalidate()
+//                }
             }
             MessageManager.instance.addMessage(Lang.Payment.pendingMsg.localized(), type: Type.INFO)
             break
@@ -152,7 +157,6 @@ struct PaymentView: View {
             break
         }
     }
-    
 }
 
 struct PaymentView_Previews: PreviewProvider {

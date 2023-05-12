@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct MessageView: ViewModifier {
     
     @Binding var message: Message?
@@ -27,12 +28,12 @@ struct MessageView: ViewModifier {
                         
                         VStack {
                             Button(action: {
-                                DispatchQueue.main.async {
+//                                DispatchQueue.main.async {
                                     if let ok = self.message?.ok {
                                         ok()
                                     }
                                     self.message = nil
-                                }
+//                                }
                             }) {
                                 Text(Lang.Common.ok.localized())
                                     .bold()
