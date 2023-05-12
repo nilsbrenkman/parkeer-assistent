@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class User: ObservableObject {
     
     @Published var balance: String?
@@ -31,56 +32,40 @@ class User: ObservableObject {
         userClient    = try ClientManager.instance.get(UserClient.self)
         parkingClient = try ClientManager.instance.get(ParkingClient.self)
         visitorClient = try ClientManager.instance.get(VisitorClient.self)
-                
-        let backgroundThread = { [weak self] in
-            while true {
-                guard let `self` = self else {
-                    return
-                }
-                Thread.sleep(forTimeInterval: User.backgroundUpdate(self))
-            }
-        }
-        DispatchQueue.global(qos: .background).async {
-            backgroundThread()
-        }
     }
 
     func getUser() {
-        DispatchQueue.global().async {
-            self.userClient.get() { response in
-                self.getVisitors()
-                self.getParking()
-                DispatchQueue.main.async {
-                    self.balance = response.balance
-                    self.hourRate = response.hourRate
-                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
-                    self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
-                    self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: response.hourRate)
-                }
-            }
+        Task {
+            let response = try await self.userClient.get()
+            
+            self.getVisitors()
+            self.getParking()
+            
+            self.balance = response.balance
+            self.hourRate = response.hourRate
+            self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+            self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+            self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: response.hourRate)
+
         }
+
     }
 
     func getBalance() {
-        DispatchQueue.global().async {
-            self.userClient.balance() { response in
-                DispatchQueue.main.async {
-                    self.balance = response.balance
-                    self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: self.hourRate)
-                }
-            }
+        Task {
+            let response = try await self.userClient.balance()
+            self.balance = response.balance
+            self.timeBalance = Util.calculateTimeBalance(balance: response.balance, hourRate: self.hourRate)
         }
     }
     
     func getRegime(_ date: Date, onComplete: @escaping () -> Void) {
-        DispatchQueue.global().async {
-            self.userClient.regime(date) { response in
-                DispatchQueue.main.async {
-                    self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
-                    self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
-                    onComplete()
-                }
-            }
+        Task {
+            let response = try await self.userClient.regime(date)
+            
+            self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+            self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+            onComplete()
         }
     }
 
@@ -89,77 +74,70 @@ class User: ObservableObject {
     }
 
     func getVisitors() {
-        DispatchQueue.global().async {
-            self.visitorClient.get() { response in
-                DispatchQueue.main.async {
-                    self.visitors = response.visitors
-                }
-            }
+        Task {
+            self.visitors = try await self.visitorClient.get().visitors
         }
     }
     
     func addVisitor(license: String, name: String, onComplete: @escaping () -> Void) {
-        DispatchQueue.global().async {
-            self.visitorClient.add(license: license, name: name) { response in
-                if response.success {
-                    Stats.user.visitorCount += 1
-                    DispatchQueue.main.async {
-                        self.visitors = nil
-                        self.addVisitor = false
-                    }
-                    self.getVisitors()
-                } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
-                }
-                onComplete()
+        Task {
+            let response = try await self.visitorClient.add(license: license, name: name)
+            
+            if response.success {
+                Stats.user.visitorCount += 1
+                self.visitors = nil
+                self.addVisitor = false
+                self.getVisitors()
+            } else {
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
+            onComplete()
         }
     }
     
     func deleteVisitor(_ visitor: Visitor) {
-        DispatchQueue.global().async {
-            self.visitorClient.delete(visitorId: visitor.visitorId) { response in
-                if (response.success) {
-                    self.getVisitors()
-                } else {
-                    self.getVisitors()
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
-                }
+        Task {
+            let response = try await self.visitorClient.delete(visitor)
+            
+            if (response.success) {
+                self.getVisitors()
+            } else {
+                self.getVisitors()
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
         }
     }
 
     func getParking() {
-        DispatchQueue.global().async {
-            self.parkingClient.get() { response in
-                DispatchQueue.main.async {
-                    self.parking = ParkingResponse(active: Array(response.active), scheduled: Array(response.scheduled))
-                }
-                Notifications.store.parking(response, visitors: self.visitors)
-            }
+        Task {
+            let response = try await self.parkingClient.get()
+            
+            self.parking = ParkingResponse(active: Array(response.active), scheduled: Array(response.scheduled))
+            Notifications.store.parking(response, visitors: self.visitors)
         }
     }
     
     func startParking(_ visitor: Visitor, timeMinutes: Int, start: Date, onComplete: @escaping () -> Void) {
         let regimeTimeEnd = Util.dateTimeFormatter.string(from: self.regimeTimeEnd!)
-        DispatchQueue.global().async {
-            self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd) { response in
-                if response.success {
-                    Stats.user.parkingCount += 1
-                    DispatchQueue.main.async {
-                        self.selectedVisitor = nil
-                        self.parking = nil
-                    }
-                    self.getParking()
-                    self.getBalance()
-                    self.getRegime(Date.now()) {
-                        //
-                    }
-                } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
+
+        Task {
+            let response = try await self.parkingClient.start(visitor: visitor, timeMinutes: timeMinutes, start: start, regimeTimeEnd: regimeTimeEnd)
+            
+            if response.success {
+                Stats.user.parkingCount += 1
+                
+                self.selectedVisitor = nil
+                self.parking = nil
+                
+                self.getParking()
+                self.getBalance()
+                self.getRegime(Date.now()) {
+                    //
                 }
-                onComplete()
+            } else {
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
+            onComplete()
         }
     }
 
@@ -173,49 +151,17 @@ class User: ObservableObject {
             }))
         )
         
-        DispatchQueue.global().async {
-            self.parkingClient.stop(parkingId: parking.id) { response in
-                if response.success {
-                    self.getParking()
-                    self.getBalance()
-                } else {
-                    self.getParking()
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
-                }
+        Task {
+            let response = try await self.parkingClient.stop(parking)
+            
+            if response.success {
+                self.getParking()
+                self.getBalance()
+            } else {
+                self.getParking()
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
         }
-    }
-    
-    static func backgroundUpdate(_ user: User) -> TimeInterval {
-        var delay = 10.0
-        var update = false
-        
-        let checkUpdate: (String) -> Void = { time in
-            if let date = try? Util.parseDate(time) {
-                if date < Date.now() {
-                    update = true
-                } else {
-                    let timeInterval = Date.now().distance(to: date)
-                    if timeInterval < delay {
-                        delay = timeInterval
-                    }
-                }
-            }
-        }
-        
-        if let parking = user.parking {
-            delay = 60.0
-            for active in parking.active {
-                checkUpdate(active.endTime)
-            }
-            for scheduled in parking.scheduled {
-                checkUpdate(scheduled.startTime)
-            }
-        }
-        if update {
-            user.getParking()
-        }
-        return delay
     }
 
 }

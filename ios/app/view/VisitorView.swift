@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct VisitorView: View {
     
     var visitor: Visitor

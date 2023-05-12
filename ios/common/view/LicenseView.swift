@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct LicenseView: View {
     
     var license: String

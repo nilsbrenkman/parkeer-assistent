@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct HistoryListView: View {
     
     static let groupFormatter = Util.createDateFormatter("MMMM yyyy")
@@ -55,15 +56,19 @@ struct HistoryListView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .onAppear() {
-            let parkingClient = try! ClientManager.instance.get(ParkingClient.self)
-            
-            DispatchQueue.global().async {
-                parkingClient.history() { response in
-                    DispatchQueue.main.async {
-                        self.history = response.history
-                    }
-                }
+            Task {
+                let parkingClient = try! ClientManager.instance.get(ParkingClient.self)
+                let response = try await parkingClient.history()
+                self.history = response.history
             }
+            
+//            DispatchQueue.global().async {
+//                parkingClient.history() { response in
+//                    DispatchQueue.main.async {
+//                        self.history = response.history
+//                    }
+//                }
+//            }
         }
         .navigationBarTitle(Text(Lang.Parking.history.localized()))
         .navigationBarBackButtonHidden(true)

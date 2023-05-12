@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct ParkingDetailView: View {
     
     @EnvironmentObject var user: User

@@ -5,12 +5,14 @@
 //  Created by Nils Brenkman on 20/08/2021.
 //
 
+import os
 import Foundation
 
 protocol PaymentClient {
-    func ideal(onComplete: @escaping (IdealResponse) -> Void)
-    func payment(amount: String, issuerId: String, onComplete: @escaping (PaymentResponse) -> Void)
-    func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void)
+    func ideal() async throws -> IdealResponse
+    func payment(amount: String, issuerId: String) async throws -> PaymentResponse
+    func complete(transactionId: String, data: String) async throws -> Response
+    func status(_ transactionId: String) async throws -> StatusResponse
 }
 
 class PaymentClientApi: PaymentClient {
@@ -21,17 +23,22 @@ class PaymentClientApi: PaymentClient {
         //
     }
     
-    func ideal(onComplete: @escaping (IdealResponse) -> Void) {
-        ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET, onComplete: onComplete)
+    func ideal() async throws -> IdealResponse {
+        return try await ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET)
     }
     
-    func payment(amount: String, issuerId: String, onComplete: @escaping (PaymentResponse) -> Void) {
+    func payment(amount: String, issuerId: String) async throws -> PaymentResponse {
         let body = PaymentRequest(amount: amount, issuerId: issuerId)
-        ApiClient.client.call(PaymentResponse.self, path: "payment", method: Method.POST, body: body, onComplete: onComplete)
+        return try await ApiClient.client.call(PaymentResponse.self, path: "payment", method: Method.POST, body: body)
     }
     
-    func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void) {
-        ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET, onComplete: onComplete)
+    func complete(transactionId: String, data: String) async throws -> Response {
+        let body = CompleteRequest(transactionId: transactionId, data: data)
+        return try await ApiClient.client.call(Response.self, path: "payment/complete", method: Method.POST, body: body)
+    }
+    
+    func status(_ transactionId: String) async throws -> StatusResponse {
+        return try await ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET)
     }
     
 }
@@ -47,49 +54,52 @@ class PaymentClientMock: PaymentClient {
         //
     }
  
-    func ideal(onComplete: @escaping (IdealResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func ideal() async throws -> IdealResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
-        onComplete(IdealResponse(amounts: ["5,00",
-                                           "10,00",
-                                           "15,00",
-                                           "20,00",
-                                           "30,00",
-                                           "40,00",
-                                           "50,00",
-                                           "100,00"],
-                                 issuers: [Issuer(issuerId: "ABNANL2A", name: "ABN AMRO - success"),
-                                           Issuer(issuerId: "ASNBNL21", name: "ASN Bank - pending"),
-                                           Issuer(issuerId: "BUNQNL2A", name: "bunq - pending 10s"),
-                                           Issuer(issuerId: "INGBNL2A", name: "ING - error"),
-                                           Issuer(issuerId: "KNABNL2H", name: "Knab"),
-                                           Issuer(issuerId: "RABONL2U", name: "Rabobank"),
-                                           Issuer(issuerId: "RBRBNL21", name: "RegioBank"),
-                                           Issuer(issuerId: "REVOLT21", name: "Revolut"),
-                                           Issuer(issuerId: "SNSBNL2A", name: "SNS"),
-                                           Issuer(issuerId: "TRIONL2U", name: "Triodos Bank"),
-                                           Issuer(issuerId: "FVLBNL22", name: "Van Lanschot")]))
+        return IdealResponse(amounts: ["5,00",
+                                       "10,00",
+                                       "15,00",
+                                       "20,00",
+                                       "30,00",
+                                       "40,00",
+                                       "50,00",
+                                       "100,00"],
+                             issuers: [Issuer(issuerId: "ABNANL2A", name: "ABN AMRO - success"),
+                                       Issuer(issuerId: "ASNBNL21", name: "ASN Bank - pending"),
+                                       Issuer(issuerId: "BUNQNL2A", name: "bunq - pending 10s"),
+                                       Issuer(issuerId: "INGBNL2A", name: "ING - error"),
+                                       Issuer(issuerId: "KNABNL2H", name: "Knab"),
+                                       Issuer(issuerId: "RABONL2U", name: "Rabobank"),
+                                       Issuer(issuerId: "RBRBNL21", name: "RegioBank"),
+                                       Issuer(issuerId: "REVOLT21", name: "Revolut"),
+                                       Issuer(issuerId: "SNSBNL2A", name: "SNS"),
+                                       Issuer(issuerId: "TRIONL2U", name: "Triodos Bank"),
+                                       Issuer(issuerId: "FVLBNL22", name: "Van Lanschot")])
     }
     
-    func payment(amount: String, issuerId: String, onComplete: @escaping (PaymentResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func payment(amount: String, issuerId: String) async throws -> PaymentResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
         let transactionId = String(nextId)
         nextId += 1
         let t = MockTransaction(transactionId: transactionId, amount: amount, issuerId: issuerId, creationDate: Date.now())
         transactions[t.transactionId] = t
-        onComplete(PaymentResponse(redirectUrl: ApiClient.client.baseUrl + "open", transactionId: transactionId))
+        return PaymentResponse(redirectUrl: ApiClient.client.baseUrl + "open", transactionId: transactionId)
     }
 
-    func status(transactionId: String, onComplete: @escaping (StatusResponse) -> Void) {
-        guard MockClient.client.authorized() else { return }
+    func complete(transactionId: String, data: String) async throws -> Response {
+        return Response(success: true)
+    }
+    
+    func status(_ transactionId: String) async throws -> StatusResponse {
+        guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
         guard let transaction = transactions[transactionId] else {
-            onComplete(StatusResponse(status: "error"))
-            return
+            return StatusResponse(status: "error")
         }
         
-        onComplete(StatusResponse(status: PaymentClientMock.getTransactionStatus(transaction)))
+        return StatusResponse(status: PaymentClientMock.getTransactionStatus(transaction))
     }
     
     static func getTransactionStatus(_ transaction: MockTransaction) -> String {

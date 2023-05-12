@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import LocalAuthentication
 
+@MainActor
 class Login: ObservableObject, ErrorHandler {
     
     @Published var isLoading: Bool = true
@@ -27,83 +28,77 @@ class Login: ObservableObject, ErrorHandler {
         ApiClient.client.registerErrorHandler(self)
     }
     
-    func handleError(_ error: ClientError) {
-        if error == .Unauthorized {
-            if self.isLoggedIn {
-                MessageManager.instance.addMessage(Lang.Error.unauthorized.localized(), type: Type.WARN)
+    nonisolated func handleError(_ error: ClientError) {
+        Task {
+            await MainActor.run() {
+                if error == .Unauthorized {
+                    if self.isLoggedIn {
+                        MessageManager.instance.addMessage(Lang.Error.unauthorized.localized(), type: Type.WARN)
+                    }
+                        
+                    self.isLoggedIn = false
+                    self.isLoading = false
+                    self.isBackground = false
+                    self.autoLogin = false
+                    return
+                }
+                if error == .NoHttpResponse {
+                    MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
+                }
+                MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
             }
-                
-            DispatchQueue.main.async {
-                self.isLoggedIn = false
-                self.isLoading = false
-                self.isBackground = false
-            }
-            return
         }
-        if error == .NoHttpResponse {
-            MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
-        }
-        MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
+
     }
     
     func loggedIn() {
-        DispatchQueue.main.async {
-            self.isLoading = true
-        }
+        self.isLoading = true
         
-        DispatchQueue.global().async {
-            self.loginClient.loggedId() { response in
-                DispatchQueue.main.async {
-                    self.isLoggedIn = response.success
-                    self.isLoading = false
-                }
-            }
+        Task {
+            let response = try await self.loginClient.loggedId()
+            
+            self.isLoggedIn = response.success
+            self.isLoading = false
         }
     }
     
     func login(username: String, password: String, storeCredentials: Bool, onComplete: @escaping () -> Void) {
-        DispatchQueue.global().async {
-            self.loginClient.login(username: username, password: password) { response in
-                if response.success {
-                    Stats.user.loginCount += 1
-                    if storeCredentials {
-                        do {
-                            try Keychain.storeCredentials(username: username, password: password)
-                            Keychain.setRecent(username)
-                        } catch {
-                            print("Store credentials failed: \(error)")
-                        }
+        Task {
+            let response = try await self.loginClient.login(username: username, password: password)
+            
+            if response.success {
+                Stats.user.loginCount += 1
+                if storeCredentials {
+                    do {
+                        try Keychain.storeCredentials(username: username, password: password)
+                        Keychain.setRecent(username)
+                    } catch {
+                        print("Store credentials failed: \(error)")
                     }
-                    DispatchQueue.main.async {
-                        self.isLoggedIn = true
-                    }
-                } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
                 }
-                onComplete()
+                self.isLoggedIn = true
+                
+            } else {
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
+            onComplete()
         }
     }
     
     func logout(_ onComplete: @escaping () -> Void) {
-        DispatchQueue.main.async {
-            self.isLoading = true
-        }
+        self.isLoading = true
         
-        DispatchQueue.global().async {
-            self.loginClient.logout() { response in
-                if response.success {
-                    DispatchQueue.main.async {
-                        self.isLoggedIn = false
-                    }
-                } else {
-                    MessageManager.instance.addMessage(response.message, type: Type.ERROR)
-                }
-                onComplete()
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                }
+        Task {
+            let response = try await self.loginClient.logout()
+            
+            if response.success {
+                self.isLoggedIn = false
+            } else {
+                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
+            onComplete()
+            self.autoLogin = false
+            self.isLoading = false
         }
     }
     

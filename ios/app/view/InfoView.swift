@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct InfoView: View {
     
     var body: some View {

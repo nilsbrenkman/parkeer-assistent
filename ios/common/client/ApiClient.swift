@@ -41,63 +41,73 @@ class ApiClient {
         self.errorHandler?.handleError(error)
     }
     
-    func call<RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, onComplete: @escaping (RESPONSE) -> Void) {
+    
+    func call<RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method) async throws -> RESPONSE {
         let body: Response? = nil
-        call(result, path: path, method: method, body: body) { response in
-            onComplete(response)
-        }
+        return try await call(result, path: path, method: method, body: body)
     }
     
-    func call<REQUEST: Encodable, RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, body: REQUEST? = nil, onComplete: @escaping (RESPONSE) -> Void) {
+    func call<REQUEST: Encodable, RESPONSE: Decodable>(_ result: RESPONSE.Type, path: String, method: Method, body: REQUEST? = nil) async throws -> RESPONSE {
         
-        guard let url = URL(string: baseUrl + path) else {
-            return self.throwError(.InvalidPath)
-        }
-        
-        var headers = HTTPCookie.requestHeaderFields(with: getCookies())
-        addAnalyticHeaders(&headers)
-
-        var request = URLRequest(url: url)
-        request.allHTTPHeaderFields = headers
-        request.httpMethod = method.rawValue
-        
-        if body != nil {
-            guard let json = try? JSONEncoder().encode(body) else {
-                return self.throwError(.RequestSerialization)
+        let httpTask = Task.detached(priority: .userInitiated) { [path, method, body] in
+            
+            guard let url = URL(string: self.baseUrl + path) else {
+                throw ClientError.InvalidPath
             }
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.httpBody = json
-        }
-        
-        session.dataTask(with: request) { data, response, error in
+            
+            var headers = HTTPCookie.requestHeaderFields(with: self.getCookies())
+            self.addAnalyticHeaders(&headers)
+
+            var request = URLRequest(url: url)
+            request.allHTTPHeaderFields = headers
+            request.httpMethod = method.rawValue
+            
+            if body != nil {
+                guard let json = try? JSONEncoder().encode(body) else {
+                    throw ClientError.RequestSerialization
+                }
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.httpBody = json
+            }
+            
+            let (data, response) = try await self.session.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                return self.throwError(.NoHttpResponse)
+                throw ClientError.NoHttpResponse
             }
-
+            
             self.updateCookies(httpResponse)
-
+            
             if httpResponse.statusCode / 100 != 2 {
                 switch httpResponse.statusCode {
-                    case 401, 403:
-                        return self.throwError(.Unauthorized)
-                    default:
-                        return self.throwError(.ServerError)
+                case 401, 403:
+                    throw ClientError.Unauthorized
+                default:
+                    throw ClientError.ServerError
                 }
             }
             
-            guard let data = data else {
-                return self.throwError(.EmptyResponse)
-            }
-
+            //            guard let data = data else {
+            //                self.throwError(.EmptyResponse)
+            //                throw ClientError.EmptyResponse
+            //            }
+            
             guard let result = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
-                return self.throwError(.ResponseSerialization)
+                throw ClientError.ResponseSerialization
             }
             
-            onComplete(result)
-
-        }.resume()
-
+            return result
+        }
+        
+        do {
+            return try await httpTask.value
+        } catch {
+            if let clientError = error as? ClientError {
+                self.throwError(clientError)
+            }
+            throw error
+        }
+        
     }
     
     private func persistCookies() {

@@ -8,6 +8,7 @@
 import SwiftUI
 import WatchConnectivity
 
+@MainActor
 struct ContentView: View {
     
     @Environment(\.scenePhase) private var scenePhase
@@ -74,6 +75,13 @@ struct ContentView: View {
             } else if login.isBackground {
                 login.isBackground = false
                 login.loggedIn()
+            }
+        }
+        .onOpenURL { url in
+            let split = url.absoluteString.split(separator: "?")
+            if split.count == 2 {
+                let query = String(split[1])
+                payment.completeData = query
             }
         }
     }

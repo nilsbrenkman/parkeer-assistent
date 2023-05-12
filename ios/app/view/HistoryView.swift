@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct HistoryView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>

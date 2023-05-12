@@ -17,7 +17,7 @@ struct InsetPicker: View {
     var body: some View {
         Form {
             Section {
-                ForEach(0 ..< labels.count) { i in
+                ForEach(0 ..< labels.count, id: \.self) { i in
                     Button(action: {
                         self.selected = i
                         self.presentationMode.wrappedValue.dismiss()

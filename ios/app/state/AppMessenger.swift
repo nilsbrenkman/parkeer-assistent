@@ -16,8 +16,10 @@ class AppMessenger: ObservableObject, Messenger {
     }
  
     func addMessage(message: String, type: Type, ok: (() -> Void)? = nil) {
-        DispatchQueue.main.async {
-            self.message = Message(message: message, type: type, ok: ok)
+        Task {
+            await MainActor.run {
+                self.message = Message(message: message, type: type, ok: ok)
+            }
         }
     }
     
