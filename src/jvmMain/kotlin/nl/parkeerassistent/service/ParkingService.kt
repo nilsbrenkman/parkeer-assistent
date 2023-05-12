@@ -4,9 +4,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.DateUtil
 import nl.parkeerassistent.Log
+import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.AddParking
 import nl.parkeerassistent.external.AddParkingSession
@@ -42,7 +42,7 @@ object ParkingService {
         }
     }
 
-    suspend fun get(session: CallSession): ParkingResponse {
+    suspend fun get(session: Session): ParkingResponse {
 
         val active = getParkingSessions(session, ParkingSessionType.Active)
         val scheduled = getParkingSessions(session, ParkingSessionType.Scheduled)
@@ -51,7 +51,7 @@ object ParkingService {
         return ParkingResponse(active, scheduled)
     }
 
-    private suspend fun getParkingSessions(session: CallSession, type: ParkingSessionType): List<Parking> {
+    private suspend fun getParkingSessions(session: Session, type: ParkingSessionType): List<Parking> {
 
         val result = parkingSessions(session, type)
 
@@ -84,7 +84,7 @@ object ParkingService {
         return match.groupValues[1].toLong()
     }
 
-    suspend fun start(session: CallSession, request: AddParkingRequest): Response {
+    suspend fun start(session: Session, request: AddParkingRequest): Response {
         val reportCode = ensureData(session.permit?.reportCode, "report code")
         val paymentZoneId = ensureData(session.permit?.paymentZoneId, "payment zone id")
 
@@ -124,7 +124,7 @@ object ParkingService {
         return ServiceUtil.convertResponse(session.call, Method.Start, completed)
     }
 
-    suspend fun stop(session: CallSession): Response {
+    suspend fun stop(session: Session): Response {
         val parkingId = ensureData(session.call.parameters["id"]?.toLong(), "parking id")
         val reportCode = ensureData(session.permit?.reportCode, "report code")
 
@@ -153,14 +153,14 @@ object ParkingService {
         return ServiceUtil.convertResponse(session.call, Method.Stop, completed)
     }
 
-    private suspend fun findParkingSession(session: CallSession, parkingId: Long): ParkingSession? {
+    private suspend fun findParkingSession(session: Session, parkingId: Long): ParkingSession? {
         val parkingSession = parkingSessions(session, ParkingSessionType.Active)
             .find { p -> (p.psRightId == parkingId) }
         return parkingSession ?: parkingSessions(session, ParkingSessionType.Scheduled)
             .find { p -> (p.psRightId == parkingId) }
     }
 
-    private suspend fun parkingSessions(session: CallSession, type: ParkingSessionType): List<ParkingSession> {
+    private suspend fun parkingSessions(session: Session, type: ParkingSessionType): List<ParkingSession> {
         val result = ApiHelper.client.get<ParkingSessions>(ApiHelper.getCloudUrl("v2/parkingsessions")) {
             ApiHelper.addCloudHeaders(this, session)
             parameter("status", type.status)
@@ -170,7 +170,7 @@ object ParkingService {
         return result.parkingSession.filterNot {p -> p.isCancelled && p.parkingCost.value == 0.0}
     }
 
-    suspend fun history(session: CallSession): HistoryResponse {
+    suspend fun history(session: Session): HistoryResponse {
         val history = getParkingSessions(session, ParkingSessionType.Completed)
 
         return HistoryResponse(history)

@@ -4,8 +4,8 @@ import io.ktor.client.features.RedirectResponseException
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.Log
+import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.Balance
 import nl.parkeerassistent.external.Order
@@ -43,7 +43,7 @@ object PaymentService {
 
     val amounts = arrayListOf("2.50", "5.00", "10.00", "15.00", "20.00", "30.00", "40.00", "50.00", "100.00")
 
-    fun ideal(session: CallSession): IdealResponse {
+    fun ideal(session: Session): IdealResponse {
 
         val issuers = ArrayList<Issuer>()
         issuers.addAll(IdealBanks.values().map { i -> Issuer(i.name, i.displayName) })
@@ -52,11 +52,11 @@ object PaymentService {
         return IdealResponse(amounts, issuers)
     }
 
-    suspend fun payment(session: CallSession, request: PaymentRequest): PaymentResponse {
+    suspend fun payment(session: Session, request: PaymentRequest): PaymentResponse {
 
         val payment = Payment(
             Balance(request.amount.toDouble(), "EUR"),
-            Redirect("https://www.parkeerassistent.nl/")
+            Redirect("https://parkeerassistent.nl/")
         )
 
         val order = ApiHelper.client.post<PaymentOrder>(ApiHelper.getCloudUrl("v1/orders")) {
@@ -77,7 +77,7 @@ object PaymentService {
         return PaymentResponse(link, order.frontendId.toString())
     }
 
-    suspend fun complete(session: CallSession, request: CompleteRequest): Response {
+    suspend fun complete(session: Session, request: CompleteRequest): Response {
         try {
             val order = session.client.get<String>("https://aanmeldenparkeren.amsterdam.nl/api/orders?transactionType=topUpBalance&${request.data}")
             Log.debug(order)
@@ -99,7 +99,7 @@ object PaymentService {
         return Response(false)
     }
 
-    suspend fun status(session: CallSession): StatusResponse {
+    suspend fun status(session: Session): StatusResponse {
         val transactionId = ensureData(session.call.parameters["transactionId"], "transaction id")
 
         val order = ApiHelper.client.get<Order>(ApiHelper.getCloudUrl("v1/orders/$transactionId")) {

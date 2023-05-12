@@ -5,9 +5,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.Parameters
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.Log
 import nl.parkeerassistent.Permit
+import nl.parkeerassistent.Session
 import nl.parkeerassistent.User
 import nl.parkeerassistent.external.Credentials
 import nl.parkeerassistent.external.Csrf
@@ -30,7 +30,7 @@ object LoginService {
         }
     }
 
-    suspend fun isLoggedIn(session: CallSession): Response {
+    suspend fun isLoggedIn(session: Session): Response {
 
         val result = session.client.get<nl.parkeerassistent.external.Session>(ApiHelper.getMainUrl("api/auth/session")) {}
 
@@ -50,7 +50,7 @@ object LoginService {
 
     }
 
-    suspend fun login(session: CallSession, request: LoginRequest): Response {
+    suspend fun login(session: Session, request: LoginRequest): Response {
 
         session.client.get<nl.parkeerassistent.external.Session>(ApiHelper.getMainUrl("api/auth/session")) {}
 
@@ -74,7 +74,7 @@ object LoginService {
         return loggedIn
     }
 
-    suspend fun logout(session: CallSession): Response {
+    suspend fun logout(session: Session): Response {
         val csrfToken = getCsrfToken(session)
 
         val result = session.client.post<Credentials>(ApiHelper.getMainUrl("api/auth/signout")) {
@@ -96,7 +96,7 @@ object LoginService {
         return Response(true)
     }
 
-    suspend fun getCsrfToken(session: CallSession): String {
+    suspend fun getCsrfToken(session: Session): String {
         val result = session.client.get<Csrf>(ApiHelper.getMainUrl("api/auth/csrf")) {}
         return result.csrfToken
     }
