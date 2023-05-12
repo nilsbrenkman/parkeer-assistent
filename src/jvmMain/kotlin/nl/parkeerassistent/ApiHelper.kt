@@ -58,13 +58,13 @@ object ApiHelper {
         return cloudBaseUrl + url
     }
 
-    fun addCloudHeaders(httpRequestBuilder: HttpRequestBuilder, session: CallSession) {
+    fun addCloudHeaders(httpRequestBuilder: HttpRequestBuilder, session: Session) {
         val token = ensureData(session.user?.token, "token")
         httpRequestBuilder.header("Authorization", token)
         httpRequestBuilder.contentType(ContentType.Application.Json)
     }
 
-    suspend fun waitForOrder(session: CallSession, orderId: Long): Boolean {
+    suspend fun waitForOrder(session: Session, orderId: Long): Boolean {
         repeat(5) {
             withContext(Dispatchers.IO) {
                 Thread.sleep(200L * (it + 1))

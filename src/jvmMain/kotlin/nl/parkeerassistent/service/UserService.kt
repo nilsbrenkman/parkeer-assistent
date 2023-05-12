@@ -3,8 +3,8 @@ package nl.parkeerassistent.service
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.CallSession
 import nl.parkeerassistent.DateUtil
+import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.Permit
 import nl.parkeerassistent.external.Permits
@@ -33,7 +33,7 @@ object UserService {
         }
     }
 
-    suspend fun get(session: CallSession): UserResponse {
+    suspend fun get(session: Session): UserResponse {
 
         val permits = getPermits(session)
 
@@ -53,7 +53,7 @@ object UserService {
         return UserResponse(formatBalance(permits), permit.parkingRate.value, regime.regimeTimeStart, regime.regimeTimeEnd)
     }
 
-    suspend fun balance(session: CallSession): BalanceResponse {
+    suspend fun balance(session: Session): BalanceResponse {
         val permits = getPermits(session)
 
         Monitoring.info(session.call, Method.Balance, "SUCCESS")
@@ -62,7 +62,7 @@ object UserService {
 
     private fun formatBalance(permits: Permits) = "%.2f".format(permits.wallet.balance)
 
-    suspend fun regime(session: CallSession): RegimeResponse {
+    suspend fun regime(session: Session): RegimeResponse {
         val regimeDate = ensureData(session.call.parameters["date"], "date")
 
         val permits = getPermits(session)
@@ -73,7 +73,7 @@ object UserService {
         return regime
     }
 
-    suspend fun getPermits(session: CallSession): Permits {
+    suspend fun getPermits(session: Session): Permits {
         return ApiHelper.client.get(ApiHelper.getCloudUrl("v1/permits")) {
             ApiHelper.addCloudHeaders(this, session)
             parameter("status", "Actief")

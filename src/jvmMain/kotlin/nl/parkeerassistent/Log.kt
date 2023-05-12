@@ -2,18 +2,18 @@ package nl.parkeerassistent
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.logging.Logger
+import org.apache.log4j.Logger
 
 object Log {
 
-    val log = Logger.getLogger("Debug")
+    val log = Logger.getLogger("General")
 
     fun debug(msg: String) {
-        log.info(msg)
+        log.debug(msg)
     }
 
     inline fun <reified T> json(key: String, obj: T) {
-        log.info("${key}: ${Json.encodeToString(obj)}")
+        log.debug("${key}: ${Json.encodeToString(obj)}")
     }
 
 }
