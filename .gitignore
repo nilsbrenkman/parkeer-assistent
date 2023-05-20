@@ -10,7 +10,8 @@ externals/
 *.iml
 *.ipr
 out/
-#ios/parkeerassistent.xcodeproj/
+ios/parkeerassistent.xcodeproj/
+!ios/parkeerassistent.xcodeproj/project.pbxproj
 ios/app/.build
 ios/app/.swiftpm
 ios/parkeerassistent.xcodeproj.zip
