@@ -20,7 +20,7 @@ object ServiceUtil {
         method: Monitoring.Method,
         call: ApplicationCall,
         function: suspend (session: Session) -> RESPONSE
-    ): RESPONSE? {
+    ): RESPONSE {
         return execute(method, call, object : Function<RESPONSE> {
             override suspend fun execute(session: Session): RESPONSE {
                 return function.invoke(session)
@@ -33,7 +33,7 @@ object ServiceUtil {
         call: ApplicationCall,
         request: REQUEST,
         function: suspend (session: Session, request: REQUEST) -> RESPONSE
-    ): RESPONSE? {
+    ): RESPONSE {
         return execute(method, call, object : FunctionWithRequest<REQUEST, RESPONSE>(request) {
             override suspend fun execute(session: Session): RESPONSE {
                 return function.invoke(session, request)
@@ -45,9 +45,10 @@ object ServiceUtil {
         method: Monitoring.Method,
         call: ApplicationCall,
         function: Function<RESPONSE>
-    ): RESPONSE? {
+    ): RESPONSE {
+        var session: Session? = null
         try {
-            val session = Session(call)
+            session = Session(call)
             ensureWebUserId(call)
             val response = function.execute(session)
             session.updateSessionCookie()
@@ -55,6 +56,7 @@ object ServiceUtil {
         } catch (e: RedirectResponseException) {
             Monitoring.warn(call, method, "NOT_LOGGED_IN")
             call.response.status(HttpStatusCode.Forbidden)
+            throw e
         } catch (e: ClientRequestException) {
             if (e.response.status == HttpStatusCode.Unauthorized) {
                 Monitoring.warn(call, method, "NOT_LOGGED_IN")
@@ -65,12 +67,15 @@ object ServiceUtil {
                 Monitoring.warn(call, method, "EXTERNAL_ERROR")
                 call.response.status(HttpStatusCode.ServiceUnavailable)
             }
+            throw e
         } catch (e: Exception) {
             log.warn("Unexpected error", e)
             Monitoring.warn(call, method, "ERROR")
             call.response.status(HttpStatusCode.ServiceUnavailable)
+            throw e
+        } finally {
+            session?.close()
         }
-        return null
     }
 
     fun convertResponse(call: ApplicationCall, method: Monitoring.Method, response: Boolean): Response {
