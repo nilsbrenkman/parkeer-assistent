@@ -56,7 +56,7 @@ object PaymentService {
 
         val payment = Payment(
             Balance(request.amount.toDouble(), "EUR"),
-            Redirect("https://parkeerassistent.nl/")
+            Redirect("https://parkeerassistent.nl/payment")
         )
 
         val order = ApiHelper.client.post<PaymentOrder>(ApiHelper.getCloudUrl("v1/orders")) {

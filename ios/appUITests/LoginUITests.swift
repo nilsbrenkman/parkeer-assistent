@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import app
 
 class LoginUITests: XCTestCase {
 
@@ -14,7 +15,7 @@ class LoginUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["ui-test"]
+        app.launchEnvironment = ["RUNMODE" : "uitest"]
         app.launch()
     }
 
@@ -23,22 +24,24 @@ class LoginUITests: XCTestCase {
     }
 
     func testLoginScreen() throws {
-        XCTAssertTrue(app.staticTexts["Meldcode:"].exists)
-        XCTAssertTrue(app.staticTexts["Pincode:"].exists)
-
+        let usernameLabel = NSPredicate(format: "label contains 'Permit code'")
+        let passwordLabel = NSPredicate(format: "label contains 'Pin code'")
+        
+        XCTAssertTrue(app.staticTexts.element(matching: Label.username).exists)
+        XCTAssertTrue(app.staticTexts.element(matching: Label.password).exists)
+        
         let username = app.textFields["username"]
         let password = app.secureTextFields["password"]
         XCTAssertTrue(username.exists)
         XCTAssertTrue(password.exists)
-        
-        let login = app.buttons["Inloggen"]
-        XCTAssertTrue(login.exists)
+                
+        XCTAssertTrue(app.buttons.element(matching: Label.login).exists)
     }
     
     func testLoginSuccess() throws {
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")
         
-        let menu = app.buttons["Menu"]
+        let menu = app.buttons["menu"]
         XCTAssertTrue(menu.waitForExistence(timeout: TestUtil.timeout))
     }
     
@@ -53,14 +56,14 @@ class LoginUITests: XCTestCase {
     func testLogout() throws {
         try testLoginSuccess()
         
-        app.buttons["Menu"].tap()
+        app.buttons["menu"].tap()
 
-        let logout = app.buttons["Uitloggen"]
+        let logout = app.buttons.element(matching: Label.logout)
         XCTAssertTrue(logout.waitForExistence(timeout: TestUtil.timeout))
         logout.tap()
         
-        let meldcode = app.staticTexts["Meldcode:"]
-        XCTAssertTrue(meldcode.waitForExistence(timeout: TestUtil.timeout))
+        let username = app.staticTexts.element(matching: Label.username)
+        XCTAssertTrue(username.waitForExistence(timeout: TestUtil.timeout))
         XCTAssertFalse(logout.exists)
     }
   
@@ -73,7 +76,7 @@ class LoginUITests: XCTestCase {
         password.tap()
         password.typeText(passwordInput)
         
-        let login = app.buttons["Inloggen"]
+        let login = app.buttons.element(matching: Label.login)
         login.tap()
     }
 

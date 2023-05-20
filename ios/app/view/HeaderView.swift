@@ -62,6 +62,7 @@ struct HeaderView: View {
                                             .stroke(Color.white, lineWidth: 1)
                                 )
                         }
+                        .accessibilityIdentifier("menu")
                     }
                 }
                 .padding(.horizontal)

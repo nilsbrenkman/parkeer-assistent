@@ -35,7 +35,7 @@ struct Lang {
     }
 
     enum Parking: String, Localization {
-        case header, active, scheduled, noSessions, date, startTime, endTime, minutes, cost, stop, history, noHistory
+        case header, active, scheduled, noSessions, date, startTime, endTime, minutes, cost, stop, history, noHistory, freeParking
     }
 
     enum Payment: String, Localization {

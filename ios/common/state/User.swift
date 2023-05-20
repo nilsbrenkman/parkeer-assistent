@@ -75,6 +75,9 @@ class User: ObservableObject {
               let regimeDay = Util.getRegimeDay(regime: regime, date: date) else {
             self.regimeTimeStart = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
             self.regimeTimeEnd = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
+            
+            MessageManager.instance.addMessage(Lang.Parking.freeParking.localized(), type: Type.WARN)
+
             return
         }
         self.regimeTimeStart = getRegimeTime(date: date, time: regimeDay.startTime)

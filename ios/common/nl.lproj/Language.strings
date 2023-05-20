@@ -54,6 +54,7 @@
 "parking.stop" = "Sessie beëindigen";
 "parking.history" = "Parkeer geschiedenis";
 "parking.noHistory" = "Geen parkeer geschiedenis gevonden";
+"parking.freeParking" = "U kan in vandaag gratis parkeren";
 
 "payment.amount" = "Bedrag";
 "payment.bank" = "Bank";

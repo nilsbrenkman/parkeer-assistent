@@ -93,7 +93,8 @@ class Util {
     
     static func isUITest() -> Bool {
         #if DEBUG
-        if CommandLine.arguments.contains("ui-test") {
+        if ProcessInfo.processInfo.environment["RUNMODE"] == "uitest" {
+            Log.info("Running UI Tests")
             return true
         }
         #endif

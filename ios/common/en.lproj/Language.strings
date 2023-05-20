@@ -54,6 +54,7 @@
 "parking.stop" = "Stop session";
 "parking.history" = "Parking history";
 "parking.noHistory" = "No parking history found";
+"parking.freeParking" = "You can park for free today";
 
 "payment.amount" = "Amount";
 "payment.bank" = "Bank";
