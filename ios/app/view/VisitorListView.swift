@@ -86,7 +86,9 @@ struct VisitorListView: View {
         for i in offsets {
             let visitor = user.visitors![i]
             user.visitors!.remove(at: i)
-            user.deleteVisitor(visitor)
+            Task {
+                await user.deleteVisitor(visitor)
+            }
         }
     }
     

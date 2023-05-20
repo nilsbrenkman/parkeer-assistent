@@ -64,6 +64,17 @@ class Util {
         return formatter.string(from: date)
     }
     
+    static func getRegimeDay(regime: Regime, date: Date) -> RegimeDay? {
+        let weekday = Calendar.current.component(Calendar.Component.weekday, from: date)
+        let dayOfWeek = Util.weekdays[weekday - 1]
+        let regimeDay = regime.days.first(where: { d in
+            d.weekday == dayOfWeek
+        })
+        return regimeDay
+    }
+    
+    static let weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+    
     static func getVisitor(_ parking: Parking, visitors: [Visitor]?) -> Visitor? {
         if let visitors = visitors {
             for visitor in visitors {
@@ -111,6 +122,21 @@ extension Date {
         }
         #endif
         return nil
+    }
+    
+}
+
+struct TimeUnit {
+    
+    static let seconds = TimeUnit(multiplier: 1)
+    static let minutes = TimeUnit(multiplier: seconds.toInterval(value: 60))
+    static let hours = TimeUnit(multiplier: minutes.toInterval(value: 60))
+    static let days = TimeUnit(multiplier: hours.toInterval(value: 24))
+    
+    private let multiplier: Double
+    
+    func toInterval(value: Double) -> TimeInterval {
+        return TimeInterval(multiplier * value)
     }
     
 }

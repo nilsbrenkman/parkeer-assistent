@@ -65,8 +65,12 @@ struct ContentView: View {
         }
         .onAppear {
             if !initialised {
-                login.loggedIn()
-                initialised = true
+                Task {
+                    await login.loggedIn()
+                    initialised = true
+                    login.user = user
+                    login.payment = payment
+                }
             }
         }
         .onChange(of: scenePhase) { phase in
@@ -74,7 +78,9 @@ struct ContentView: View {
                 login.isBackground = true
             } else if login.isBackground {
                 login.isBackground = false
-                login.loggedIn()
+                Task {
+                    await login.loggedIn()
+                }
             }
         }
         .onOpenURL { url in

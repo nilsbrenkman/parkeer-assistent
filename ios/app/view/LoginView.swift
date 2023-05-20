@@ -118,8 +118,11 @@ struct LoginView: View {
     
     private func startLogin() {
         if !wait {
-            wait = true
-            login.login(username: username, password: password, storeCredentials: storeCredentials) {
+            Task {
+                wait = true
+                await login.login(username: username,
+                                  password: password,
+                                  storeCredentials: storeCredentials)
                 wait = false
             }
         }

@@ -69,8 +69,9 @@ struct AddVisitorView: View {
             Section {
                 Button(action: {
                     if !wait {
-                        wait = true
-                        user.addVisitor(license: license, name: name) {
+                        Task {
+                            wait = true
+                            await user.addVisitor(license: license, name: name)
                             wait = false
                         }
                     }
@@ -101,7 +102,9 @@ struct AddVisitorView: View {
             user.visitors = nil
             user.addVisitor = false
             
-            user.getVisitors()
+            Task {
+                await user.getVisitors()
+            }
         } else {
             wait = false
         }

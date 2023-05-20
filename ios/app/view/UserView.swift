@@ -27,8 +27,10 @@ struct UserView: View {
         .listStyle(InsetGroupedListStyle())
         .onAppear {
             if !user.isLoaded {
-                user.getUser()
-                user.isLoaded = true
+                Task {
+                    await user.getUser()
+                    user.isLoaded = true
+                }
             } else {
                 if Stats.user.requestReview() {
                     if let windowScene = UIApplication.shared.windows.first?.windowScene {
@@ -41,6 +43,7 @@ struct UserView: View {
                 return
             }
             refreshTask = Task.detached(priority: .background) {
+                Log.info("Starting refresh task")
                 let isCancelled: () -> Bool = {
                     do {
                         try Task.checkCancellation()
@@ -50,7 +53,7 @@ struct UserView: View {
                     }
                 }
                 
-                var delay = 10.0
+                var delay = 60.0
                 var update = false
 
                 let checkUpdate: (String) -> Void = { time in
@@ -67,11 +70,15 @@ struct UserView: View {
                 }
                 
                 while !isCancelled() {
-                    delay = 10.0
+                    try? await Task.sleep(nanoseconds: UInt64(delay.rounded()) * 1_000_000_000)
+                    
+                    delay = 60.0
                     update = false
                     
+                    Log.debug("Running refresh task")
+                    
                     if let parking = await user.parking {
-                        delay = 60.0
+                        
                         for active in parking.active {
                             checkUpdate(active.endTime)
                         }
@@ -80,14 +87,17 @@ struct UserView: View {
                         }
                     }
                     if update {
+                        Log.debug("Retrieving new data")
                         await user.getParking()
                     }
-                    try? await Task.sleep(nanoseconds: UInt64(delay.rounded()) * 1_000_000_000)
+                    
                 }
+                Log.debug("Exiting refresh task")
 
             }
         }
         .onDisappear {
+            Log.info("Cancelling refresh task")
             refreshTask?.cancel()
             refreshTask = nil
         }

@@ -30,7 +30,9 @@ struct ParkingListView: View {
         .onDelete(perform: {offsets in
             for i in offsets {
                 let parking = parkingList[i]
-                user.stopParking(parking)
+                Task {
+                    await user.stopParking(parking)
+                }
             }
         })
         .animation(nil)

@@ -22,6 +22,9 @@ class Login: ObservableObject, ErrorHandler {
     private var authenticated: Date? = nil
 
     let loginClient: LoginClient
+    
+    weak var user: User?
+    weak var payment: Payment?
 
     init() throws {
         loginClient = try ClientManager.instance.get(LoginClient.self)
@@ -36,10 +39,7 @@ class Login: ObservableObject, ErrorHandler {
                         MessageManager.instance.addMessage(Lang.Error.unauthorized.localized(), type: Type.WARN)
                     }
                         
-                    self.isLoggedIn = false
-                    self.isLoading = false
-                    self.isBackground = false
-                    self.autoLogin = false
+                    self.clearUser()
                     return
                 }
                 if error == .NoHttpResponse {
@@ -48,58 +48,66 @@ class Login: ObservableObject, ErrorHandler {
                 MessageManager.instance.addMessage(Lang.Error.serverUnknown.localized(), type: Type.ERROR)
             }
         }
-
     }
     
-    func loggedIn() {
+    private func clearUser() {
+        self.isLoggedIn = false
+        self.isLoading = false
+        self.isBackground = false
+        self.autoLogin = false
+        
+        self.user?.selectedVisitor = nil
+        self.user?.addVisitor = false
+        self.user?.isLoaded = false
+        
+        self.payment?.show = false
+    }
+    
+    func loggedIn() async {
         self.isLoading = true
         
-        Task {
-            let response = try await self.loginClient.loggedId()
-            
-            self.isLoggedIn = response.success
+        guard let response = try? await self.loginClient.loggedId() else {
+            self.isLoggedIn = false
             self.isLoading = false
+            return
         }
+        
+        self.isLoggedIn = response.success
+        self.isLoading = false
     }
     
-    func login(username: String, password: String, storeCredentials: Bool, onComplete: @escaping () -> Void) {
-        Task {
-            let response = try await self.loginClient.login(username: username, password: password)
-            
-            if response.success {
-                Stats.user.loginCount += 1
-                if storeCredentials {
-                    do {
-                        try Keychain.storeCredentials(username: username, password: password)
-                        Keychain.setRecent(username)
-                    } catch {
-                        print("Store credentials failed: \(error)")
-                    }
+    func login(username: String, password: String, storeCredentials: Bool) async {
+        
+        guard let response = try? await self.loginClient.login(username: username, password: password) else { return }
+        
+        if response.success {
+            Stats.user.loginCount += 1
+            if storeCredentials {
+                do {
+                    try Keychain.storeCredentials(username: username, password: password)
+                    Keychain.setRecent(username)
+                } catch {
+                    Log.warning("Store credentials failed: \(error)")
                 }
-                self.isLoggedIn = true
-                
-            } else {
-                MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
-            onComplete()
+            self.isLoggedIn = true
+            
+        } else {
+            MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
+        
     }
     
-    func logout(_ onComplete: @escaping () -> Void) {
+    func logout() async {
         self.isLoading = true
         
-        Task {
-            let response = try await self.loginClient.logout()
-            
-            if response.success {
-                self.isLoggedIn = false
-            } else {
+        if let response = try? await self.loginClient.logout() {
+            if !response.success {
                 MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
-            onComplete()
-            self.autoLogin = false
-            self.isLoading = false
         }
+        
+        self.clearUser()    
     }
     
     func accounts() throws -> [Credentials] {

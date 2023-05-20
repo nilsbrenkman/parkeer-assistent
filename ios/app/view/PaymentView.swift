@@ -51,9 +51,11 @@ struct PaymentView: View {
             Section {
                 if payment.transactionId == nil {
                     Button(action: {
-                        self.wait = true
-                        payment.payment { response in
-                            guard let redirectUrl = URL(string: response.redirectUrl) else {
+                        Task {
+                            self.wait = true
+                            guard let response = try? await payment.payment(),
+                                  let redirectUrl = URL(string: response.redirectUrl) else {
+                                
                                 MessageManager.instance.addMessage(Lang.Payment.redirectErrorMsg.localized(), type: Type.ERROR)
                                 return
                             }
@@ -75,9 +77,13 @@ struct PaymentView: View {
                     .disabled(payment.selectedAmount < 0 && payment.selectedIssuer < 0)
                 } else {
                     Button(action: {
-                        self.wait = true
-                        payment.status { response in
-                            self.handleStatusResponse(response)
+                        Task {
+                            self.wait = true
+                            if let response = try? await payment.status() {
+                                self.handleStatusResponse(response)
+                            } else {
+                                self.wait = false
+                            }
                         }
                     }){
                         Text(disableStatusCheck > 0 ? "\(disableStatusCheck)" : Lang.Payment.status.localized())
@@ -103,13 +109,17 @@ struct PaymentView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
-            self.payment.ideal()
+            Task {
+                await self.payment.ideal()
+            }
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active && payment.inProgress {
-                payment.status { response in
-                    payment.inProgress = false
-                    self.handleStatusResponse(response)
+                Task {
+                    if let response = try? await payment.status() {
+                        payment.inProgress = false
+                        self.handleStatusResponse(response)
+                    }
                 }
             }
         }
@@ -126,7 +136,9 @@ struct PaymentView: View {
             MessageManager.instance.addMessage(Lang.Payment.successMsg.localized(), type: Type.SUCCESS) {
                 payment.transactionId = nil
                 payment.show = false
-                user.getBalance()
+                Task {
+                    await user.getBalance()
+                }
             }
             break
         case "pending":
@@ -146,13 +158,17 @@ struct PaymentView: View {
         case "error":
             MessageManager.instance.addMessage(Lang.Payment.errorMsg.localized(), type: Type.ERROR) {
                 payment.transactionId = nil
-                user.getBalance()
+                Task {
+                    await user.getBalance()
+                }
             }
             break
         default:
             MessageManager.instance.addMessage(Lang.Payment.unknownMsg.localized(), type: Type.WARN) {
                 payment.transactionId = nil
-                user.getBalance()
+                Task {
+                    await user.getBalance()
+                }
             }
             break
         }

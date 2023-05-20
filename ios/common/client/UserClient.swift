@@ -51,7 +51,15 @@ class UserClientMock: UserClient {
         return UserResponse(balance: getBalance(),
                             hourRate: hourRate,
                             regimeTimeStart: Util.dateTimeFormatter.string(from: getRegimeStart(Date.now())),
-                            regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(Date.now())))
+                            regimeTimeEnd: Util.dateTimeFormatter.string(from: getRegimeEnd(Date.now())),
+                            regime: Regime(days: [
+                                RegimeDay(weekday: "MON", startTime: "09:00", endTime: "21:00"),
+                                RegimeDay(weekday: "TUE", startTime: "09:00", endTime: "21:00"),
+                                RegimeDay(weekday: "WED", startTime: "09:00", endTime: "21:00"),
+                                RegimeDay(weekday: "THU", startTime: "09:00", endTime: "21:00"),
+                                RegimeDay(weekday: "FRI", startTime: "09:00", endTime: "21:00"),
+                                RegimeDay(weekday: "SAT", startTime: "09:00", endTime: "21:00")
+                            ]))
     }
     
     func balance() async throws -> BalanceResponse {

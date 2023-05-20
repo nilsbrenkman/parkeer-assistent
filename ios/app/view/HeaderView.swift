@@ -99,11 +99,8 @@ struct HeaderView: View {
     }
     
     private func logout() {
-        login.logout() {
-            user.selectedVisitor = nil
-            user.addVisitor = false
-            user.isLoaded = false
-            payment.show = false
+        Task {
+            await login.logout()
         }
     }
 
