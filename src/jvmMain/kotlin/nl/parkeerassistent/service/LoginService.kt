@@ -35,11 +35,16 @@ object LoginService {
         val result = session.client.get<nl.parkeerassistent.external.Session>(ApiHelper.getMainUrl("api/auth/session")) {}
 
         result.user?.let {
+            if (it.scope != "permitHolder") {
+                session.cookieStore.clear()
+                Monitoring.info(session.call, Method.LoggedIn, "NOT_SUPPORTED")
+                return Response(false, "Bezoekers account wordt niet ondersteund")
+            }
             Log.debug("token: ${it.access_token}")
             session.user = User(it.access_token)
             Log.debug("reportcode: ${it.reportcode}")
             if (session.permit == null) {
-                session.permit = Permit(it.reportcode, null)
+                session.permit = Permit(it.reportcode, null, it.scope)
             }
             Monitoring.info(session.call, Method.LoggedIn, "LOGGED_IN")
             return Response(true, "Ingelogd")

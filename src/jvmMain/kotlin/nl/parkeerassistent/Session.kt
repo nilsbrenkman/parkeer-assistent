@@ -21,7 +21,7 @@ import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.Base64
 
-class Session(val call: ApplicationCall) {
+class Session(val call: ApplicationCall) : java.io.Closeable {
 
     val cookieStore: PassthroughCookieStorage = PassthroughCookieStorage(call.request.cookies["session"])
 
@@ -111,6 +111,10 @@ class Session(val call: ApplicationCall) {
         } ?: call.response.cookies.appendExpired(key)
     }
 
+    override fun close() {
+        client.close()
+    }
+
 }
 
 @Serializable
@@ -121,6 +125,7 @@ data class User(
 @Serializable
 data class Permit(
     val reportCode: Long,
-    val paymentZoneId: String?
+    val paymentZoneId: String? = null,
+    val scope: String? = null
 )
 

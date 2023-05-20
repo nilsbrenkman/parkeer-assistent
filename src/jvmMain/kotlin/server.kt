@@ -1,5 +1,5 @@
 
-import io.ktor.application.ApplicationCall
+import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.Compression
@@ -25,6 +25,7 @@ import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import kotlinx.coroutines.coroutineScope
 import kotlinx.html.HTML
 import nl.parkeerassistent.html.application
 import nl.parkeerassistent.html.feedback
@@ -80,6 +81,18 @@ fun main() {
             install(XForwardedHeaderSupport)
             install((HttpsRedirect))
         }
+        intercept(ApplicationCallPipeline.Monitoring) {
+            val context = this
+            try {
+                coroutineScope {
+                    context.proceed()
+                }
+            } catch (exception: Throwable) {
+                if (this.call.response.status() != null) {
+                    context.call.respondText(text = "")
+                }
+            }
+        }
         routing {
             get("/version/{version}") {
                 VersionService.version(call)
@@ -97,7 +110,7 @@ fun main() {
                 call.respondRedirect("/", false)
             }
             get("/login") {
-                call.respondOrNull(
+                call.respond(
                     ServiceUtil.execute(
                         LoginService.Method.LoggedIn,
                         call,
@@ -107,7 +120,7 @@ fun main() {
             }
             post("/login") {
                 val request = call.receive<LoginRequest>()
-                call.respondOrNull(
+                call.respond(
                     ServiceUtil.execute(
                         LoginService.Method.Login,
                         call,
@@ -117,7 +130,7 @@ fun main() {
                 )
             }
             get("/logout") {
-                call.respondOrNull(
+                call.respond(
                     ServiceUtil.execute(
                         LoginService.Method.Logout,
                         call,
@@ -127,7 +140,7 @@ fun main() {
             }
             route("/user") {
                 get {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             UserService.Method.Get,
                             call,
@@ -136,7 +149,7 @@ fun main() {
                     )
                 }
                 get("/balance") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             UserService.Method.Balance,
                             call,
@@ -145,7 +158,7 @@ fun main() {
                     )
                 }
                 get("/regime/{date}") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             UserService.Method.Regime,
                             call,
@@ -156,7 +169,7 @@ fun main() {
             }
             route("/parking") {
                 get {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             ParkingService.Method.Get,
                             call,
@@ -166,7 +179,7 @@ fun main() {
                 }
                 post {
                     val request = call.receive<AddParkingRequest>()
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             ParkingService.Method.Start,
                             call,
@@ -176,7 +189,7 @@ fun main() {
                     )
                 }
                 delete("/{id}") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             ParkingService.Method.Stop,
                             call,
@@ -185,7 +198,7 @@ fun main() {
                     )
                 }
                 get("/history") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             ParkingService.Method.History,
                             call,
@@ -196,7 +209,7 @@ fun main() {
             }
             route("/visitor") {
                 get {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             VisitorService.Method.Get,
                             call,
@@ -206,7 +219,7 @@ fun main() {
                 }
                 post {
                     val request = call.receive<AddVisitorRequest>()
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             VisitorService.Method.Add,
                             call,
@@ -216,7 +229,7 @@ fun main() {
                     )
                 }
                 delete("/{visitorId}") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             VisitorService.Method.Delete,
                             call,
@@ -227,7 +240,7 @@ fun main() {
             }
             route("/payment") {
                 get {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             PaymentService.Method.Ideal,
                             call,
@@ -237,7 +250,7 @@ fun main() {
                 }
                 post {
                     val request = call.receive<PaymentRequest>()
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             PaymentService.Method.Payment,
                             call,
@@ -248,7 +261,7 @@ fun main() {
                 }
                 post("/complete") {
                     val request = call.receive<CompleteRequest>()
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             PaymentService.Method.Complete,
                             call,
@@ -258,7 +271,7 @@ fun main() {
                     )
                 }
                 get("/{transactionId}") {
-                    call.respondOrNull(
+                    call.respond(
                         ServiceUtil.execute(
                             PaymentService.Method.Status,
                             call,
@@ -278,12 +291,6 @@ fun main() {
             }
         }
     }.start(wait = true)
-}
 
-
-suspend inline fun <reified T : Any> ApplicationCall.respondOrNull(message: T?) {
-    if (message != null) {
-        this.respond(message)
-    }
 }
 

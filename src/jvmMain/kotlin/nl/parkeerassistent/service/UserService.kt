@@ -9,9 +9,12 @@ import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.Permit
 import nl.parkeerassistent.external.Permits
 import nl.parkeerassistent.model.BalanceResponse
+import nl.parkeerassistent.model.Regime
+import nl.parkeerassistent.model.RegimeDay
 import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.UserResponse
 import nl.parkeerassistent.monitoring.Monitoring
+import java.time.DayOfWeek
 import java.time.Instant
 import java.util.Calendar
 import java.util.Date
@@ -48,9 +51,10 @@ object UserService {
         }
 
         val regime = getRegime(permit, Instant.now())
+        val fullRegime = getFullRegime(permit)
 
         Monitoring.info(session.call, Method.Get, "SUCCESS")
-        return UserResponse(formatBalance(permits), permit.parkingRate.value, regime.regimeTimeStart, regime.regimeTimeEnd)
+        return UserResponse(formatBalance(permits), permit.parkingRate.value, regime.regimeTimeStart, regime.regimeTimeEnd, fullRegime)
     }
 
     suspend fun balance(session: Session): BalanceResponse {
@@ -84,7 +88,7 @@ object UserService {
         val calendar = Calendar.getInstance()
         calendar.time = Date.from(date)
         val dayOfWeek = DayOfWeek.values().get(calendar.get(Calendar.DAY_OF_WEEK) - 1)
-        val day = permit.paymentZones.first().days.first{ it.dayOfWeek == dayOfWeek.name }
+        val day = permit.paymentZones.first().days.first{ it.dayOfWeek == dayOfWeek.alias }
         val startTime = getTime(calendar, day.startTime)
         val endTime = getTime(calendar, day.endTime)
         return RegimeResponse(startTime, endTime)
@@ -100,8 +104,35 @@ object UserService {
         return DateUtil.dateTime.format(calendar.time)
     }
 
-    enum class DayOfWeek {
-        Zondag, Maandag, Dinsdag, Woensdag, Donderdag, Vrijdag, Zaterdag
+    fun getFullRegime(permit: Permit): Regime {
+        val days = permit.paymentZones.first().days
+            .filter { d -> ! ("00:00" == d.startTime && "24:00" == d.endTime) }
+            .mapNotNull { d ->
+                val dayOfWeek = DayOfWeek.fromAlias(d.dayOfWeek)
+                dayOfWeek?.let { RegimeDay(it.name, d.startTime, d.endTime) }
+            }
+        return Regime(days)
+    }
+
+    enum class DayOfWeek(val alias: String) {
+        SUN("Zondag"),
+        MON("Maandag"),
+        TUE("Dinsdag"),
+        WED("Woensdag"),
+        THU("Donderdag"),
+        FRI("Vrijdag"),
+        SAT("Zaterdag"),
+        ;
+        companion object {
+            fun fromAlias(a: String): DayOfWeek? {
+                for (d in DayOfWeek.values()) {
+                    if (d.alias == a) {
+                        return d
+                    }
+                }
+                return null
+            }
+        }
     }
 
 }
