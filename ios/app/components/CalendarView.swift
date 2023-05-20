@@ -15,7 +15,7 @@ struct CalendarView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> some UIView {
         
-        var selector = UICalendarSelectionSingleDate(delegate: delegate)
+        let selector = UICalendarSelectionSingleDate(delegate: delegate)
         selector.selectedDate = Calendar.current.dateComponents([.year, .month, .day], from: date)
         
         let calendarView = UICalendarView()

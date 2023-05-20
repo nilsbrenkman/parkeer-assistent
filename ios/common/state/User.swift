@@ -59,7 +59,7 @@ class User: ObservableObject {
     }
     
     func getRegime(_ date: Date) async {
-        if let regime {
+        if regime != nil {
             setRegimeForDate(date)
             return
         }
