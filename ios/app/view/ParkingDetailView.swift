@@ -35,7 +35,9 @@ struct ParkingDetailView: View {
             
             Section {
                 Button(action: {
-                    user.stopParking(parking)
+                    Task {
+                        await user.stopParking(parking)
+                    }
                     self.presentationMode.wrappedValue.dismiss()
                 }){
                     Text(Lang.Parking.stop.localized())

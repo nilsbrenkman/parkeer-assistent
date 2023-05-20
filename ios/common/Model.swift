@@ -22,6 +22,7 @@ struct UserResponse: Codable {
     var hourRate: Double
     var regimeTimeStart: String
     var regimeTimeEnd: String
+    var regime: Regime
 }
 
 struct BalanceResponse: Codable {
@@ -118,4 +119,14 @@ struct History: Codable, Hashable {
     var cost: Double
     
     var date: Date { get { try! Util.parseDate(startTime) } }
+}
+
+struct Regime: Codable {
+    var days: [RegimeDay]
+}
+
+struct RegimeDay: Codable {
+    var weekday: String
+    var startTime: String
+    var endTime: String
 }

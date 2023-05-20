@@ -19,6 +19,7 @@ struct AddParkingView: View {
     )
     
     let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    let calendarDelegate = CalenderViewDelegate()
 
     @State private var minutes = 0
     @State private var startDate = Date.now()
@@ -42,6 +43,13 @@ struct AddParkingView: View {
                     HStack(alignment: .center, spacing: Constants.spacing.normal) {
                         DataBox(title: Lang.Parking.date.localized(), content: "\(Util.dayMonthFormatter.string(from: startDate))")
                             .onTapGesture {
+                                calendarDelegate.onSelectDate = { d in
+                                    Log.info("Selected date: \(Util.dateFormatter.string(from: d))")
+                                    startDate = d
+                                    updateRegime()
+                                    showDatePicker = false
+                                }
+                                calendarDelegate.regime = user.regime
                                 showDatePicker.toggle()
                             }
                             .opacity(opacity(enabled: showDatePicker))
@@ -76,8 +84,9 @@ struct AddParkingView: View {
             Section {
                 Button(action: {
                     if !wait && minutes > 0 {
-                        wait = true
-                        user.startParking(visitor, timeMinutes: minutes, start: startDate) {
+                        Task {
+                            wait = true
+                            await user.startParking(visitor, timeMinutes: minutes, start: startDate)
                             wait = false
                         }
                     }
@@ -103,7 +112,7 @@ struct AddParkingView: View {
             }
         }
         .modal(visible: $showDatePicker, onClose: updateRegime) {
-            DatePickerModal(date: $startDate)
+            DatePickerModal(date: $startDate, delegate: calendarDelegate)
         }
         .navigationBarHidden(true)
         .onAppear(perform: {
@@ -168,7 +177,8 @@ struct AddParkingView: View {
     }
     
     private func updateRegime() {
-        user.getRegime(startDate) {
+        Task {
+            await user.getRegime(startDate)
             update()
         }
     }
@@ -204,6 +214,8 @@ struct AddParkingView: View {
         }
         return 0.5
     }
+
+
     
 }
 

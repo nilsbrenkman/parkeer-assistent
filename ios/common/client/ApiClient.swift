@@ -54,6 +54,7 @@ class ApiClient {
             guard let url = URL(string: self.baseUrl + path) else {
                 throw ClientError.InvalidPath
             }
+            Log.info("Request: \(url) \(method.rawValue)")
             
             var headers = HTTPCookie.requestHeaderFields(with: self.getCookies())
             self.addAnalyticHeaders(&headers)
@@ -66,6 +67,7 @@ class ApiClient {
                 guard let json = try? JSONEncoder().encode(body) else {
                     throw ClientError.RequestSerialization
                 }
+                Log.debug("Body: \(String(decoding: json, as: UTF8.self))")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = json
             }
@@ -77,6 +79,8 @@ class ApiClient {
             }
             
             self.updateCookies(httpResponse)
+            
+            Log.info("Status code: \(httpResponse.statusCode)")
             
             if httpResponse.statusCode / 100 != 2 {
                 switch httpResponse.statusCode {
@@ -92,6 +96,8 @@ class ApiClient {
             //                throw ClientError.EmptyResponse
             //            }
             
+            Log.debug("Response: \(String(decoding: data, as: UTF8.self))")
+
             guard let result = try? JSONDecoder().decode(RESPONSE.self, from: data) else {
                 throw ClientError.ResponseSerialization
             }
