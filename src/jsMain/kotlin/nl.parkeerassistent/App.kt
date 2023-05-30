@@ -31,7 +31,7 @@ val client = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer() }
     install("CustomHeaders") {
         requestPipeline.intercept(HttpRequestPipeline.State) {
-            context.header("PA-OS", "Web")
+            context.header("X-ParkeerAssistent-OS", "Web")
         }
     }
 }

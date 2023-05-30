@@ -8,7 +8,6 @@ FROM openjdk:15-jdk-alpine
 RUN mkdir /app
 COPY --from=build /home/gradle/build/install/ParkeerAssistent/lib/*.jar /app/
 COPY --from=build /home/gradle/build/libs/ParkeerAssistent-jvm-*.jar /app/
-COPY keystore.jks /app/keystore.jks
 COPY apple-app-site-association.json /app/apple-app-site-association.json
 
 CMD java -cp "/app/*" ServerKt

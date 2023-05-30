@@ -89,19 +89,9 @@ object UserService {
         calendar.time = Date.from(date)
         val dayOfWeek = DayOfWeek.values().get(calendar.get(Calendar.DAY_OF_WEEK) - 1)
         val day = permit.paymentZones.first().days.first{ it.dayOfWeek == dayOfWeek.alias }
-        val startTime = getTime(calendar, day.startTime)
-        val endTime = getTime(calendar, day.endTime)
+        val startTime = DateUtil.dateWithTime(calendar.time, day.startTime)
+        val endTime = DateUtil.dateWithTime(calendar.time, day.endTime)
         return RegimeResponse(startTime, endTime)
-    }
-
-    fun getTime(calendar: Calendar, time: String): String {
-        val hour = time.substring(0, 2).toInt()
-        val minutes = time.substring(3, 5).toInt()
-        calendar.set(Calendar.HOUR_OF_DAY, hour)
-        calendar.set(Calendar.MINUTE, minutes)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return DateUtil.dateTime.format(calendar.time)
     }
 
     fun getFullRegime(permit: Permit): Regime {

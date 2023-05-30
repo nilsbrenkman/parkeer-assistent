@@ -2,6 +2,7 @@ package nl.parkeerassistent.monitoring
 
 import io.ktor.application.ApplicationCall
 import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 
 object Monitoring {
 
@@ -26,7 +27,7 @@ object Monitoring {
         ;
     }
 
-    val log = Logger.getLogger("AnalyticEvent")
+    val log = LoggerFactory.getLogger(Monitoring::class.java)
 
     fun info(call: ApplicationCall, method: Method, message: String) {
         ES.log(call, method, Level.INFO, message)

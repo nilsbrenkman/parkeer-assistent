@@ -72,16 +72,9 @@ object ParkingService {
         Completed("Voltooid")
     }
 
-    private val regex = "/Date\\(([0-9]+)\\)/".toRegex()
-
     private fun convertTime(gmt: String): String {
         val date = DateUtil.gmtDateFormatter.parse(gmt)
         return DateUtil.dateFormatter.format(date)
-    }
-
-    private fun getUnixTime(utc: String): Long {
-        val match = regex.find(utc)!!
-        return match.groupValues[1].toLong()
     }
 
     suspend fun start(session: Session, request: AddParkingRequest): Response {

@@ -17,7 +17,29 @@ val ktorVersion = "1.6.3"
 val serializationVersion = "1.1.0"
 
 kotlin {
+    val commonMain = sourceSets["commonMain"]
     jvm {
+//        compilations {
+//            val main by getting
+//
+//            val mock by compilations.creating {
+//                defaultSourceSet {
+//                    dependsOn(commonMain)
+//                    dependencies {
+//                        implementation(main.compileDependencyFiles + main.output.classesDirs)
+//                    }
+//                }
+//            }
+//
+//            tasks.register<Jar>("mockJar") {
+//                group = "build"
+//                manifest {
+//                    attributes["Main-Class"] = "nl.parkeerassistent.mock.MockServerKt"
+//                }
+//                archiveBaseName.set("${project.name}-mock")
+//                from(mock.output.classesDirs)
+//            }
+//        }
         compilations.all {
             kotlinOptions.jvmTarget = "15"
         }
@@ -107,15 +129,11 @@ tasks.named<Copy>("jvmProcessResources") {
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
-    environment(
-        "HOST" to "192.168.178.74",
-        "PORT" to "3000",
-        "TRUST_STORE" to "keystore.jks",
-        "FORCE_SSL" to "false",
-        "DEBUG_LOG" to "false",
-        "VERSION" to "1.1.5",
-        "BONSAI_URL" to "...",
-        "ELASTIC_SEARCH_INDEX" to "parkeer-assistent-dev",
-        "APPLE_APP_SITE_ASSOCIATION" to "apple-app-site-association.json"
-    )
+}
+
+tasks.withType(JavaExec::class.java) {
+    file(".env").readLines().forEach {
+        val (key, value) = it.split("=")
+        environment(key to value)
+    }
 }
