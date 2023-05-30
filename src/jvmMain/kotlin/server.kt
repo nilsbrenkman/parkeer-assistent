@@ -30,7 +30,7 @@ import kotlinx.html.HTML
 import nl.parkeerassistent.html.application
 import nl.parkeerassistent.html.completeMockPayment
 import nl.parkeerassistent.html.feedback
-import nl.parkeerassistent.mock.MockRouteSelector
+import nl.parkeerassistent.mock.mock
 import nl.parkeerassistent.mock.mockRouting
 import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.AddVisitorRequest
@@ -47,6 +47,7 @@ import nl.parkeerassistent.service.VisitorService
 import nl.parkeerassistent.style.Style
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 
 fun main() {
@@ -54,11 +55,9 @@ fun main() {
     if ("true" != System.getenv("DEBUG_LOG")) {
         Logger.getRootLogger().level = Level.INFO
     }
-
-    val log = Logger.getLogger("Server.kt")
+    val log = LoggerFactory.getLogger("Server.kt")
 
     val port = System.getenv("PORT").toInt()
-
     log.info("Starting server: $port")
 
     val mockBuilds = System.getenv("MOCK_BUILDS")
@@ -102,7 +101,7 @@ fun main() {
             post("/") {
                 call.respondRedirect("/", false)
             }
-            createChild(MockRouteSelector(mockBuilds)).apply {
+            mock {
                 mockRouting()
             }
             get("/login") {

@@ -6,18 +6,21 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import nl.parkeerassistent.ApiHelper
 import nl.parkeerassistent.License
-import nl.parkeerassistent.Log
 import nl.parkeerassistent.MigrationUtil
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.LicensePlate
+import nl.parkeerassistent.json
 import nl.parkeerassistent.model.AddVisitorRequest
 import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.model.Visitor
 import nl.parkeerassistent.model.VisitorResponse
 import nl.parkeerassistent.monitoring.Monitoring
+import org.slf4j.LoggerFactory
 
 object VisitorService {
+
+    private val log = LoggerFactory.getLogger(VisitorService::class.java)
 
     enum class Method: Monitoring.Method {
         Get,
@@ -41,7 +44,15 @@ object VisitorService {
         }
 
         Monitoring.info(session.call, Method.Get, "SUCCESS")
-        return VisitorResponse(licensePlates.map{ Visitor(MigrationUtil.createId(it.vehicleId), reportCode, it.vehicleId, License.format(it.vehicleId), it.visitorName) })
+        return VisitorResponse(licensePlates.map {
+            Visitor(
+                MigrationUtil.createId(it.vehicleId),
+                reportCode,
+                it.vehicleId,
+                License.format(it.vehicleId),
+                it.visitorName
+            )
+        })
     }
 
     suspend fun add(session: Session, request: AddVisitorRequest): Response {
@@ -50,7 +61,7 @@ object VisitorService {
             ApiHelper.addCloudHeaders(this, session)
             body = licensePlate
         }
-        Log.json("LicensePlate", result)
+        log.json("LicensePlate", result)
         return ServiceUtil.convertResponse(session.call, Method.Add, true)
     }
 

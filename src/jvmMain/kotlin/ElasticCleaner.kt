@@ -12,6 +12,7 @@ import nl.parkeerassistent.monitoring.QueryResponse
 import nl.parkeerassistent.monitoring.Range
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -22,7 +23,7 @@ fun main() {
         Logger.getRootLogger().level = Level.INFO
     }
 
-    val log = Logger.getLogger("ElasticCleaner.kt")
+    val log = LoggerFactory.getLogger("ElasticCleaner.kt")
 
     val trustStore = System.getenv("TRUST_STORE")
     val trustStoreFile = File(trustStore)
@@ -55,7 +56,7 @@ fun main() {
 
 suspend fun send(query: QueryRequest): Boolean {
 
-    val log = Logger.getLogger("ElasticCleaner.kt")
+    val log = LoggerFactory.getLogger("ElasticCleaner")
 
     try {
         val response = ES.client.post<QueryResponse>(ES.url + "/" + ES.index + "/_delete_by_query") {

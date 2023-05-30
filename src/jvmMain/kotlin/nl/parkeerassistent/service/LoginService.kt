@@ -5,7 +5,6 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.http.Parameters
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.Log
 import nl.parkeerassistent.Permit
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.User
@@ -14,8 +13,11 @@ import nl.parkeerassistent.external.Csrf
 import nl.parkeerassistent.model.LoginRequest
 import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.monitoring.Monitoring
+import org.slf4j.LoggerFactory
 
 object LoginService {
+
+    private val log = LoggerFactory.getLogger(LoginService::class.java)
 
     enum class Method : Monitoring.Method {
         LoggedIn,
@@ -40,9 +42,9 @@ object LoginService {
                 Monitoring.info(session.call, Method.LoggedIn, "NOT_SUPPORTED")
                 return Response(false, "Bezoekers account wordt niet ondersteund")
             }
-            Log.debug("token: ${it.access_token}")
+            log.debug("token: ${it.access_token}")
             session.user = User(it.access_token)
-            Log.debug("reportcode: ${it.reportcode}")
+            log.debug("reportcode: ${it.reportcode}")
             if (session.permit == null) {
                 session.permit = Permit(it.reportcode, null, it.scope)
             }
@@ -71,7 +73,7 @@ object LoginService {
             })
         }
 
-        Log.debug("credentials: ${result}")
+        log.debug("credentials: ${result}")
 
         val loggedIn = isLoggedIn(session)
 
@@ -105,6 +107,5 @@ object LoginService {
         val result = session.client.get<Csrf>(ApiHelper.getMainUrl("api/auth/csrf")) {}
         return result.csrfToken
     }
-
 
 }

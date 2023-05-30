@@ -9,7 +9,7 @@ import nl.parkeerassistent.model.Regime
 import nl.parkeerassistent.model.RegimeDay
 import nl.parkeerassistent.model.StatusResponse
 import nl.parkeerassistent.model.Visitor
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class MockState {
 
     companion object {
-        private val log = Logger.getLogger("MockState.kt")
+        private val log = LoggerFactory.getLogger(MockState::class.java)
 
         val hourRate = 2.1
     }
@@ -62,15 +62,12 @@ class MockState {
         visitorList = mutableListOf(
             Visitor(idGenerator.getId(), user.reportCode, "111-AA-1", "Suzanne"),
             Visitor(idGenerator.getId(), user.reportCode, "22-BBB-2", "Erik"),
-            Visitor(idGenerator.getId(), user.reportCode, "33-CC-33", "Invalid visitor"),
-            Visitor(idGenerator.getId(), user.reportCode, "4-DDD-44", null)
         )
         parkingList = mutableListOf()
 
         startParking(AddParkingRequest(visitorList[0].convert(), 15, Date().addingMinutes(-14), user.regimeEnd))
         startParking(AddParkingRequest(visitorList[1].convert(), 60, Date().addingMinutes(2), user.regimeEnd))
-        startParking(AddParkingRequest(visitorList[0].convert(), 60, Date().addingMinutes(-24 * 60), user.regimeEnd))
-        startParking(AddParkingRequest(visitorList[0].convert(), 60, Date().addingMinutes(-31 * 24 * 60), user.regimeEnd))
+        startParking(AddParkingRequest(visitorList[0].convert(), 60, Date().addingMinutes(-2 * 60), user.regimeEnd))
     }
 
     fun startParking(request: AddParkingRequest) {
@@ -119,7 +116,7 @@ class MockState {
         val payment = Payment(uuid, request.issuerId, amount, Instant.now())
         paymentList[uuid] = payment
 
-        return PaymentResponse("http://192.168.178.83:3000/completeMockPayment?id=$uuid", uuid)
+        return PaymentResponse("https://parkeerassistent.nl/completeMockPayment?id=$uuid", uuid)
     }
 
     fun checkPayment(transactionId: String): StatusResponse {

@@ -5,7 +5,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import nl.parkeerassistent.ApiHelper
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.Log
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.AddParking
@@ -15,18 +14,22 @@ import nl.parkeerassistent.external.ParkingSession
 import nl.parkeerassistent.external.ParkingSessions
 import nl.parkeerassistent.external.StopParking
 import nl.parkeerassistent.external.StopParkingSession
+import nl.parkeerassistent.json
 import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.HistoryResponse
 import nl.parkeerassistent.model.Parking
 import nl.parkeerassistent.model.ParkingResponse
 import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.monitoring.Monitoring
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.Date
 
 object ParkingService {
+
+    private val log = LoggerFactory.getLogger(ParkingService::class.java)
 
     enum class Method: Monitoring.Method {
         Get,
@@ -103,14 +106,14 @@ object ParkingService {
             )
         )
 
-        Log.json("parkingSession", parkingSession)
+        log.json("parkingSession", parkingSession)
 
         val result = ApiHelper.client.post<ParkingOrder>(ApiHelper.getCloudUrl("v1/orders")) {
             ApiHelper.addCloudHeaders(this, session)
             body = parkingSession
         }
 
-        Log.json("result", result)
+        log.json("result", result)
 
         val completed = ApiHelper.waitForOrder(session, result.frontendId)
 
@@ -132,14 +135,14 @@ object ParkingService {
             )
         )
 
-        Log.json("parkingSession", parkingSession)
+        log.json("parkingSession", parkingSession)
 
         val result = ApiHelper.client.post<ParkingOrder>(ApiHelper.getCloudUrl("v1/orders")) {
             ApiHelper.addCloudHeaders(this, session)
             body = parkingSession
         }
 
-        Log.json("result", result)
+        log.json("result", result)
 
         val completed = ApiHelper.waitForOrder(session, result.frontendId)
 
@@ -168,6 +171,5 @@ object ParkingService {
 
         return HistoryResponse(history)
     }
-
 
 }

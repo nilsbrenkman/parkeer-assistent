@@ -7,12 +7,12 @@ import io.ktor.client.request.put
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 
 class ESEvent(private val event: Event, private val index: String) : Runnable {
 
     companion object {
-        private val log = Logger.getLogger("ESEvent")
+        private val log = LoggerFactory.getLogger(ESEvent::class.java)
     }
 
     private var retries = 0
