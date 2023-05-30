@@ -6,7 +6,6 @@
 //
 
 import XCTest
-@testable import app
 
 class LoginUITests: XCTestCase {
 
@@ -24,9 +23,6 @@ class LoginUITests: XCTestCase {
     }
 
     func testLoginScreen() throws {
-        let usernameLabel = NSPredicate(format: "label contains 'Permit code'")
-        let passwordLabel = NSPredicate(format: "label contains 'Pin code'")
-        
         XCTAssertTrue(app.staticTexts.element(matching: Label.username).exists)
         XCTAssertTrue(app.staticTexts.element(matching: Label.password).exists)
         
@@ -34,14 +30,14 @@ class LoginUITests: XCTestCase {
         let password = app.secureTextFields["password"]
         XCTAssertTrue(username.exists)
         XCTAssertTrue(password.exists)
-                
+    
         XCTAssertTrue(app.buttons.element(matching: Label.login).exists)
     }
     
     func testLoginSuccess() throws {
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")
         
-        let menu = app.buttons["menu"]
+        let menu = app.images["menu"]
         XCTAssertTrue(menu.waitForExistence(timeout: TestUtil.timeout))
     }
     
@@ -55,8 +51,11 @@ class LoginUITests: XCTestCase {
     
     func testLogout() throws {
         try testLoginSuccess()
-        
-        app.buttons["menu"].tap()
+                
+        let menu = app.images["menu"]
+        XCTAssertTrue(menu.waitForExistence(timeout: TestUtil.timeout))
+        wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: menu)], timeout: TestUtil.timeout)
+        menu.tap()
 
         let logout = app.buttons.element(matching: Label.logout)
         XCTAssertTrue(logout.waitForExistence(timeout: TestUtil.timeout))
@@ -78,6 +77,14 @@ class LoginUITests: XCTestCase {
         
         let login = app.buttons.element(matching: Label.login)
         login.tap()
+        
+        let menu = app.images["menu"]
+        if menu.waitForExistence(timeout: TestUtil.timeout) {
+            let dismiss = app.scrollViews.otherElements.buttons.element(matching: Label.dismiss)
+            if dismiss.waitForExistence(timeout: TestUtil.timeout) {
+                dismiss.tap()
+            }
+        }
     }
 
 }

@@ -70,7 +70,6 @@ class MockClient {
     }
     
     func isLoggedIn() -> Bool {
-        startup = false
         let delay = Date(timeIntervalSinceNow: -15 * 60)
         if delay > timeout {
             loggedIn = false
@@ -78,6 +77,10 @@ class MockClient {
             timeout = Date()
         }
         return loggedIn
+    }
+    
+    func startupComplete() {
+        startup = false
     }
     
 }

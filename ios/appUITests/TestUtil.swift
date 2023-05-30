@@ -15,12 +15,26 @@ struct TestUtil {
 
 struct Label {
     
-    static let username = NSPredicate(format: "label contains 'Permit code'")
-    static let password = NSPredicate(format: "label contains 'Pin code'")
-    static let login = NSPredicate(format: "label contains 'Login'")
-    static let logout = NSPredicate(format: "label contains 'Logout'")
+    static let add = Label.buildPredicate("Add")
+    static let start = Label.buildPredicate("Start")
     
-    static let addVisitor = NSPredicate(format: "label contains 'Add visitor'")
+    static let username = Label.buildPredicate("Permit code")
+    static let password = Label.buildPredicate("Pin code")
+    static let login = Label.buildPredicate("Login")
+    static let logout = Label.buildPredicate("Logout")
     
+    static let parkingHeader = Label.buildPredicate("Parking")
+    static let parkingEmpty = Label.buildPredicate("No active or scheduled sessions")
+    static let parkingActive = Label.buildPredicate("Active sessions")
+    static let parkingScheduled = Label.buildPredicate("Scheduled sessions")
+    
+    static let visitorHeader = Label.buildPredicate("Visitors")
+    static let addVisitor = Label.buildPredicate("Add visitor")
+    
+    static let dismiss = Label.buildPredicate("Not Now")
+    
+    private static func buildPredicate(_ label: String) -> NSPredicate {
+        return NSPredicate(format: "label CONTAINS %@", label)
+    }
     
 }

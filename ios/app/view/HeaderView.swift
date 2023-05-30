@@ -61,8 +61,9 @@ struct HeaderView: View {
                                 .overlay(RoundedRectangle(cornerRadius: Constants.radius.small)
                                             .stroke(Color.white, lineWidth: 1)
                                 )
+                                .accessibilityIdentifier("menu")
+
                         }
-                        .accessibilityIdentifier("menu")
                     }
                 }
                 .padding(.horizontal)

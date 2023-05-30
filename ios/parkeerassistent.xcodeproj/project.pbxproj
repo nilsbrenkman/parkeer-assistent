@@ -15,6 +15,7 @@
 		291988C8268B82B700B289F0 /* ParkingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 291988C7268B82B600B289F0 /* ParkingListView.swift */; };
 		291988CA268B83B100B289F0 /* ParkingRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 291988C9268B83B100B289F0 /* ParkingRowView.swift */; };
 		292A1D0A267D53F700F14A59 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292A1D09267D53F700F14A59 /* LoadingView.swift */; };
+		292FD7B32A19576100C6A088 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD3C0426D57A9C0082E913 /* Lang.swift */; };
 		293220FB26BEF57000E5B8B7 /* ParkingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293220FA26BEF57000E5B8B7 /* ParkingUITests.swift */; };
 		293220FF26BEF6AC00E5B8B7 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293220FE26BEF6AC00E5B8B7 /* TestUtil.swift */; };
 		29419F9A26FFBB0D0058DA25 /* LangTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29419F9926FFBB0D0058DA25 /* LangTest.swift */; };
@@ -207,6 +208,7 @@
 		291988C9268B83B100B289F0 /* ParkingRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingRowView.swift; sourceTree = "<group>"; };
 		292A1D09267D53F700F14A59 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		292BDFCF26FA6C7400B70FBC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Language.strings; sourceTree = "<group>"; };
+		292FD7BF2A19717800C6A088 /* app.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = app.xctestplan; sourceTree = "<group>"; };
 		293220FA26BEF57000E5B8B7 /* ParkingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingUITests.swift; sourceTree = "<group>"; };
 		293220FE26BEF6AC00E5B8B7 /* TestUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtil.swift; sourceTree = "<group>"; };
 		29419F9926FFBB0D0058DA25 /* LangTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangTest.swift; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 				29B827B626755F820025E717 /* app */,
 				29B827C826755F840025E717 /* appTests */,
 				29B827D326755F840025E717 /* appUITests */,
+				292FD7BF2A19717800C6A088 /* app.xctestplan */,
 				29939604271B4D2200B1AB57 /* watch */,
 				2993960F271B4D2500B1AB57 /* watch WatchKit Extension */,
 				29939628271B4D2800B1AB57 /* watchTests */,
@@ -1090,6 +1093,7 @@
 				29D4F74726B9F25200600D33 /* LoginUITests.swift in Sources */,
 				29D4F74926BA08D200600D33 /* UserUITests.swift in Sources */,
 				293220FB26BEF57000E5B8B7 /* ParkingUITests.swift in Sources */,
+				292FD7B32A19576100C6A088 /* Lang.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

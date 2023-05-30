@@ -62,6 +62,10 @@ extension Localized where Self : RawRepresentable, Self.RawValue == String {
         let key = prefix + "." + self.rawValue
         return NSLocalizedString(key, tableName: "Language", bundle: .main, value: key, comment: key)
     }
+    func predicate() -> NSPredicate {
+        return NSPredicate(format: "label CONTAINS %@", localized())
+    }
 }
 
 typealias Localization = Localized & RawRepresentable & CaseIterable
+

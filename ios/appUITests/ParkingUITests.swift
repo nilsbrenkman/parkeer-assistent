@@ -14,7 +14,7 @@ class ParkingUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["ui-test"]
+        app.launchEnvironment = ["RUNMODE" : "uitest"]
         app.launch()
         
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")
@@ -39,14 +39,14 @@ class ParkingUITests: XCTestCase {
         XCTAssertTrue(wheel.waitForExistence(timeout: TestUtil.timeout))
         wheel.swipeLeft()
 
-        app.buttons["Toevoegen"].tap()
+        app.buttons.element(matching: Label.add).tap()
         
         ParkingUITests.numberOfParking(app, count: 1)
         
-        let empty = app.staticTexts["Geen actieve of geplande sessies"]
+        let empty = app.staticTexts.element(matching: Label.parkingEmpty)
         XCTAssertFalse(empty.exists)
         
-        let active = app.staticTexts["Actieve sessies:"]
+        let active = app.staticTexts.element(matching: Label.parkingActive)
         XCTAssertTrue(active.exists)
     }
  
@@ -61,26 +61,25 @@ class ParkingUITests: XCTestCase {
         XCTAssertTrue(wheel.waitForExistence(timeout: TestUtil.timeout))
         wheel.swipeLeft()
         
-        app.staticTexts["Start tijd:"].tap()
+        app.staticTexts.element(matching: Label.start).tap()
         wheel.swipeLeft()
         
-        app.buttons["Toevoegen"].tap()
+        app.buttons.element(matching: Label.add).tap()
         
         ParkingUITests.numberOfParking(app, count: 1)
         
-        let empty = app.staticTexts["Geen actieve of geplande sessies"]
+        let empty = app.staticTexts.element(matching: Label.parkingEmpty)
         XCTAssertFalse(empty.exists)
         
-        let scheduled = app.staticTexts["Geplande sessies:"]
+        let scheduled = app.staticTexts.element(matching: Label.parkingScheduled)
         XCTAssertTrue(scheduled.exists)
     }
-
     
     static func initialParkingList(_ app: XCUIApplication) {
-        let header = app.staticTexts["Parkeren:"]
+        let header = app.staticTexts.element(matching: Label.parkingHeader)
         XCTAssertTrue(header.waitForExistence(timeout: TestUtil.timeout))
   
-        let empty = app.staticTexts["Geen actieve of geplande sessies"]
+        let empty = app.staticTexts.element(matching: Label.parkingEmpty)
         XCTAssertTrue(empty.waitForExistence(timeout: TestUtil.timeout))
     }
 

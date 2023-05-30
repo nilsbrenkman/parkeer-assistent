@@ -149,9 +149,6 @@ struct PaymentView: View {
                         self.disableStatusCheck -= 1
                     }
                 }
-//                if self.disableStatusCheck == 0 {
-//                    timer.invalidate()
-//                }
             }
             MessageManager.instance.addMessage(Lang.Payment.pendingMsg.localized(), type: Type.INFO)
             break
