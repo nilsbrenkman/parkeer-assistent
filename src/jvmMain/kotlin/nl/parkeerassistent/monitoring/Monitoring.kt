@@ -1,7 +1,6 @@
 package nl.parkeerassistent.monitoring
 
 import io.ktor.application.ApplicationCall
-import org.apache.log4j.Logger
 import org.slf4j.LoggerFactory
 
 object Monitoring {

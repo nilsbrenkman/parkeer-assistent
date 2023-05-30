@@ -13,7 +13,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.file
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
-import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondRedirect
@@ -22,7 +21,6 @@ import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import io.ktor.routing.header
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
@@ -59,7 +57,6 @@ fun main() {
 
     val log = Logger.getLogger("Server.kt")
 
-//    val host = System.getenv("HOST")
     val port = System.getenv("PORT").toInt()
 
     log.info("Starting server: $port")
@@ -105,12 +102,6 @@ fun main() {
             post("/") {
                 call.respondRedirect("/", false)
             }
-//            header("X-ParkeerAssistent-Mock", "true") {
-//                mockRouting()
-//            }
-//            header("X-ParkeerAssistent-Version", "true") {
-//                mockRouting()
-//            }
             createChild(MockRouteSelector(mockBuilds)).apply {
                 mockRouting()
             }
