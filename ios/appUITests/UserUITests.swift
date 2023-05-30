@@ -14,7 +14,7 @@ class UserUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["ui-test"]
+        app.launchEnvironment = ["RUNMODE" : "uitest"]
         app.launch()
         
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")

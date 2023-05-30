@@ -208,11 +208,11 @@ class ApiClient {
             
             let os = ProcessInfo.processInfo.operatingSystemVersion
             
-            headers["PA-UserId"] = uuid
-            headers["PA-OS"] = "iOS"
-            headers["PA-SDK"] = String(os.majorVersion) + "." + String(os.minorVersion) + "." + String(os.patchVersion)
-            headers["PA-Version"] = version
-            headers["PA-Build"] = build
+            headers["X-ParkeerAssistent-UserId"] = uuid
+            headers["X-ParkeerAssistent-OS"] = "iOS"
+            headers["X-ParkeerAssistent-SDK"] = String(os.majorVersion) + "." + String(os.minorVersion) + "." + String(os.patchVersion)
+            headers["X-ParkeerAssistent-Version"] = version
+            headers["X-ParkeerAssistent-Build"] = build
         }
     }
     

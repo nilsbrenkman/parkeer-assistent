@@ -15,12 +15,13 @@ struct parkeerassistentApp: App {
     static let versionKey = "version"
     
     init() {
-        if useMockClient() {
+        if false {
             ClientManager.instance.register(LoginClient.self,   client: LoginClientMock.client)
             ClientManager.instance.register(UserClient.self,    client: UserClientMock.client)
             ClientManager.instance.register(ParkingClient.self, client: ParkingClientMock.client)
             ClientManager.instance.register(VisitorClient.self, client: VisitorClientMock.client)
             ClientManager.instance.register(PaymentClient.self, client: PaymentClientMock.client)
+            MockClient.client.startupComplete()
         } else {
             ClientManager.instance.register(LoginClient.self,   client: LoginClientApi.client)
             ClientManager.instance.register(UserClient.self,    client: UserClientApi.client)

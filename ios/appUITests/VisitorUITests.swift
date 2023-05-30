@@ -14,7 +14,7 @@ class VisitorUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["ui-test"]
+        app.launchEnvironment = ["RUNMODE" : "uitest"]
         app.launch()
         
         LoginUITests.login(app, usernameInput: "test", passwordInput: "1234")
@@ -61,7 +61,7 @@ class VisitorUITests: XCTestCase {
     }
  
     static func initialVisitorList(_ app: XCUIApplication) {
-        let header = app.staticTexts["Bezoekers:"]
+        let header = app.staticTexts.element(matching: Label.visitorHeader)
         XCTAssertTrue(header.waitForExistence(timeout: TestUtil.timeout))
         
         VisitorUITests.numberOfVisitors(app, count: 4)

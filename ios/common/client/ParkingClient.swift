@@ -80,6 +80,8 @@ class ParkingClientMock: ParkingClient {
     func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String) async throws -> Response {
         guard MockClient.client.authorized() else { throw ClientError.Unauthorized }
         
+        Log.debug("Adding session: \(visitor.formattedLicense)")
+        
         if visitor.name == "Invalid visitor" {
             return Response(success: false, message: "Visitor is not allowed to park")
         }

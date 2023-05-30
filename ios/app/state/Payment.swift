@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 class Payment: ObservableObject {
     
     @Published var transactionId: String?

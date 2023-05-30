@@ -45,22 +45,36 @@ class VisitorClientMock: VisitorClient {
     private let permitId = 999
 
     private init() {
-        Task {
-            for visitor in MockVisitor.visitors {
-                _ = try await add(license: visitor.license, name: visitor.name)
-            }
-            var regime = try await UserClientMock.client.regime(Date.now())
-            _ = try await ParkingClientMock.client.start(visitor: self.visitors[1]!, timeMinutes: 1, start: Date.now(), regimeTimeEnd: regime.regimeTimeEnd)
-            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Date.now().addingTimeInterval(10.0), regimeTimeEnd: regime.regimeTimeEnd)
-            
-            regime = try await UserClientMock.client.regime(Date(timeInterval: 24*60*60, since: Date.now()))
-            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
-            
-            
-            regime = try await UserClientMock.client.regime(Date(timeInterval: -24*60*60, since: Date.now()))
-            _ = try await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 60, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
-            
+        for visitor in MockVisitor.visitors {
+            Log.debug("Adding visitor: \(visitor.name)")
+            nextId += 1
+            let visitor = Visitor(visitorId: nextId,
+                                  permitId: permitId,
+                                  license: visitor.license,
+                                  formattedLicense: License.formatLicense(visitor.license),
+                                  name: visitor.name.count > 0 ? visitor.name : nil)
+            visitors[visitor.visitorId] = visitor
         }
+        
+        let semaphore = DispatchSemaphore(value: 0)
+
+        Task {
+            var regime = try! await UserClientMock.client.regime(Date.now())
+            Log.debug("regime: \(regime.regimeTimeStart) - \(regime.regimeTimeEnd)")
+            _ = try! await ParkingClientMock.client.start(visitor: self.visitors[1]!, timeMinutes: 1, start: Date.now(), regimeTimeEnd: regime.regimeTimeEnd)
+            _ = try! await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Date.now().addingTimeInterval(10.0), regimeTimeEnd: regime.regimeTimeEnd)
+            
+            regime = try! await UserClientMock.client.regime(Date(timeInterval: 24*60*60, since: Date.now()))
+            Log.debug("regime: \(regime.regimeTimeStart) - \(regime.regimeTimeEnd)")
+            _ = try! await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 10, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
+            
+            regime = try! await UserClientMock.client.regime(Date(timeInterval: -24*60*60, since: Date.now()))
+            Log.debug("regime: \(regime.regimeTimeStart) - \(regime.regimeTimeEnd)")
+            _ = try! await ParkingClientMock.client.start(visitor: self.visitors[2]!, timeMinutes: 60, start: Util.parseDate(regime.regimeTimeStart), regimeTimeEnd: regime.regimeTimeEnd)
+            
+            semaphore.signal()
+        }
+        semaphore.wait()
     }
     
     func get() async throws -> VisitorResponse {

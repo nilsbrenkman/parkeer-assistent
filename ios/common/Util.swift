@@ -105,14 +105,15 @@ class Util {
 
 extension Date {
 
-    static let systemTimeOffset = systemTimeOverride()
+//    static let systemTimeOffset = systemTimeOverride()
+//    static let systemTimeOffset = try? Util.parseDate("2023-05-22T14:00:00+02:00").timeIntervalSinceNow
     
     static func now() -> Date {
-        #if DEBUG
-        if let interval = systemTimeOffset {
-            return Date().addingTimeInterval(interval)
-        }
-        #endif
+//        #if DEBUG
+//        if let interval = systemTimeOffset {
+//            return Date().addingTimeInterval(interval)
+//        }
+//        #endif
         return Date()
     }
     

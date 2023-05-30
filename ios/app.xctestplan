@@ -1,0 +1,40 @@
+{
+  "configurations" : [
+    {
+      "id" : "3AD13A01-3275-404D-A514-D79C83ADC9F5",
+      "name" : "Main Configuration",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "environmentVariableEntries" : [
+      {
+        "key" : "RUNMODE",
+        "value" : "uitest"
+      }
+    ]
+  },
+  "testTargets" : [
+    {
+      "skippedTests" : [
+        "parkeerassistentTests"
+      ],
+      "target" : {
+        "containerPath" : "container:parkeerassistent.xcodeproj",
+        "identifier" : "29B827C426755F840025E717",
+        "name" : "appTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:parkeerassistent.xcodeproj",
+        "identifier" : "29B827CF26755F840025E717",
+        "name" : "appUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
