@@ -132,8 +132,8 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.withType(JavaExec::class.java) {
-    file(".env").readLines().forEach {
-        val (key, value) = it.split("=")
+    file(".env").takeIf { it.exists() }?.readLines()?.forEach {s ->
+        val (key, value) = s.split("=")
         environment(key to value)
     }
 }
