@@ -1417,7 +1417,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SERVER_BASE_URL = "https://parkeer-assistent-staging.herokuapp.com/";
+				SERVER_BASE_URL = "https://parkeerassistent.nl/";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -1500,8 +1500,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.0;
-				METRICS_API_KEY = "190884:eyJrIjoiN2IzYjNlZWMwN2FiYWU4YjNmMmJmMjY5ODU5ZTA2M2U0NTU4ZDIwOSIsIm4iOiJwYXJrZWVyYXNzaXN0ZW50LWFtc3RlcmRhbSIsImlkIjo1MzU0ODJ9";
-				METRICS_URL = "https://graphite-prod-10-prod-us-central-0.grafana.net/graphite/metrics";
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.parkeer-assistent.amsterdam";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1530,8 +1528,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.2.0;
-				METRICS_API_KEY = "190884:eyJrIjoiN2IzYjNlZWMwN2FiYWU4YjNmMmJmMjY5ODU5ZTA2M2U0NTU4ZDIwOSIsIm4iOiJwYXJrZWVyYXNzaXN0ZW50LWFtc3RlcmRhbSIsImlkIjo1MzU0ODJ9";
-				METRICS_URL = "https://graphite-prod-10-prod-us-central-0.grafana.net/graphite/metrics";
 				PRODUCT_BUNDLE_IDENTIFIER = "nl.parkeer-assistent.amsterdam";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

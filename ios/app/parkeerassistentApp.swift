@@ -15,66 +15,14 @@ struct parkeerassistentApp: App {
     static let versionKey = "version"
     
     init() {
-        if false {
-            ClientManager.instance.register(LoginClient.self,   client: LoginClientMock.client)
-            ClientManager.instance.register(UserClient.self,    client: UserClientMock.client)
-            ClientManager.instance.register(ParkingClient.self, client: ParkingClientMock.client)
-            ClientManager.instance.register(VisitorClient.self, client: VisitorClientMock.client)
-            ClientManager.instance.register(PaymentClient.self, client: PaymentClientMock.client)
-            MockClient.client.startupComplete()
-        } else {
-            ClientManager.instance.register(LoginClient.self,   client: LoginClientApi.client)
-            ClientManager.instance.register(UserClient.self,    client: UserClientApi.client)
-            ClientManager.instance.register(ParkingClient.self, client: ParkingClientApi.client)
-            ClientManager.instance.register(VisitorClient.self, client: VisitorClientApi.client)
-            ClientManager.instance.register(PaymentClient.self, client: PaymentClientApi.client)
-        }
+        ClientManager.instance.register(LoginClient.self,   client: LoginClientApi.client)
+        ClientManager.instance.register(UserClient.self,    client: UserClientApi.client)
+        ClientManager.instance.register(ParkingClient.self, client: ParkingClientApi.client)
+        ClientManager.instance.register(VisitorClient.self, client: VisitorClientApi.client)
+        ClientManager.instance.register(PaymentClient.self, client: PaymentClientApi.client)
         
         UINavigationBar.appearance().largeTitleTextAttributes = [.font: UIFont.systemFont(ofSize: 24, weight: .bold)]
         UINavigationBar.appearance().titleTextAttributes = [.font: UIFont.systemFont(ofSize: 20, weight: .bold)]
-    }
-    
-    private func useMockClient() -> Bool {
-        if Util.isUITest() {
-            return true
-        }
-        guard let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-            return true
-        }
-        guard let userVersion = UserDefaults.standard.string(forKey: parkeerassistentApp.versionKey) else {
-            return mockVersion(appVersion)
-        }
-        if appVersion == userVersion {
-            return false
-        }
-        return mockVersion(appVersion)
-    }
-    
-    private func mockVersion(_ version: String) -> Bool {
-        guard let url = URL(string: ApiClient.client.baseUrl + "version/" + version) else {
-            return false
-        }
-        
-        var mock = false
-        let semaphore = DispatchSemaphore(value: 0)
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 404 {
-                    mock = true
-                }
-            }
-            semaphore.signal()
-        }
-        .resume()
-        
-        _ = semaphore.wait(timeout: DispatchTime.now().advanced(by: DispatchTimeInterval.seconds(10)))
-        
-        if mock {
-            return true
-        }
-        UserDefaults.standard.set(version, forKey: parkeerassistentApp.versionKey)
-        return false
     }
     
     var body: some Scene {
