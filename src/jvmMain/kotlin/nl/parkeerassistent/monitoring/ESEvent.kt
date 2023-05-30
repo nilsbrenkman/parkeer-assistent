@@ -7,8 +7,6 @@ import io.ktor.client.request.put
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
-import kotlinx.css.body
-import kotlinx.css.header
 import org.apache.log4j.Logger
 
 class ESEvent(private val event: Event, private val index: String) : Runnable {

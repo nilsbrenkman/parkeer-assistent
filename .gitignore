@@ -1,15 +1,15 @@
-lib/
 build/
-node_modules/
-externals/
+
 .gradle
+gradle/
+gradlew
+gradlew.bat
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
-out/
 ios/parkeerassistent.xcodeproj/
 !ios/parkeerassistent.xcodeproj/project.pbxproj
 ios/app/.build
@@ -17,5 +17,6 @@ ios/app/.swiftpm
 ios/parkeerassistent.xcodeproj.zip
 
 .env
+aws/
 kotlin-js-store
 private_key.pepk

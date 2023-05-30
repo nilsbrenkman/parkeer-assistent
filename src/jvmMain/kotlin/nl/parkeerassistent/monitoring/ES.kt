@@ -3,17 +3,14 @@ package nl.parkeerassistent.monitoring
 import io.ktor.application.ApplicationCall
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
-import io.ktor.client.features.HttpResponseValidator
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.http.URLBuilder
 import kotlinx.serialization.json.Json
 import nl.parkeerassistent.DateUtil
-import nl.parkeerassistent.service.ServiceException
 import org.apache.log4j.Logger
 import java.time.Instant
 import java.util.Base64
-import java.util.Date
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ThreadPoolExecutor
