@@ -17,6 +17,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.parkeerassistent.service.LoginService
 import nl.parkeerassistent.service.ServiceException
+import org.slf4j.LoggerFactory
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.Base64
@@ -66,7 +67,7 @@ class Session(val call: ApplicationCall) : java.io.Closeable {
         user?.token?.let {
             val jwt = JWT(it)
             if (jwt.isExpired()) {
-                Log.debug("refreshing token")
+                log.debug("refreshing token")
                 runBlocking {
                     LoginService.isLoggedIn(this@Session)
                 }
@@ -88,6 +89,7 @@ class Session(val call: ApplicationCall) : java.io.Closeable {
             allowSpecialFloatingPointValues = true
             useArrayPolymorphism = false
         })
+        private val log = LoggerFactory.getLogger(Session::class.java)
     }
 
     private inline fun <reified T> decodeCookie(cookie: String): T? {
@@ -95,7 +97,7 @@ class Session(val call: ApplicationCall) : java.io.Closeable {
             val json = String(Base64.getDecoder().decode(cookie), StandardCharsets.UTF_8)
             return Json.decodeFromString(json)
         } catch (e: SerializationException) {
-            Log.debug("Unable to decode cookie: ${cookie}")
+            log.debug("Unable to decode cookie: ${cookie}")
             return null
         }
     }

@@ -1,11 +1,11 @@
 package nl.parkeerassistent.mock
 
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.Instant
 
 object MockStateContainer {
 
-    val log = Logger.getLogger("MockStateContainer.kt")
+    val log = LoggerFactory.getLogger(MockStateContainer::class.java)
 
     private var mockState = MockState()
 

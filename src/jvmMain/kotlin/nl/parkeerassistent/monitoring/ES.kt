@@ -8,7 +8,7 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.http.URLBuilder
 import kotlinx.serialization.json.Json
 import nl.parkeerassistent.DateUtil
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.util.Base64
 import java.util.concurrent.LinkedBlockingQueue
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 object ES {
 
-    private val log = Logger.getLogger("ES")
+    private val log = LoggerFactory.getLogger(ES::class.java)
 
     val url: String
     val basicAuth: String

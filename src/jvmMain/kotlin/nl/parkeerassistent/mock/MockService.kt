@@ -29,6 +29,7 @@ import nl.parkeerassistent.model.RegimeResponse
 import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.model.UserResponse
 import nl.parkeerassistent.model.VisitorResponse
+import java.util.Optional
 import javax.naming.NoPermissionException
 
 fun Route.mockRouting() {
@@ -41,6 +42,9 @@ fun Route.mockRouting() {
             MockStateContainer.mock().user.loggedIn = true
         } else if (request.username.lowercase() == "reset") {
             MockStateContainer.reset()
+        } else {
+            call.response.status(HttpStatusCode.Unauthorized)
+            throw NoPermissionException()
         }
         call.respond(Response(MockStateContainer.mock().user.loggedIn, ""))
     }
@@ -158,15 +162,24 @@ fun preCheck(call: ApplicationCall, MockStateContainer: MockStateContainer) {
     }
 }
 
-class MockRouteSelector(val builds: String?) : RouteSelector() {
+fun Route.mock(build: Route.() -> Unit): Route {
+    val selector = MockRouteSelector()
+    return createChild(selector).apply(build)
+}
+
+class MockRouteSelector : RouteSelector() {
+
+    private val mockBuilds: List<String> = Optional
+        .ofNullable(System.getenv("MOCK_BUILDS"))
+        .or { Optional.of("") }
+        .get().split(",")
 
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int): RouteSelectorEvaluation {
         val mockHeader = context.call.request.headers["X-ParkeerAssistent-Mock"]
         if ("true".equals(mockHeader, ignoreCase = true)) {
             return RouteSelectorEvaluation.Constant
         }
-        if (builds != null) {
-            val mockBuilds = builds.split(",")
+        if (mockBuilds.isNotEmpty()) {
             val buildHeader = context.call.request.headers["X-ParkeerAssistent-Build"]
             if (mockBuilds.contains(buildHeader)) {
                 return RouteSelectorEvaluation.Constant

@@ -17,8 +17,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import nl.parkeerassistent.external.Order
 import nl.parkeerassistent.service.ServiceException
+import org.slf4j.LoggerFactory
 
 object ApiHelper {
+
+    private val log = LoggerFactory.getLogger(ApiHelper::class.java)
 
     val mainBaseUrl = "https://aanmeldenparkeren.amsterdam.nl/"
     val cloudBaseUrl = "https://evs-ssp.mendixcloud.com/rest/sspapi/"
@@ -73,7 +76,7 @@ object ApiHelper {
                 addCloudHeaders(this, session)
             }
             if (order.orderStatus == "Completed") {
-                Log.debug("Order confirmed in ${it + 1} tries")
+                log.debug("Order confirmed in ${it + 1} tries")
                 return true
             }
         }

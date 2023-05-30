@@ -8,13 +8,13 @@ import io.ktor.http.HttpStatusCode
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.model.Response
 import nl.parkeerassistent.monitoring.Monitoring
-import org.apache.log4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object ServiceUtil {
 
-    val log = Logger.getLogger("ServiceUtil")
+    val log = LoggerFactory.getLogger(ServiceUtil::class.java)
 
     suspend fun <RESPONSE> execute(
         method: Monitoring.Method,

@@ -4,7 +4,6 @@ import io.ktor.client.features.RedirectResponseException
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import nl.parkeerassistent.ApiHelper
-import nl.parkeerassistent.Log
 import nl.parkeerassistent.Session
 import nl.parkeerassistent.ensureData
 import nl.parkeerassistent.external.Balance
@@ -12,6 +11,7 @@ import nl.parkeerassistent.external.Order
 import nl.parkeerassistent.external.Payment
 import nl.parkeerassistent.external.PaymentOrder
 import nl.parkeerassistent.external.Redirect
+import nl.parkeerassistent.json
 import nl.parkeerassistent.model.CompleteRequest
 import nl.parkeerassistent.model.IdealResponse
 import nl.parkeerassistent.model.Issuer
@@ -22,8 +22,11 @@ import nl.parkeerassistent.model.StatusResponse
 import nl.parkeerassistent.monitoring.Monitoring
 import org.jsoup.Connection
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 
 object PaymentService {
+
+    private val log = LoggerFactory.getLogger(PaymentService::class.java)
 
     enum class Method : Monitoring.Method {
         Ideal,
@@ -64,7 +67,7 @@ object PaymentService {
             body = payment
         }
 
-        Log.json("order", order)
+        log.json("order", order)
 
         val rabo = Jsoup.connect(order.redirectUrl).method(Connection.Method.GET).execute().parse()
         val issuer = rabo.select("a#issuer-" + request.issuerId)
@@ -80,7 +83,7 @@ object PaymentService {
     suspend fun complete(session: Session, request: CompleteRequest): Response {
         try {
             val order = session.client.get<String>("https://aanmeldenparkeren.amsterdam.nl/api/orders?transactionType=topUpBalance&${request.data}")
-            Log.debug(order)
+            log.debug(order)
         } catch(e: RedirectResponseException) {
             if (e.response.status.value == 302) {
                 if (e.response.headers["Location"]?.startsWith("/top-up-balance/success") == true) {
@@ -106,7 +109,7 @@ object PaymentService {
             ApiHelper.addCloudHeaders(this, session)
         }
 
-        Log.json("order", order)
+        log.json("order", order)
 
         when(order.orderStatus) {
             "Completed" -> {
