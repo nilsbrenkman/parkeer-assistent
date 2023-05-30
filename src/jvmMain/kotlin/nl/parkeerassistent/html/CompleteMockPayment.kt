@@ -7,12 +7,14 @@ import kotlinx.css.px
 import kotlinx.html.ButtonType
 import kotlinx.html.FormMethod
 import kotlinx.html.HTML
+import kotlinx.html.InputType
 import kotlinx.html.body
 import kotlinx.html.button
 import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.head
+import kotlinx.html.input
 import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.style
@@ -24,7 +26,7 @@ private var Style = CSSBuilder().apply {
     }
 }
 
-fun HTML.open() {
+fun HTML.completeMockPayment() {
     head {
         title("Parkeer Assistent")
         link {
@@ -41,7 +43,17 @@ fun HTML.open() {
         div {
             form {
                 method = FormMethod.get
-                action = "parkeerassistent:open"
+                action = "https://parkeerassistent.nl/completePayment"
+                input {
+                    type = InputType.hidden
+                    name = "key1"
+                    value = "value1"
+                }
+                input {
+                    type = InputType.hidden
+                    name = "key2"
+                    value = "value3"
+                }
                 button {
                     type = ButtonType.submit
                     classes = setOf("btn", "btn-info")

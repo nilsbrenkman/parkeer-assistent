@@ -13,6 +13,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.file
 import io.ktor.http.content.resources
 import io.ktor.http.content.static
+import io.ktor.request.header
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.response.respondRedirect
@@ -21,6 +22,7 @@ import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import io.ktor.routing.header
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.engine.embeddedServer
@@ -28,8 +30,10 @@ import io.ktor.server.netty.Netty
 import kotlinx.coroutines.coroutineScope
 import kotlinx.html.HTML
 import nl.parkeerassistent.html.application
+import nl.parkeerassistent.html.completeMockPayment
 import nl.parkeerassistent.html.feedback
-import nl.parkeerassistent.html.open
+import nl.parkeerassistent.mock.MockRouteSelector
+import nl.parkeerassistent.mock.mockRouting
 import nl.parkeerassistent.model.AddParkingRequest
 import nl.parkeerassistent.model.AddVisitorRequest
 import nl.parkeerassistent.model.CompleteRequest
@@ -55,22 +59,14 @@ fun main() {
 
     val log = Logger.getLogger("Server.kt")
 
-    val trustStore = System.getenv("TRUST_STORE")
-    val trustStoreFile = File(trustStore)
-    if (trustStoreFile.exists()) {
-//        log.info("Using trust store: ${trustStoreFile.absolutePath}")
-//        System.setProperty("javax.net.ssl.trustStore", trustStoreFile.absolutePath)
-//        System.setProperty("javax.net.ssl.trustStorePassword", "parkeerassistent")
-    } else {
-        log.info("Trust store not found: ${trustStoreFile.absolutePath}")
-    }
-
-    val host = System.getenv("HOST")
+//    val host = System.getenv("HOST")
     val port = System.getenv("PORT").toInt()
 
-    log.info("Starting server: $host:$port")
+    log.info("Starting server: $port")
 
-    embeddedServer(Netty, port = port, host = host) {
+    val mockBuilds = System.getenv("MOCK_BUILDS")
+
+    embeddedServer(Netty, port = port) {
         install(ContentNegotiation) {
             json()
         }
@@ -79,7 +75,7 @@ fun main() {
         }
         if ("true" == System.getenv("FORCE_SSL")) {
             install(XForwardedHeaderSupport)
-            install((HttpsRedirect))
+            install(HttpsRedirect)
         }
         intercept(ApplicationCallPipeline.Monitoring) {
             val context = this
@@ -100,14 +96,23 @@ fun main() {
             get("/") {
                 call.respondHtml(HttpStatusCode.OK, HTML::application)
             }
-            get("/open") {
-                call.respondHtml(HttpStatusCode.OK, HTML::open)
+            get("/completeMockPayment") {
+                call.respondHtml(HttpStatusCode.OK, HTML::completeMockPayment)
             }
             get("/feedback") {
                 call.respondHtml(HttpStatusCode.OK, HTML::feedback)
             }
             post("/") {
                 call.respondRedirect("/", false)
+            }
+//            header("X-ParkeerAssistent-Mock", "true") {
+//                mockRouting()
+//            }
+//            header("X-ParkeerAssistent-Version", "true") {
+//                mockRouting()
+//            }
+            createChild(MockRouteSelector(mockBuilds)).apply {
+                mockRouting()
             }
             get("/login") {
                 call.respond(
