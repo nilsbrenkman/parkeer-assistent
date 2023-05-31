@@ -11,8 +11,8 @@ This project consist of:
 ### How to deploy
 
 ```
-heroku login
-heroku container:login
+
+
 heroku container:push web -a parkeer-assistent-staging
 heroku container:release web -a parkeer-assistent-staging
 ```
