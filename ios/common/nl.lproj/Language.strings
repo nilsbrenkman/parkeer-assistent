@@ -21,6 +21,8 @@
 "login.remember" = "Onthoud inlog gegevens";
 "login.rememberShort" = "Onthouden";
 "login.reason" = "Opgeslagen inlog gegevens laden";
+"login.failed" = "Inloggegevens komen niet overeen";
+"login.error" = "Inloggen mislukt";
 
 "account.header" = "Accounts";
 "account.label" = "Account";

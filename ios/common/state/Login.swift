@@ -78,7 +78,19 @@ class Login: ObservableObject, ErrorHandler {
     
     func login(username: String, password: String, storeCredentials: Bool) async {
         
-        guard let response = try? await self.loginClient.login(username: username, password: password) else { return }
+        let response: Response
+        do {
+            response = try await self.loginClient.login(username: username, password: password)
+        } catch {
+            if let clientError = error as? ClientError {
+                if clientError == .Unauthorized {
+                    MessageManager.instance.addMessage(Lang.Login.failed.localized(), type: .WARN)
+                    return
+                }
+            }
+            MessageManager.instance.addMessage(Lang.Login.error.localized(), type: .ERROR)
+            return
+        }
         
         if response.success {
             Stats.user.loginCount += 1

@@ -15,7 +15,7 @@ struct Lang {
     }
 
     enum Login: String, Localization {
-        case login, logout, username, password, remember, rememberShort, reason
+        case login, logout, username, password, remember, rememberShort, reason, failed, error
     }
     
     enum Account: String, Localization {
