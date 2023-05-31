@@ -39,7 +39,7 @@ struct Lang {
     }
 
     enum Payment: String, Localization {
-        case amount, bank, start, status, recipientMsg, redirectMsg, redirectErrorMsg, successMsg, pendingMsg, errorMsg, unknownMsg
+        case amount, bank, start, status, inProgress, recipientMsg, redirectMsg, redirectErrorMsg, successMsg, pendingMsg, errorMsg, unknownMsg
     }
 
     enum Info: String, Localization {

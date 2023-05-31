@@ -62,6 +62,7 @@
 "payment.bank" = "Bank";
 "payment.start" = "Opwaarderen";
 "payment.status" = "Controleer status";
+"payment.inProgress" = "Betaling is in behandeling";
 "payment.recipientMsg" = "Let op: controleer altijd of de begunstigde van de betaling Gemeente Amsterdam is.";
 "payment.redirectMsg" = "Na afloop van de betaling zal je doorgestuurd worden naar de website van de gemeente. Log niet in maar open deze app om de betaling af te ronden.";
 "payment.redirectErrorMsg" = "Fout bij het starten van de betaling.";

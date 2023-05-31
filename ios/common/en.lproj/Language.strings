@@ -62,6 +62,7 @@
 "payment.bank" = "Bank";
 "payment.start" = "Add funds";
 "payment.status" = "Check status";
+"payment.inProgress" = "Payment in progress";
 "payment.recipientMsg" = "Attention: always check whether the beneficiary of the payment is the Municipality of Amsterdam";
 "payment.redirectMsg" = "After authorising the payment, you will be forwarded to the municipality's website. Do not log in but open this app to complete the payment.";
 "payment.redirectErrorMsg" = "Error during payment initialization.";

@@ -18,38 +18,40 @@ struct PaymentView: View {
     
     @State private var wait: Bool = false
     @State private var disableStatusCheck: Int = 0
+    
+    @State private var statusTask: Task<Void, Never>?
 
     var body: some View {
         Form {
-            Section {
-                Text(Lang.Payment.recipientMsg.localized())
-                    .bold()
-                    .foregroundColor(Color.ui.danger)
-            }
-            Section {
-                if let amounts = $payment.amounts.wrappedValue {
-                    NavigationLink(destination: InsetPicker(labels: amounts.map{ self.formatAmount($0) }, selected: $payment.selectedAmount)) {
-                        HStack {
-                            Text(Lang.Payment.amount.localized())
-                            Spacer()
-                            Text(payment.selectedAmount == -1 ? Lang.Common.select.localized() : formatAmount(amounts[payment.selectedAmount]))
-                                .foregroundColor(Color(UIColor.systemGray))
+            if payment.transactionId == nil {
+                Section {
+                    Text(Lang.Payment.recipientMsg.localized())
+                        .bold()
+                        .foregroundColor(Color.ui.danger)
+                }
+                Section {
+                    if let amounts = $payment.amounts.wrappedValue {
+                        NavigationLink(destination: InsetPicker(labels: amounts.map{ self.formatAmount($0) }, selected: $payment.selectedAmount)) {
+                            HStack {
+                                Text(Lang.Payment.amount.localized())
+                                Spacer()
+                                Text(payment.selectedAmount == -1 ? Lang.Common.select.localized() : formatAmount(amounts[payment.selectedAmount]))
+                                    .foregroundColor(Color(UIColor.systemGray))
+                            }
+                        }
+                    }
+                    if let issuers = $payment.issuers.wrappedValue {
+                        NavigationLink(destination: InsetPicker(labels: issuers.map{ $0.name }, selected: $payment.selectedIssuer)) {
+                            HStack {
+                                Text(Lang.Payment.bank.localized())
+                                Spacer()
+                                Text("\(payment.selectedIssuer == -1 ? Lang.Common.select.localized() : issuers[payment.selectedIssuer].name)")
+                                    .foregroundColor(Color(UIColor.systemGray))
+                            }
                         }
                     }
                 }
-                if let issuers = $payment.issuers.wrappedValue {
-                    NavigationLink(destination: InsetPicker(labels: issuers.map{ $0.name }, selected: $payment.selectedIssuer)) {
-                        HStack {
-                            Text(Lang.Payment.bank.localized())
-                            Spacer()
-                            Text("\(payment.selectedIssuer == -1 ? Lang.Common.select.localized() : issuers[payment.selectedIssuer].name)")
-                                .foregroundColor(Color(UIColor.systemGray))
-                        }
-                    }
-                }
-            }
-            Section {
-                if payment.transactionId == nil {
+                Section {
                     Button(action: {
                         Task {
                             self.wait = true
@@ -75,36 +77,43 @@ struct PaymentView: View {
                     }
                     .style(.success, disabled: payment.selectedAmount < 0 && payment.selectedIssuer < 0)
                     .disabled(payment.selectedAmount < 0 && payment.selectedIssuer < 0)
-                } else {
+       
                     Button(action: {
-                        Task {
-                            self.wait = true
-                            if let response = try? await payment.status() {
-                                self.handleStatusResponse(response)
-                            } else {
-                                self.wait = false
-                            }
-                        }
-                    }){
-                        Text(disableStatusCheck > 0 ? "\(disableStatusCheck)" : Lang.Payment.status.localized())
+                        payment.show = false
+                        payment.transactionId = nil
+                    }) {
+                        Text(Lang.Common.cancel.localized())
                             .font(.title3)
                             .bold()
-                            .wait($wait)
+                            .centered()
                     }
-                    .style(.success, disabled: disableStatusCheck > 0)
-                    .disabled(disableStatusCheck > 0)
+                    .style(.cancel)
                 }
-   
-                Button(action: {
-                    payment.show = false
-                    payment.transactionId = nil
-                }) {
-                    Text(Lang.Common.cancel.localized())
-                        .font(.title3)
+            } else {
+                Section {
+                    Text(Lang.Payment.inProgress.localized())
                         .bold()
+                        .foregroundColor(Color.ui.info)
                         .centered()
+                    
+                    ZStack {
+                        ProgressView()
+                    }
+                    .frame(height: 200)
+                    .centered()
+                    .animation(nil)
                 }
-                .style(.cancel)
+                Section {
+                    Button(action: {
+                        cancelInProgress()
+                    }) {
+                        Text(Lang.Common.cancel.localized())
+                            .font(.title3)
+                            .bold()
+                            .centered()
+                    }
+                    .style(.cancel)
+                }
             }
         }
         .navigationBarHidden(true)
@@ -114,13 +123,35 @@ struct PaymentView: View {
             }
         }
         .onChange(of: scenePhase) { phase in
-            if phase == .active && payment.inProgress {
-                Task {
-                    if let response = try? await payment.status() {
-                        payment.inProgress = false
-                        self.handleStatusResponse(response)
-                    }
+            if phase == .active && payment.transactionId != nil {
+                guard statusTask == nil else {
+                    return
                 }
+                statusTask = Task.detached(priority: .background) {
+                    Log.info("Starting status task")
+                    let isCancelled: () -> Bool = {
+                        do {
+                            try Task.checkCancellation()
+                            return false
+                        } catch {
+                            return true
+                        }
+                    }
+                    while !isCancelled() {
+                        if let response = try? await payment.status() {
+                            await MainActor.run {
+                                self.handleStatusResponse(response)
+                            }
+                        }
+
+                        try? await Task.sleep(nanoseconds: UInt64(15) * 1_000_000_000)
+                    }
+                    Log.debug("Exiting status task")
+                }
+            } else {
+                Log.debug("Cancelling status task")
+                statusTask?.cancel()
+                statusTask = nil
             }
         }
     }
@@ -128,44 +159,35 @@ struct PaymentView: View {
     func formatAmount(_ amount: String) -> String {
         return "€ \(amount.replacingOccurrences(of: ",", with: "."))"
     }
+    
+    func cancelInProgress() {
+        payment.transactionId = nil
+        statusTask?.cancel()
+        statusTask = nil
+        Task {
+            await user.getBalance()
+        }
+    }
 
     func handleStatusResponse(_ response: StatusResponse) {
         self.wait = false
         switch response.status {
         case "success":
             MessageManager.instance.addMessage(Lang.Payment.successMsg.localized(), type: Type.SUCCESS) {
-                payment.transactionId = nil
+                cancelInProgress()
                 payment.show = false
-                Task {
-                    await user.getBalance()
-                }
             }
             break
         case "pending":
-            self.disableStatusCheck = 15
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                Task {
-                    await MainActor.run {
-                        self.disableStatusCheck -= 1
-                    }
-                }
-            }
-            MessageManager.instance.addMessage(Lang.Payment.pendingMsg.localized(), type: Type.INFO)
             break
         case "error":
             MessageManager.instance.addMessage(Lang.Payment.errorMsg.localized(), type: Type.ERROR) {
-                payment.transactionId = nil
-                Task {
-                    await user.getBalance()
-                }
+                cancelInProgress()
             }
             break
         default:
             MessageManager.instance.addMessage(Lang.Payment.unknownMsg.localized(), type: Type.WARN) {
-                payment.transactionId = nil
-                Task {
-                    await user.getBalance()
-                }
+                cancelInProgress()
             }
             break
         }

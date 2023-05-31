@@ -54,7 +54,7 @@ fun Route.mockRouting() {
     }
     route("/user") {
         get {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             val user = MockStateContainer.mock().user
             call.respond(
                 UserResponse(
@@ -67,11 +67,11 @@ fun Route.mockRouting() {
             )
         }
         get("/balance") {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(BalanceResponse("%.2f".format(MockStateContainer.mock().balance)))
         }
         get("/regime/{date}") {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             val date = ensureData(call.parameters["date"], "date")
             val (start, end) = MockStateContainer.mock().user.regimeForDate(DateUtil.date.parse(date))
             call.respond(RegimeResponse(start, end))
@@ -79,42 +79,42 @@ fun Route.mockRouting() {
     }
     route("/parking") {
         get {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(ParkingResponse(MockStateContainer.mock().active, MockStateContainer.mock().scheduled))
         }
         post {
             val request = call.receive<AddParkingRequest>()
-            preCheck(call, MockStateContainer)
+            preCheck(call)
 
             MockStateContainer.mock().startParking(request)
             call.respond(Response(true, ""))
         }
         delete("/{id}") {
             val id = ensureData(call.parameters["id"]?.toLong(), "parking id")
-            preCheck(call, MockStateContainer)
+            preCheck(call)
 
             MockStateContainer.mock().stopParking(id)
             call.respond(Response(true, ""))
         }
         get("/history") {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(HistoryResponse(MockStateContainer.mock().history))
         }
     }
     route("/visitor") {
         get {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(VisitorResponse(MockStateContainer.mock().visitors))
         }
         post {
             val request = call.receive<AddVisitorRequest>()
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             MockStateContainer.mock().addVisitor(request.name, request.license)
             call.respond(Response(true, ""))
         }
         delete("/{id}") {
             val id = ensureData(call.parameters["id"]?.toInt(), "visitor id")
-            preCheck(call, MockStateContainer)
+            preCheck(call)
 
             MockStateContainer.mock().deleteVisitor(id)
             call.respond(Response(true, ""))
@@ -122,7 +122,7 @@ fun Route.mockRouting() {
     }
     route("/payment") {
         get {
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(
                 IdealResponse(
                     listOf("5,00", "10,00", "15,00", "20,00", "30,00", "40,00", "50,00", "100,00"),
@@ -136,26 +136,26 @@ fun Route.mockRouting() {
         }
         post {
             val request = call.receive<PaymentRequest>()
-            preCheck(call, MockStateContainer)
+            preCheck(call)
 
             call.respond(MockStateContainer.mock().startPayment(request))
         }
         post("/complete") {
             val request = call.receive<CompleteRequest>()
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             val status = MockStateContainer.mock().checkPayment(request.transactionId)
             call.respond(Response(status.status == "success", ""))
         }
         get("/{id}") {
             val id = ensureData(call.parameters["id"], "payment id")
-            preCheck(call, MockStateContainer)
+            preCheck(call)
             call.respond(MockStateContainer.mock().checkPayment(id))
         }
     }
 
 }
 
-fun preCheck(call: ApplicationCall, MockStateContainer: MockStateContainer) {
+fun preCheck(call: ApplicationCall) {
     if (MockStateContainer.mock().user.loggedIn.not()) {
         call.response.status(HttpStatusCode.Unauthorized)
         throw NoPermissionException()
