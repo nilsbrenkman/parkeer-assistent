@@ -61,13 +61,7 @@ struct PaymentView: View {
                                 MessageManager.instance.addMessage(Lang.Payment.redirectErrorMsg.localized(), type: Type.ERROR)
                                 return
                             }
-                            if payment.showRedirectMessage() {
-                                MessageManager.instance.addMessage(Lang.Payment.redirectMsg.localized(), type: Type.INFO) {
-                                    openURL(redirectUrl)
-                                }
-                            } else {
-                                openURL(redirectUrl)
-                            }
+                            openURL(redirectUrl)
                         }
                     }){
                         Text(Lang.Payment.start.localized())
@@ -124,30 +118,7 @@ struct PaymentView: View {
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active && payment.transactionId != nil {
-                guard statusTask == nil else {
-                    return
-                }
-                statusTask = Task.detached(priority: .background) {
-                    Log.info("Starting status task")
-                    let isCancelled: () -> Bool = {
-                        do {
-                            try Task.checkCancellation()
-                            return false
-                        } catch {
-                            return true
-                        }
-                    }
-                    while !isCancelled() {
-                        if let response = try? await payment.status() {
-                            await MainActor.run {
-                                self.handleStatusResponse(response)
-                            }
-                        }
-
-                        try? await Task.sleep(nanoseconds: UInt64(15) * 1_000_000_000)
-                    }
-                    Log.debug("Exiting status task")
-                }
+                startStatusTask()
             } else {
                 Log.debug("Cancelling status task")
                 statusTask?.cancel()
@@ -156,11 +127,32 @@ struct PaymentView: View {
         }
     }
     
-    func formatAmount(_ amount: String) -> String {
+    private func formatAmount(_ amount: String) -> String {
         return "€ \(amount.replacingOccurrences(of: ",", with: "."))"
     }
     
-    func cancelInProgress() {
+    private func startStatusTask() {
+        guard statusTask == nil else {
+            return
+        }
+        statusTask = Task.detached(priority: .background) {
+            Log.debug("Starting status task")
+            var wait = 5.0
+            while !Task.isCancelled {
+                if let response = try? await payment.status() {
+                    await MainActor.run {
+                        self.handleStatusResponse(response)
+                    }
+                }
+                Log.debug("Waiting \(wait, privacy: .public) seconds")
+                try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000))
+                wait = min(wait * 1.5, 30)
+            }
+            Log.debug("Exiting status task")
+        }
+    }
+    
+    private func cancelInProgress() {
         payment.transactionId = nil
         statusTask?.cancel()
         statusTask = nil
@@ -169,7 +161,7 @@ struct PaymentView: View {
         }
     }
 
-    func handleStatusResponse(_ response: StatusResponse) {
+    private func handleStatusResponse(_ response: StatusResponse) {
         self.wait = false
         switch response.status {
         case "success":

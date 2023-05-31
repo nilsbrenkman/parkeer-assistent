@@ -16,16 +16,14 @@ struct ParkingDetailView: View {
     var parking: Parking
     
     var body: some View {
-        let visitor = user.getVisitor(parking)
-        
         Form {
 
             Section {
                 VStack(alignment: .leading, spacing: Constants.spacing.normal) {
-                    LicenseView(license: visitor?.license ?? parking.license)
+                    LicenseView(license: parking.license)
                         .centered()
 
-                    Property(label: Lang.Visitor.name.localized(), text: visitor?.name ?? "")
+                    Property(label: Lang.Visitor.name.localized(), text: parking.name ?? "")
                     Property(label: Lang.Parking.cost.localized(), text: "€ \(Util.formatCost(parking.cost))")
                     Property(label: Lang.Parking.startTime.localized(), text: Util.getParkingTime(parking.startTime))
                     Property(label: Lang.Parking.endTime.localized(), text: Util.getParkingTime(parking.endTime))

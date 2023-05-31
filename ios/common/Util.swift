@@ -104,41 +104,7 @@ class Util {
 }
 
 extension Date {
-
-//    static let systemTimeOffset = systemTimeOverride()
-//    static let systemTimeOffset = try? Util.parseDate("2023-05-22T14:00:00+02:00").timeIntervalSinceNow
-    
     static func now() -> Date {
-//        #if DEBUG
-//        if let interval = systemTimeOffset {
-//            return Date().addingTimeInterval(interval)
-//        }
-//        #endif
         return Date()
     }
-    
-    static func systemTimeOverride() -> TimeInterval? {
-        #if DEBUG
-        if Util.isUITest() {
-            return try? Util.parseDate("2021-08-01T14:00:00+02:00").timeIntervalSinceNow
-        }
-        #endif
-        return nil
-    }
-    
-}
-
-struct TimeUnit {
-    
-    static let seconds = TimeUnit(multiplier: 1)
-    static let minutes = TimeUnit(multiplier: seconds.toInterval(value: 60))
-    static let hours = TimeUnit(multiplier: minutes.toInterval(value: 60))
-    static let days = TimeUnit(multiplier: hours.toInterval(value: 24))
-    
-    private let multiplier: Double
-    
-    func toInterval(value: Double) -> TimeInterval {
-        return TimeInterval(multiplier * value)
-    }
-    
 }
