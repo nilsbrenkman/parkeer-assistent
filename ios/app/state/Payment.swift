@@ -21,9 +21,8 @@ class Payment: ObservableObject {
     @Published var selectedAmount: Int = -1
     @Published var selectedIssuer: Int = -1
 
-    private static let AMOUNT_KEY    = "paymentAmount"
-    private static let ISSUER_KEY    = "paymentIssuer"
-    private static let COMPLETED_KEY = "paymentCompleted"
+    private static let AMOUNT_KEY = "paymentAmount"
+    private static let ISSUER_KEY = "paymentIssuer"
 
     let paymentClient: PaymentClient
 
@@ -84,13 +83,8 @@ class Payment: ObservableObject {
         
         if response.status == "success" {
             Stats.user.paymentCount += 1
-            UserDefaults.standard.set(true, forKey: Payment.COMPLETED_KEY)
         }
         return response
-    }
- 
-    func showRedirectMessage() -> Bool {
-        return !UserDefaults.standard.bool(forKey: Payment.COMPLETED_KEY)
     }
     
 }

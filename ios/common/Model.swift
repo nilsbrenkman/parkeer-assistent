@@ -63,19 +63,26 @@ struct StatusResponse: Codable {
     var status: String
 }
 
-struct Parking: Codable, Hashable {
+struct Parking: Codable, Hashable, Comparable {
     var id: Int
     var license: String
+    var name: String?
     var startTime: String
     var endTime: String
     var cost: Double
     
-    var visitor: Visitor?
+    static func < (lhs: Parking, rhs: Parking) -> Bool {
+        return lhs.id < rhs.id
+    }
 }
 
-struct ParkingResponse: Codable {
+struct ParkingResponse: Codable, Equatable {
     var active: [Parking]
     var scheduled: [Parking]
+    
+    static func == (lhs: ParkingResponse, rhs: ParkingResponse) -> Bool {
+        return lhs.active.sorted() == rhs.active.sorted() && lhs.scheduled.sorted() == rhs.scheduled.sorted()
+    }
 }
 
 struct AddParkingRequest: Codable {
@@ -85,7 +92,7 @@ struct AddParkingRequest: Codable {
     var regimeTimeEnd: String
 }
 
-struct Visitor: Codable, Hashable {
+struct Visitor: Codable, Hashable, Comparable {
     var visitorId: Int
     var permitId: Int
     var license: String
@@ -94,6 +101,18 @@ struct Visitor: Codable, Hashable {
     
     var id: Int {
         visitorId
+    }
+    static func < (lhs: Visitor, rhs: Visitor) -> Bool {
+        guard let ln = lhs.name else {
+            guard rhs.name != nil else {
+                return lhs.license < rhs.license
+            }
+            return false
+        }
+        guard let rn = rhs.name else {
+            return true
+        }
+        return ln < rn
     }
 }
 

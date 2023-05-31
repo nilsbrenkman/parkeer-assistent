@@ -53,6 +53,9 @@ class User: ObservableObject {
     func getBalance() async {
         guard let response = try? await self.userClient.balance() else { return }
         
+        if response.balance == self.balance {
+            return
+        }
         self.balance = response.balance
         self.timeBalance = Util.calculateTimeBalance(balance: response.balance,
                                                      hourRate: self.hourRate)
@@ -89,14 +92,14 @@ class User: ObservableObject {
         return Calendar.current.date(bySettingHour: Int(times[0]) ?? 0, minute: Int(times[1]) ?? 0, second: 0, of: date)
     }
 
-    func getVisitor(_ parking: Parking) -> Visitor? {
-        return Util.getVisitor(parking, visitors: self.visitors)
-    }
-
     func getVisitors() async {
         guard let response = try? await self.visitorClient.get() else { return }
         
-        self.visitors = response.visitors
+        let sorted = response.visitors.sorted()
+        if sorted == self.visitors {
+            return
+        }
+        self.visitors = sorted
     }
     
     func addVisitor(license: String, name: String) async {
@@ -115,7 +118,7 @@ class User: ObservableObject {
     func deleteVisitor(_ visitor: Visitor) async {
         guard let response = try? await self.visitorClient.delete(visitor) else { return }
         
-        if (!response.success) {
+        if !response.success {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
         await self.getVisitors()
@@ -124,6 +127,9 @@ class User: ObservableObject {
     func getParking() async {
         guard let response = try? await self.parkingClient.get() else { return }
 
+        if response == self.parking {
+            return
+        }
         self.parking = ParkingResponse(active: Array(response.active),
                                        scheduled: Array(response.scheduled))
         Notifications.store.parking(response, visitors: self.visitors)

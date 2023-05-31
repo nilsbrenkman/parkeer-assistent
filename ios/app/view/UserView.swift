@@ -30,6 +30,7 @@ struct UserView: View {
                 Task {
                     await user.getUser()
                     user.isLoaded = true
+                    startRefreshTask()
                 }
             } else {
                 if Stats.user.requestReview() {
@@ -38,62 +39,7 @@ struct UserView: View {
                         SKStoreReviewController.requestReview(in: windowScene)
                     }
                 }
-            }
-            guard refreshTask == nil else {
-                return
-            }
-            refreshTask = Task.detached(priority: .background) {
-                Log.info("Starting refresh task")
-                let isCancelled: () -> Bool = {
-                    do {
-                        try Task.checkCancellation()
-                        return false
-                    } catch {
-                        return true
-                    }
-                }
-                
-                var delay = 60.0
-                var update = false
-
-                let checkUpdate: (String) -> Void = { time in
-                    if let date = try? Util.parseDate(time) {
-                        if date < Date.now() {
-                            update = true
-                        } else {
-                            let timeInterval = Date.now().distance(to: date)
-                            if timeInterval < delay {
-                                delay = timeInterval
-                            }
-                        }
-                    }
-                }
-                
-                while !isCancelled() {
-                    try? await Task.sleep(nanoseconds: UInt64(delay.rounded()) * 1_000_000_000)
-                    
-                    delay = 60.0
-                    update = false
-                    
-                    Log.debug("Running refresh task")
-                    
-                    if let parking = await user.parking {
-                        
-                        for active in parking.active {
-                            checkUpdate(active.endTime)
-                        }
-                        for scheduled in parking.scheduled {
-                            checkUpdate(scheduled.startTime)
-                        }
-                    }
-                    if update {
-                        Log.debug("Retrieving new data")
-                        await user.getParking()
-                    }
-                    
-                }
-                Log.debug("Exiting refresh task")
-
+                startRefreshTask()
             }
         }
         .onDisappear {
@@ -103,6 +49,53 @@ struct UserView: View {
         }
         .navigationBarHidden(true)
 
+    }
+    
+    private func startRefreshTask() {
+        guard refreshTask == nil else {
+            return
+        }
+        refreshTask = Task.detached(priority: .background) {
+            Log.info("Starting refresh task")
+
+            let checkUpdate: (String) -> Double = { time in
+                if let date = try? Util.parseDate(time) {
+                    if date < Date.now() {
+                        return 0
+                    }
+                    let interval = Date.now().distance(to: date)
+                    Log.debug("Interval until \(time, privacy: .public) is \(interval, privacy: .public)")
+                    return interval
+                }
+                Log.warning("Error parsing time \(time, privacy: .public)")
+                return 60
+            }
+            
+            while !Task.isCancelled {
+                var delay = 60.0
+                
+                Log.debug("Running refresh task")
+                
+                guard let parking = await user.parking else {
+                    Log.warning("No parking data, wait 10 seconds")
+                    try? await Task.sleep(nanoseconds: UInt64(10 * 1_000_000_000))
+                    continue
+                }
+                
+                for active in parking.active {
+                    delay = min(delay, checkUpdate(active.endTime))
+                }
+                for scheduled in parking.scheduled {
+                    delay = min(delay, checkUpdate(scheduled.startTime))
+                }
+                
+                if delay > 0 {
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
+                await user.getParking()
+            }
+            Log.debug("Exiting refresh task")
+        }
     }
     
 }
