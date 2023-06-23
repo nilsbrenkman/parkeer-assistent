@@ -17,7 +17,7 @@ object DateUtil {
 
     val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX").withZone(amsterdam.toZoneId())
     val gmtDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneId.from(ZoneOffset.UTC))
-    val esIndexFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd").withZone(ZoneId.from(ZoneOffset.UTC))
+    val esIndexFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM").withZone(ZoneId.from(ZoneOffset.UTC))
 
     fun dateWithTime(date: Date, time: String): String {
         val calendar = Calendar.getInstance()
