@@ -213,6 +213,7 @@ class ApiClient {
             headers["X-ParkeerAssistent-SDK"] = String(os.majorVersion) + "." + String(os.minorVersion) + "." + String(os.patchVersion)
             headers["X-ParkeerAssistent-Version"] = version
             headers["X-ParkeerAssistent-Build"] = build
+//            headers["X-ParkeerAssistent-Mock"] = "true"
         }
     }
     

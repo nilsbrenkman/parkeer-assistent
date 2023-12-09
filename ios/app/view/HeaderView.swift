@@ -15,6 +15,7 @@ struct HeaderView: View {
     
     @Binding var showInfo: Bool
     @Binding var showHistory: Bool
+    @Binding var showSettings: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,6 +46,10 @@ struct HeaderView: View {
                             Button(action: showPayment) {
                                 Text(Lang.User.addBalance.localized())
                                 Image(systemName: "eurosign.circle")
+                            }
+                            Button(action: { showSettings = true }) {
+                                Text("Settings")
+                                Image(systemName: "gearshape.circle")
                             }
                             Button(action: logout) {
                                 Text(Lang.Login.logout.localized())
@@ -111,8 +116,9 @@ struct HeaderView: View {
 struct HeaderView_Previews: PreviewProvider {
     @State static var showInfo = false
     @State static var showHistory = false
+    @State static var showSettings = false
     static var previews: some View {
-        HeaderView(showInfo: $showInfo, showHistory: $showHistory)
+        HeaderView(showInfo: $showInfo, showHistory: $showHistory, showSettings: $showSettings)
 //            .setupPreview(loggedIn: true)
     }
 }

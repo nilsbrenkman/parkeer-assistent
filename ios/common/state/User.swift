@@ -127,12 +127,13 @@ class User: ObservableObject {
     func getParking() async {
         guard let response = try? await self.parkingClient.get() else { return }
 
+        Notifications.store.parking(response, visitors: self.visitors)
+
         if response == self.parking {
             return
         }
         self.parking = ParkingResponse(active: Array(response.active),
                                        scheduled: Array(response.scheduled))
-        Notifications.store.parking(response, visitors: self.visitors)
     }
     
     func startParking(_ visitor: Visitor, timeMinutes: Int, start: Date) async {

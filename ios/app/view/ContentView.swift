@@ -21,10 +21,11 @@ struct ContentView: View {
     @State var initialised = false
     @State var showInfo = false
     @State var showHistory = false
+    @State var showSettings = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HeaderView(showInfo: $showInfo, showHistory: $showHistory)
+            HeaderView(showInfo: $showInfo, showHistory: $showHistory, showSettings: $showSettings)
             
             ZStack {
                 if login.isLoading || login.isBackground {
@@ -38,9 +39,16 @@ struct ContentView: View {
                     } else {
                         NavigationView {
                             UserView()
-                                .background(
-                                    NavigationLink(destination: HistoryListView(), isActive: $showHistory) {
-                                        EmptyView()
+                                .background (
+                                    List {
+                                        
+                                        
+                                        NavigationLink(destination: HistoryListView(), isActive: $showHistory) {
+                                            EmptyView()
+                                        }
+                                        NavigationLink(destination: SettingsView(), isActive: $showSettings) {
+                                            EmptyView()
+                                        }
                                     }
                                 )
                         }
