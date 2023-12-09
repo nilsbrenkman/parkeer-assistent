@@ -79,7 +79,7 @@ struct AccountRowView: View {
                             Text(Lang.Common.delete.localized()),
                             action: {
                                 login.deleteAccount(credentials)
-                                list = (try? login.accounts()) ?? []
+                                list = (try? login.loadAccounts()) ?? []
                             }
                         ),
                         secondaryButton: .cancel(
@@ -104,7 +104,7 @@ struct AccountRowView: View {
     private func updateAccount(start: Bool) {
         if !start {
             login.updateAccount(credentials, username: username, password: password, alias: alias.isEmpty ? nil : alias)
-            list = (try? login.accounts()) ?? []
+            list = (try? login.loadAccounts()) ?? []
         }
     }
     

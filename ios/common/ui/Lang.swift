@@ -19,7 +19,7 @@ struct Lang {
     }
     
     enum Account: String, Localization {
-        case header, label, alias, autoLogin, confirmDelete, errorUnavailable, errorFailed
+        case header, newAccount, details, label, alias, autoLogin, confirmDelete, errorUnavailable, errorFailed
     }
     
     enum Menu: String, Localization {
@@ -40,6 +40,10 @@ struct Lang {
 
     enum Payment: String, Localization {
         case amount, bank, start, status, inProgress, recipientMsg, redirectMsg, redirectErrorMsg, successMsg, pendingMsg, errorMsg, unknownMsg
+    }
+
+    enum Settings: String, Localization {
+        case header, notifications, onStart, onStop, reminders
     }
 
     enum Info: String, Localization {

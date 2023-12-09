@@ -15,10 +15,10 @@ class Login: ObservableObject, ErrorHandler {
     @Published var isLoading: Bool = true
     @Published var isBackground: Bool = false
     @Published var isLoggedIn: Bool = false
+    @Published var accounts: [Credentials] = []
     
     public var autoLogin: Bool = true
     
-    private var credentials: [Credentials] = []
     private var authenticated: Date? = nil
 
     let loginClient: LoginClient
@@ -96,7 +96,7 @@ class Login: ObservableObject, ErrorHandler {
             Stats.user.loginCount += 1
             if storeCredentials {
                 do {
-                    try Keychain.storeCredentials(username: username, password: password)
+                    try Keychain.storeCredentials(username: username, password: password, alias: nil)
                     Keychain.setRecent(username)
                 } catch {
                     Log.warning("Store credentials failed: \(error)")
@@ -122,12 +122,20 @@ class Login: ObservableObject, ErrorHandler {
         self.clearUser()    
     }
     
-    func accounts() throws -> [Credentials] {
+    func selectedAccount() -> Credentials {
+        return Keychain.getRecent(accounts) ?? Credentials(username: "", password: "")
+    }
+    
+    func setSelectedAccount(_ account: Credentials?) {
+        Keychain.setRecent(account?.username ?? "")
+    }
+
+    func loadAccounts() throws -> [Credentials] {
         let context = LAContext()
         var error: NSError?
 
         if authenticated != nil && authenticated!.addingTimeInterval(5 * 60) > Date.now() {
-            return self.credentials
+            return self.accounts
         }
         
         if !context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
@@ -152,34 +160,34 @@ class Login: ObservableObject, ErrorHandler {
         semaphore.wait()
         
         if success {
-            self.credentials = stored
+            self.accounts = stored
             self.authenticated = Date.now()
         } else {
             throw AuthenticationError.Failed
         }
-        return self.credentials
+        return self.accounts
     }
     
-    func addAccount() {
-        try? Keychain.storeCredentials(username: "", password: "")
-        self.credentials = Keychain.retrieveCredentials()
+    func addAccount(username: String, password: String, alias: String?) {
+        try? Keychain.storeCredentials(username: username, password: password, alias: alias)
+        self.accounts = Keychain.retrieveCredentials()
     }
     
     func updateAccount(_ account: Credentials, username: String, password: String, alias: String?) {
-        let isRecent = Keychain.getRecent(self.credentials)?.username == account.username
+        let isRecent = Keychain.getRecent(self.accounts)?.username == account.username
         try? Keychain.updateCredentials(account, username: username, password: password, alias: alias)
-        self.credentials = Keychain.retrieveCredentials()
+        self.accounts = Keychain.retrieveCredentials()
         if isRecent {
             Keychain.setRecent(username)
         }
     }
 
     func deleteAccount(_ account: Credentials) {
-        let isRecent = Keychain.getRecent(self.credentials)?.username == account.username
+        let isRecent = Keychain.getRecent(self.accounts)?.username == account.username
         try? Keychain.deleteCredentials(account: account)
-        self.credentials = Keychain.retrieveCredentials()
+        self.accounts = Keychain.retrieveCredentials()
         if isRecent {
-            Keychain.setRecent(self.credentials.first?.username)
+            Keychain.setRecent(self.accounts.first?.username)
         }
     }
 

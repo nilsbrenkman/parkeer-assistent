@@ -14,10 +14,7 @@ struct VisitorListView: View {
     
     var body: some View {
         
-        Section {
-            Text("\(Lang.Visitor.header.localized()):")
-                .font(.title2)
-                .bold()
+        Section(header: SectionHeader(Lang.Visitor.header.localized())) {
             
             if let visitors = $user.visitors.wrappedValue {
                 
@@ -47,13 +44,11 @@ struct VisitorListView: View {
                     }
                     .onDelete(perform: delete)
                 }
-                
             } else {
                 ProgressView()
                     .centered()
             }
         }
-        
 
         Section {
             Button(action: {

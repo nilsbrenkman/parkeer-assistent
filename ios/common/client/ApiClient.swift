@@ -186,6 +186,11 @@ class ApiClient {
     }
     
     private func updateCookies(_ httpResponse: HTTPURLResponse) {
+        if httpResponse.statusCode >= 400 {
+            UserDefaults.standard.removeObject(forKey: ApiClient.COOKIE_KEY)
+            cookies = SessionCookies()
+            return
+        }
         var updated = false
         if let responseHeaderFields = httpResponse.allHeaderFields as? [String : String] {
             let responseCookies = HTTPCookie.cookies(withResponseHeaderFields: responseHeaderFields, for: url)

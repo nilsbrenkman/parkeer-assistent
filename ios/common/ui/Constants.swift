@@ -30,7 +30,9 @@ struct Constants {
     struct Padding {
         let normal: CGFloat = 20
         let small:  CGFloat = 10
-        let xSmall: CGFloat = 5
+        let mini:   CGFloat = 7
+        let micro:  CGFloat = 5
+        let nano:   CGFloat = 3
     }
     
     struct Radius {

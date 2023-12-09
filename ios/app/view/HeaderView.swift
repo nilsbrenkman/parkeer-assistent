@@ -15,6 +15,7 @@ struct HeaderView: View {
     
     @Binding var showInfo: Bool
     @Binding var showHistory: Bool
+    @Binding var showAccounts: Bool
     @Binding var showSettings: Bool
     
     var body: some View {
@@ -32,7 +33,7 @@ struct HeaderView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: 48)
-                        .animation(.linear)
+                        .animation(.linear, value: 0)
                         .onTapGesture {
                             showInfo = true
                         }
@@ -46,6 +47,10 @@ struct HeaderView: View {
                             Button(action: showPayment) {
                                 Text(Lang.User.addBalance.localized())
                                 Image(systemName: "eurosign.circle")
+                            }
+                            Button(action: { showAccounts = true }) {
+                                Text("Accounts")
+                                Image(systemName: "person.circle")
                             }
                             Button(action: { showSettings = true }) {
                                 Text("Settings")
@@ -118,7 +123,7 @@ struct HeaderView_Previews: PreviewProvider {
     @State static var showHistory = false
     @State static var showSettings = false
     static var previews: some View {
-        HeaderView(showInfo: $showInfo, showHistory: $showHistory, showSettings: $showSettings)
+        HeaderView(showInfo: $showInfo, showHistory: $showHistory, showAccounts: $showHistory, showSettings: $showSettings)
 //            .setupPreview(loggedIn: true)
     }
 }

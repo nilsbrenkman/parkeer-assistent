@@ -39,7 +39,7 @@ struct HistoryListView: View {
                             }
                         } header: {
                             Text(HistoryListView.groupFormatter.string(from: group.date))
-                                .font(Font.ui.historyListHeader)
+                                .font(Font.ui.sectionHeader)
                         }
                     }
                 }

@@ -21,11 +21,12 @@ struct ContentView: View {
     @State var initialised = false
     @State var showInfo = false
     @State var showHistory = false
+    @State var showAccounts = false
     @State var showSettings = false
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HeaderView(showInfo: $showInfo, showHistory: $showHistory, showSettings: $showSettings)
+            HeaderView(showInfo: $showInfo, showHistory: $showHistory, showAccounts: $showAccounts, showSettings: $showSettings)
             
             ZStack {
                 if login.isLoading || login.isBackground {
@@ -35,15 +36,16 @@ struct ContentView: View {
                         NavigationView {
                             PaymentView()
                         }
-                        .navigationViewStyle(StackNavigationViewStyle())
+                        .navigationViewStyle(.stack)
                     } else {
                         NavigationView {
                             UserView()
                                 .background (
                                     List {
-                                        
-                                        
                                         NavigationLink(destination: HistoryListView(), isActive: $showHistory) {
+                                            EmptyView()
+                                        }
+                                        NavigationLink(destination: AccountView(), isActive: $showAccounts) {
                                             EmptyView()
                                         }
                                         NavigationLink(destination: SettingsView(), isActive: $showSettings) {
@@ -52,14 +54,16 @@ struct ContentView: View {
                                     }
                                 )
                         }
-                        .navigationViewStyle(StackNavigationViewStyle())
+                        .navigationViewStyle(.stack)
+                        .padding(.top, Constants.padding.normal)
+                        .background(Color.system.groupedBackground)
                     }
                 } else {
                     NavigationView {
                         LoginView()
                             .navigationBarHidden(true)
                     }
-                    .navigationViewStyle(StackNavigationViewStyle())
+                    .navigationViewStyle(.stack)
                 }
             }
             .ignoresSafeArea()

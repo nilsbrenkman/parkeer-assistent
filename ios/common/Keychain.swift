@@ -21,18 +21,18 @@ class Keychain {
         //
     }
     
-    static func storeCredentials(username: String, password: String) throws {
+    static func storeCredentials(username: String, password: String, alias: String?) throws {
         var credentials = retrieveCredentials()
         if let i = credentials.firstIndex(where: {$0.username == username}) {
             // Credentials with this username found
             if credentials[i].password != password {
                 // Password is different, so update
-                credentials[i] = Credentials(username: username, password: password)
+                credentials[i] = Credentials(alias: alias, username: username, password: password)
                 try storeCredentials(credentials: credentials)
             }
             return
         }
-        credentials.append(Credentials(username: username, password: password))
+        credentials.append(Credentials(alias: alias, username: username, password: password))
         try storeCredentials(credentials: credentials)
         return
     }
@@ -148,10 +148,12 @@ struct CredentialsList: Codable {
     var list: [Credentials]
 }
 
-struct Credentials: Codable {
+struct Credentials: Codable, Identifiable, Hashable {
     var alias: String?
     var username: String
     var password: String
+    
+    var id = UUID()
 }
 
 enum KeychainError: Error {

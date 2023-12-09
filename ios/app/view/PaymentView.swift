@@ -95,7 +95,7 @@ struct PaymentView: View {
                     }
                     .frame(height: 200)
                     .centered()
-                    .animation(nil)
+                    .animation(nil, value: 0)
                 }
                 Section {
                     Button(action: {

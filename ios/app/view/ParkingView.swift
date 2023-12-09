@@ -14,11 +14,7 @@ struct ParkingView: View {
 
     var body: some View {
         
-        Section {
-            Text("\(Lang.Parking.header.localized()):")
-                .font(.title2)
-                .bold()
-            
+        Section(header: SectionHeader(Lang.Parking.header.localized())) {
             if let parking = $user.parking.wrappedValue {
                 if parking.active.isEmpty && parking.scheduled.isEmpty {
                     Text(Lang.Parking.noSessions.localized())
@@ -37,7 +33,7 @@ struct ParkingView: View {
             }
         }
         .id(UUID())
-        .animation(nil)
+        .animation(nil, value: 0)
         
     }
     

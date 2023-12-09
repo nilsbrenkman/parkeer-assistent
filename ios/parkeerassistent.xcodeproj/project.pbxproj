@@ -19,6 +19,7 @@
 		293220FB26BEF57000E5B8B7 /* ParkingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293220FA26BEF57000E5B8B7 /* ParkingUITests.swift */; };
 		293220FF26BEF6AC00E5B8B7 /* TestUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293220FE26BEF6AC00E5B8B7 /* TestUtil.swift */; };
 		29419F9A26FFBB0D0058DA25 /* LangTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29419F9926FFBB0D0058DA25 /* LangTest.swift */; };
+		2951455F2B245E3200ACD607 /* AccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2951455E2B245E3200ACD607 /* AccountDetailView.swift */; };
 		295898342A17BF71000FDA59 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295898332A17BF71000FDA59 /* CalendarView.swift */; };
 		295E91C527BEF55000A1929E /* Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295E91C427BEF55000A1929E /* Preview.swift */; };
 		295E91C627BEF55000A1929E /* Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295E91C427BEF55000A1929E /* Preview.swift */; };
@@ -128,6 +129,7 @@
 		29D4F74B26BA15ED00600D33 /* VisitorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29D4F74A26BA15ED00600D33 /* VisitorUITests.swift */; };
 		29E0B8BF26E3ADBD002450B7 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E0B8BE26E3ADBD002450B7 /* Stats.swift */; };
 		29F063A52717897C00CBA193 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29F063A22717897C00CBA193 /* WatchConnectivity.framework */; };
+		29F26DEE2B25230F002FB09C /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F26DED2B25230F002FB09C /* SectionHeader.swift */; };
 		29F7B1462690AD570079EF92 /* ParkingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F7B1452690AD570079EF92 /* ParkingDetailView.swift */; };
 		29F7B1482690B56C0079EF92 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F7B1472690B56C0079EF92 /* Property.swift */; };
 		29F7B14C2690C14F0079EF92 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F7B14B2690C14F0079EF92 /* MessageView.swift */; };
@@ -213,6 +215,7 @@
 		293220FA26BEF57000E5B8B7 /* ParkingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingUITests.swift; sourceTree = "<group>"; };
 		293220FE26BEF6AC00E5B8B7 /* TestUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtil.swift; sourceTree = "<group>"; };
 		29419F9926FFBB0D0058DA25 /* LangTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangTest.swift; sourceTree = "<group>"; };
+		2951455E2B245E3200ACD607 /* AccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailView.swift; sourceTree = "<group>"; };
 		295898332A17BF71000FDA59 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		295E91C427BEF55000A1929E /* Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preview.swift; sourceTree = "<group>"; };
 		29688E6726B08361008BC85A /* car-horn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "car-horn.wav"; sourceTree = "<group>"; };
@@ -306,6 +309,7 @@
 		29E0B8BE26E3ADBD002450B7 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		29F063A22717897C00CBA193 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
 		29F06453271A2CD400CBA193 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.0.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		29F26DED2B25230F002FB09C /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
 		29F7B1452690AD570079EF92 /* ParkingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingDetailView.swift; sourceTree = "<group>"; };
 		29F7B1472690B56C0079EF92 /* Property.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Property.swift; sourceTree = "<group>"; };
 		29F7B14B2690C14F0079EF92 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -393,6 +397,7 @@
 			children = (
 				29AE299D27B599DF00A00FDF /* AccountRowView.swift */,
 				29AE299B27B58D9300A00FDF /* AccountView.swift */,
+				2951455E2B245E3200ACD607 /* AccountDetailView.swift */,
 				298F7D8F2688CDD700D75A5C /* AddParkingView.swift */,
 				298F7D87268287A200D75A5C /* AddVisitorView.swift */,
 				29B827B926755F820025E717 /* ContentView.swift */,
@@ -678,6 +683,7 @@
 				291988C3268B5CCB00B289F0 /* WheelSelector.swift */,
 				29CCB0CB274478E300504164 /* CalendarDate.swift */,
 				295898332A17BF71000FDA59 /* CalendarView.swift */,
+				29F26DED2B25230F002FB09C /* SectionHeader.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1059,6 +1065,7 @@
 				29F7B14C2690C14F0079EF92 /* MessageView.swift in Sources */,
 				299395F3271B4B0400B1AB57 /* PaymentClient.swift in Sources */,
 				299395C3271B1DD500B1AB57 /* User.swift in Sources */,
+				2951455F2B245E3200ACD607 /* AccountDetailView.swift in Sources */,
 				299395F7271B4B0400B1AB57 /* LoginClient.swift in Sources */,
 				29D4F74526B9E07000600D33 /* Button.swift in Sources */,
 				29AD3BF226CF42B10082E913 /* InsetPicker.swift in Sources */,
@@ -1072,6 +1079,7 @@
 				299395F9271B4B0400B1AB57 /* ClientManager.swift in Sources */,
 				29E0B8BF26E3ADBD002450B7 /* Stats.swift in Sources */,
 				29B827F6267570770025E717 /* UserView.swift in Sources */,
+				29F26DEE2B25230F002FB09C /* SectionHeader.swift in Sources */,
 				29F7B15D26AF71040079EF92 /* AppDelegate.swift in Sources */,
 				295898342A17BF71000FDA59 /* CalendarView.swift in Sources */,
 				29F7B14E269101CC0079EF92 /* Keychain.swift in Sources */,
@@ -1416,7 +1424,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1473,7 +1481,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1549,7 +1557,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NVWAZSZHJQ;
 				INFOPLIST_FILE = appTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1571,7 +1579,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = NVWAZSZHJQ;
 				INFOPLIST_FILE = appTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

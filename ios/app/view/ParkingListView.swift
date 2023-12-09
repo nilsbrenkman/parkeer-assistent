@@ -35,7 +35,7 @@ struct ParkingListView: View {
                 }
             }
         })
-        .animation(nil)
+        .animation(nil, value: 0)
         
     }
     

@@ -24,7 +24,7 @@ struct UserView: View {
             VisitorListView()
 
         }
-        .listStyle(InsetGroupedListStyle())
+        .listStyle(.insetGrouped)
         .onAppear {
             if !user.isLoaded {
                 Task {
@@ -34,7 +34,7 @@ struct UserView: View {
                 }
             } else {
                 if Stats.user.requestReview() {
-                    if let windowScene = UIApplication.shared.windows.first?.windowScene {
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                         Stats.user.requested = Date.now()
                         SKStoreReviewController.requestReview(in: windowScene)
                     }

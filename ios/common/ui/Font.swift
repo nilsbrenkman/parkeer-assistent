@@ -25,7 +25,7 @@ extension Font {
         let calenderDow = Font.system(size: 10.0, weight: .bold, design: .default)
         let calenderDay = Font.system(size: 18.0, weight: .bold, design: .default)
 
-        let historyListHeader = Font.system(size: 16.0, weight: .semibold, design: .default)
+        let sectionHeader = Font.system(size: 16.0, weight: .semibold, design: .default)
 
     }
 }

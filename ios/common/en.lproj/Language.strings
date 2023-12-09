@@ -25,6 +25,8 @@
 "login.error" = "Login failed";
 
 "account.header" = "Accounts";
+"account.newAccount" = "New account";
+"account.details" = "Account details";
 "account.label" = "Account";
 "account.alias" = "Description";
 "account.autoLogin" = "Automatic login";
@@ -70,6 +72,12 @@
 "payment.pendingMsg" = "Payment is still in progress.";
 "payment.errorMsg" = "An error occurred during payment.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.";
 "payment.unknownMsg" = "Status of the payment can not be verified.\n\nCheck your bank app if the payment was successful before trying again. It may take some time for the payment to be processed.";
+
+"settings.header" = "Settings";
+"settings.notifications" = "Notifications";
+"settings.onStart" = "On start of session";
+"settings.onStop" = "On end of session";
+"settings.reminders" = "Reminders";
 
 "info.header" = "About this app";
 "info.text1" = "Parking Amsterdam is a personal app that is not affiliated with the Municipality of Amsterdam.";
