@@ -14,6 +14,7 @@ struct AccountView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @EnvironmentObject var login: Login
+    @EnvironmentObject var user: User
     
     @State private var autoLogin: Bool = false
     @State private var newAccount: Bool = false
@@ -35,26 +36,25 @@ struct AccountView: View {
                     }
                 }
             }
+            Section {
+                Button(action: { newAccount.toggle() }) {
+                    ZStack {
+                        NavigationLink(destination: AccountDetailView(account: Credentials(username: "", password: "")),
+                                       isActive: $newAccount) {
+                            EmptyView()
+                        }
+                        .hidden()
+                        Text(Lang.Common.add.localized())
+                            .font(.title3)
+                            .bold()
+                    }
+                }
+                .style(.success, disabled: false)
+            }
         }
         .background(Color.system.groupedBackground.ignoresSafeArea())
         .onAppear(perform: load)
-        .navigationBarTitle(Text(Lang.Account.header.localized()))
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(
-            leading: Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                Image(systemName: "arrow.left")
-            },
-            trailing: Button(action: { newAccount.toggle() }) {
-                ZStack {
-                    NavigationLink(destination: AccountDetailView(account: Credentials(username: "", password: "")),
-                                   isActive: $newAccount) {
-                        EmptyView()
-                    }
-                                   .hidden()
-                    Image(systemName: "plus")
-                }
-            }
-        )
+        .pageTitle(Lang.Account.header.localized(), dismiss: { user.page = nil })
     }
     
     private func load() {

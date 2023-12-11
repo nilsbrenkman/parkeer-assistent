@@ -31,39 +31,40 @@ struct ContentView: View {
             ZStack {
                 if login.isLoading || login.isBackground {
                     LoadingView()
-                } else if login.isLoggedIn {
-                    if payment.show {
-                        NavigationView {
-                            PaymentView()
-                        }
-                        .navigationViewStyle(.stack)
-                    } else {
-                        NavigationView {
+                } else {
+                    NavigationView {
+                        if login.isLoggedIn {
                             UserView()
                                 .background (
                                     List {
-                                        NavigationLink(destination: HistoryListView(), isActive: $showHistory) {
+                                        NavigationLink(destination: PaymentView(), isActive: pageBinding(.payment)) {
                                             EmptyView()
                                         }
-                                        NavigationLink(destination: AccountView(), isActive: $showAccounts) {
+                                        NavigationLink(destination: HistoryListView(), isActive: pageBinding(.history)) {
                                             EmptyView()
                                         }
-                                        NavigationLink(destination: SettingsView(), isActive: $showSettings) {
+                                        NavigationLink(destination: AccountView(), isActive: pageBinding(.account)) {
+                                            EmptyView()
+                                        }
+                                        NavigationLink(destination: SettingsView(), isActive: pageBinding(.settings)) {
+                                            EmptyView()
+                                        }
+                                        NavigationLink(destination: AddVisitorView(), isActive: pageBinding(.visitor)) {
+                                            EmptyView()
+                                        }
+                                        NavigationLink(destination: AddParkingView(), isActive: pageBinding(.parking)) {
                                             EmptyView()
                                         }
                                     }
                                 )
+                        } else {
+                            LoginView()
+                                .navigationBarHidden(true)
                         }
-                        .navigationViewStyle(.stack)
-                        .padding(.top, Constants.padding.normal)
-                        .background(Color.system.groupedBackground)
-                    }
-                } else {
-                    NavigationView {
-                        LoginView()
-                            .navigationBarHidden(true)
                     }
                     .navigationViewStyle(.stack)
+                    .padding(.top, Constants.padding.normal)
+                    .background(Color.system.groupedBackground)
                 }
             }
             .ignoresSafeArea()
@@ -102,6 +103,13 @@ struct ContentView: View {
                 payment.completeData = query
             }
         }
+    }
+    
+    private func pageBinding(_ page: Page) -> Binding<Bool> {
+        return Binding<Bool>(
+            get: { return user.page == page },
+            set: { _ in }
+        );
     }
     
 }

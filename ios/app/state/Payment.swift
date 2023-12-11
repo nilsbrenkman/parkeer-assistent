@@ -12,8 +12,6 @@ import SwiftUI
 class Payment: ObservableObject {
     
     @Published var transactionId: String?
-    @Published var show: Bool = false
-    @Published var inProgress: Bool = false
     @Published var completeData: String?
 
     @Published var amounts: [String]?
@@ -63,7 +61,6 @@ class Payment: ObservableObject {
         let response = try await self.paymentClient.payment(amount: amount, issuerId: issuerId)
             
         self.transactionId = response.transactionId
-        self.inProgress = true
         
         return response
     }

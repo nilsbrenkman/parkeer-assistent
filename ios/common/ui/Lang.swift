@@ -11,7 +11,7 @@ import SwiftUI
 struct Lang {
     
     enum Common: String, Localization {
-        case ok, add, back, delete, cancel, select, stop
+        case ok, add, back, save, delete, cancel, select, stop
     }
 
     enum Login: String, Localization {
@@ -35,7 +35,7 @@ struct Lang {
     }
 
     enum Parking: String, Localization {
-        case header, active, scheduled, noSessions, date, startTime, endTime, minutes, cost, stop, history, noHistory, freeParking
+        case header, start, active, scheduled, noSessions, date, startTime, endTime, minutes, cost, stop, history, details, noHistory, freeParking
     }
 
     enum Payment: String, Localization {

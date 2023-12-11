@@ -95,8 +95,9 @@ object UserService {
     }
 
     fun getFullRegime(permit: Permit): Regime {
-        val days = permit.paymentZones.first().days
-            .filter { d -> ! ("00:00" == d.startTime && "24:00" == d.endTime) }
+        val paymentZone = permit.paymentZones.first()
+        val days = paymentZone.days
+            .filter { d -> ! ("00:00" == d.startTime && "24:00" == d.endTime && !paymentZone.description.contains("ma-zo 00-24")) }
             .mapNotNull { d ->
                 val dayOfWeek = DayOfWeek.fromAlias(d.dayOfWeek)
                 dayOfWeek?.let { RegimeDay(it.name, d.startTime, d.endTime) }

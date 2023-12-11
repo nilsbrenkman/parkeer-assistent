@@ -20,7 +20,7 @@ class User: ObservableObject {
     @Published var parking: ParkingResponse?
     
     @Published var isLoaded: Bool = false
-    @Published var addVisitor: Bool = false
+    @Published var page: Page?
     @Published var selectedVisitor: Visitor?
     
     let loginClient: LoginClient
@@ -108,7 +108,7 @@ class User: ObservableObject {
         if response.success {
             Stats.user.visitorCount += 1
             self.visitors = nil
-            self.addVisitor = false
+            self.page = nil
             await self.getVisitors()
         } else {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
@@ -147,6 +147,7 @@ class User: ObservableObject {
         if response.success {
             Stats.user.parkingCount += 1
             
+            self.page = nil
             self.selectedVisitor = nil
             self.parking = nil
             
@@ -178,4 +179,8 @@ class User: ObservableObject {
         await self.getBalance()
     }
 
+}
+
+enum Page {
+    case history, payment, account, settings, visitor, parking;
 }

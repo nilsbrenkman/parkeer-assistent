@@ -16,6 +16,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     func applicationDidFinishLaunching(_ application: UIApplication) {
+        UserDefaults.standard.register(defaults: [
+            Notifications.START_KEY: true,
+            Notifications.STOP_KEY: true,
+            Notifications.REMINDER_KEY: false,
+            Notifications.INTERVAL_KEY: 1.0
+        ])
         if Util.isUITest() {
             UIView.setAnimationsEnabled(false)
         }

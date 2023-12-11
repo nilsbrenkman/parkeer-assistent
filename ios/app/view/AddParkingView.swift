@@ -10,9 +10,7 @@ import SwiftUI
 struct AddParkingView: View {
     
     @EnvironmentObject var user: User
-    
-    var visitor: Visitor
-    
+        
     let config = Config(
         radius: 50,
         size: 12
@@ -38,7 +36,9 @@ struct AddParkingView: View {
                 
                 VStack(alignment:.center, spacing: Constants.spacing.normal) {
                                         
-                    VisitorView(visitor: visitor)
+                    if let visitor = user.selectedVisitor {
+                        VisitorView(visitor: visitor)
+                    }
                     
                     HStack(alignment: .center, spacing: Constants.spacing.normal) {
                         DataBox(title: Lang.Parking.date.localized(), content: "\(Util.dayMonthFormatter.string(from: startDate))")
@@ -86,7 +86,7 @@ struct AddParkingView: View {
                     if !wait && minutes > 0 {
                         Task {
                             wait = true
-                            await user.startParking(visitor, timeMinutes: minutes, start: startDate)
+                            await user.startParking(user.selectedVisitor!, timeMinutes: minutes, start: startDate)
                             wait = false
                         }
                     }
@@ -97,24 +97,11 @@ struct AddParkingView: View {
                         .wait($wait)
                 }
                 .style(.success, disabled: minutes <= 0)
-                
-                Button(action: { user.selectedVisitor = nil }) {
-                    ZStack {
-                        Text(Lang.Common.cancel.localized())
-                            .font(.title3)
-                            .bold()
-                            .centered()
-
-                    }
-                    .padding(.horizontal)
-                }
-                .style(.cancel)
             }
         }
         .modal(visible: $showDatePicker, onClose: updateRegime) {
             DatePickerModal(date: $startDate, delegate: calendarDelegate)
         }
-        .navigationBarHidden(true)
         .onAppear(perform: {
             update()
         })
@@ -122,6 +109,9 @@ struct AddParkingView: View {
             if !showDatePicker {
                 update()
             }
+        })
+        .pageTitle(Lang.Parking.start.localized(), dismiss: {
+            user.page = nil
         })
     }
     
@@ -215,13 +205,5 @@ struct AddParkingView: View {
         return 0.5
     }
 
-
-    
 }
 
-struct AddParkingView_Previews: PreviewProvider {
-    static var previews: some View {
-        let visitor = Visitor(visitorId: 1, permitId: 1, license: "12-AB-34", formattedLicense: "12-AB-34", name: "Jan")
-        AddParkingView(visitor: visitor)
-    }
-}

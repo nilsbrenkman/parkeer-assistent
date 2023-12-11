@@ -12,7 +12,7 @@ struct HistoryListView: View {
     
     static let groupFormatter = Util.createDateFormatter("MMMM yyyy")
 
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var user: User
     
     @State var history: [History]? = nil
 
@@ -61,22 +61,8 @@ struct HistoryListView: View {
                 let response = try await parkingClient.history()
                 self.history = response.history
             }
-            
-//            DispatchQueue.global().async {
-//                parkingClient.history() { response in
-//                    DispatchQueue.main.async {
-//                        self.history = response.history
-//                    }
-//                }
-//            }
         }
-        .navigationBarTitle(Text(Lang.Parking.history.localized()))
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading:
-            Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                Image(systemName: "arrow.left")
-            }
-        )
+        .pageTitle(Lang.Parking.history.localized(), dismiss: { user.page = nil })
     }
     
     private func groupHistory(_ history: [History]) -> [HistoryGroup] {

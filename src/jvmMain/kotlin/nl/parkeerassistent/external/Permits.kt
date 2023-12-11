@@ -18,6 +18,7 @@ data class Permit(
 @Serializable
 data class PaymentZone(
     val id: String,
+    val description: String,
     val days: List<Day>
 )
 

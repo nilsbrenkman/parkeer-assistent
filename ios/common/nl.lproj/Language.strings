@@ -9,6 +9,7 @@
 "common.ok" = "OK";
 "common.add" = "Toevoegen";
 "common.back" = "Terug";
+"common.save" = "Opslaan";
 "common.delete" = "Verwijderen";
 "common.cancel" = "Annuleren";
 "common.select" = "Selecteer";
@@ -47,6 +48,7 @@
 "visitor.tooManyMsg" = "Je kan maximaal 9 bezoekers bewaren. Verwijder een bezoeker om een nieuwe toe te kunnen voegen.";
 
 "parking.header" = "Parkeren";
+"parking.start" = "Nieuwe sessie";
 "parking.active" = "Actieve sessies";
 "parking.scheduled" = "Geplande sessies";
 "parking.noSessions" = "Geen actieve of geplande sessies";
@@ -57,6 +59,7 @@
 "parking.cost" = "Kosten";
 "parking.stop" = "Sessie beëindigen";
 "parking.history" = "Parkeer geschiedenis";
+"parking.details" = "Parkeer details";
 "parking.noHistory" = "Geen parkeer geschiedenis gevonden";
 "parking.freeParking" = "U kan in vandaag gratis parkeren";
 

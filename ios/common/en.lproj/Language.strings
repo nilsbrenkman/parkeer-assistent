@@ -9,6 +9,7 @@
 "common.ok" = "OK";
 "common.add" = "Add";
 "common.back" = "Back";
+"common.save" = "Save";
 "common.delete" = "Delete";
 "common.cancel" = "Cancel";
 "common.select" = "Select";
@@ -47,6 +48,7 @@
 "visitor.tooManyMsg" = "You have stored the maximum number of visitors. Delete a visitor to be able to add a new one.";
 
 "parking.header" = "Parking";
+"parking.start" = "New session";
 "parking.active" = "Active sessions";
 "parking.scheduled" = "Scheduled sessions";
 "parking.noSessions" = "No active or scheduled sessions";
@@ -57,6 +59,7 @@
 "parking.cost" = "Cost";
 "parking.stop" = "Stop session";
 "parking.history" = "Parking history";
+"parking.details" = "Parking details";
 "parking.noHistory" = "No parking history found";
 "parking.freeParking" = "You can park for free today";
 

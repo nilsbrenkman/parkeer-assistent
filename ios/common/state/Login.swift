@@ -56,11 +56,9 @@ class Login: ObservableObject, ErrorHandler {
         self.isBackground = false
         self.autoLogin = false
         
+        self.user?.page = nil
         self.user?.selectedVisitor = nil
-        self.user?.addVisitor = false
         self.user?.isLoaded = false
-        
-        self.payment?.show = false
     }
     
     func loggedIn() async {

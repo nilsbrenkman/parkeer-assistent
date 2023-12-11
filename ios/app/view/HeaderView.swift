@@ -40,20 +40,20 @@ struct HeaderView: View {
                     Spacer()
                     if login.isLoggedIn {
                         Menu {
-                            Button(action: { showHistory = true }) {
+                            Button(action: { user.page = .history }) {
                                 Text(Lang.Parking.history.localized())
                                 Image(systemName: "clock")
                             }
-                            Button(action: showPayment) {
+                            Button(action: { user.page = .payment }) {
                                 Text(Lang.User.addBalance.localized())
                                 Image(systemName: "eurosign.circle")
                             }
-                            Button(action: { showAccounts = true }) {
-                                Text("Accounts")
+                            Button(action: { user.page = .account }) {
+                                Text(Lang.Account.header.localized())
                                 Image(systemName: "person.circle")
                             }
-                            Button(action: { showSettings = true }) {
-                                Text("Settings")
+                            Button(action: { user.page = .settings }) {
+                                Text(Lang.Settings.header.localized())
                                 Image(systemName: "gearshape.circle")
                             }
                             Button(action: logout) {
@@ -72,7 +72,6 @@ struct HeaderView: View {
                                             .stroke(Color.white, lineWidth: 1)
                                 )
                                 .accessibilityIdentifier("menu")
-
                         }
                     }
                 }
@@ -103,13 +102,7 @@ struct HeaderView: View {
                         
         }
     }
-    
-    private func showPayment() {
-        payment.show = true
-        user.selectedVisitor = nil
-        user.addVisitor = false
-    }
-    
+
     private func logout() {
         Task {
             await login.logout()

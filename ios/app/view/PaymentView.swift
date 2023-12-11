@@ -20,7 +20,7 @@ struct PaymentView: View {
     @State private var disableStatusCheck: Int = 0
     
     @State private var statusTask: Task<Void, Never>?
-
+    
     var body: some View {
         Form {
             if payment.transactionId == nil {
@@ -71,25 +71,9 @@ struct PaymentView: View {
                     }
                     .style(.success, disabled: payment.selectedAmount < 0 && payment.selectedIssuer < 0)
                     .disabled(payment.selectedAmount < 0 && payment.selectedIssuer < 0)
-       
-                    Button(action: {
-                        payment.show = false
-                        payment.transactionId = nil
-                    }) {
-                        Text(Lang.Common.cancel.localized())
-                            .font(.title3)
-                            .bold()
-                            .centered()
-                    }
-                    .style(.cancel)
                 }
             } else {
                 Section {
-                    Text(Lang.Payment.inProgress.localized())
-                        .bold()
-                        .foregroundColor(Color.ui.info)
-                        .centered()
-                    
                     ZStack {
                         ProgressView()
                     }
@@ -97,23 +81,15 @@ struct PaymentView: View {
                     .centered()
                     .animation(nil, value: 0)
                 }
-                Section {
-                    Button(action: {
-                        cancelInProgress()
-                    }) {
-                        Text(Lang.Common.cancel.localized())
-                            .font(.title3)
-                            .bold()
-                            .centered()
-                    }
-                    .style(.cancel)
-                }
             }
         }
-        .navigationBarHidden(true)
         .onAppear {
-            Task {
-                await self.payment.ideal()
+            if payment.transactionId != nil {
+                startStatusTask()
+            } else {
+                Task {
+                    await self.payment.ideal()
+                }
             }
         }
         .onChange(of: scenePhase) { phase in
@@ -125,6 +101,15 @@ struct PaymentView: View {
                 statusTask = nil
             }
         }
+        .pageTitle(payment.transactionId == nil
+                       ? Lang.User.addBalance.localized()
+                       : Lang.Payment.inProgress.localized(),
+                   dismiss: {
+            if payment.transactionId != nil {
+                cancelInProgress()
+            }
+            user.page = nil
+        })
     }
     
     private func formatAmount(_ amount: String) -> String {
@@ -160,14 +145,14 @@ struct PaymentView: View {
             await user.getBalance()
         }
     }
-
+    
     private func handleStatusResponse(_ response: StatusResponse) {
         self.wait = false
         switch response.status {
         case "success":
             MessageManager.instance.addMessage(Lang.Payment.successMsg.localized(), type: Type.SUCCESS) {
                 cancelInProgress()
-                payment.show = false
+                user.page = nil
             }
             break
         case "pending":

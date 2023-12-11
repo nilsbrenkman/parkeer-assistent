@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 struct AddVisitorView: View {
-    
+
     @EnvironmentObject var user: User
     
     @State private var license: String = ""
@@ -21,11 +21,10 @@ struct AddVisitorView: View {
         
         Form {
             Section {
-                VStack(alignment: .leading, spacing: Constants.spacing.small) {
-                    
-                    Text("\(Lang.Visitor.license.localized()):")
-                        .font(.title3)
-                    
+                HStack {
+                    Text(Lang.Visitor.license.localized())
+                        .foregroundStyle(Color.ui.bw30)
+                        .frame(width: 120, alignment: .leading)
                     ZStack() {
                         RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                             .fill(Color.ui.licenseBg)
@@ -49,21 +48,20 @@ struct AddVisitorView: View {
                                 license = License.formatLicense(license)
                             })
                     }
-                    
-                    Text("\(Lang.Visitor.name.localized()):")
-                        .font(.title3)
-                    TextField("", text: $name)
-                        .accessibility(identifier: "name")
-                        .font(Font.ui.name)
-                        .disableAutocorrection(true)
-                        .frame(height: 36)
-                        .padding(.horizontal)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: Constants.radius.small)
-                                .stroke(Color.ui.bw0, lineWidth: 1)
-                        )
+                    Spacer()
                 }
-                .padding(.vertical)
+                .padding(.vertical, Constants.padding.mini)
+                
+                HStack {
+                    Text(Lang.Visitor.name.localized())
+                        .foregroundStyle(Color.ui.bw30)
+                        .frame(width: 120, alignment: .leading)
+                    TextField(Lang.Visitor.name.localized(), text: $name)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.vertical, Constants.padding.mini)
+
             }
             
             Section {
@@ -82,25 +80,17 @@ struct AddVisitorView: View {
                         .wait($wait)
                 }
                 .style(.success, disabled: self.license.count == 0 || self.name.count == 0)
-                
-                Button(action: { user.addVisitor = false }) {
-                    Text(Lang.Common.cancel.localized())
-                        .font(.title3)
-                        .bold()
-                        .centered()
-                }
-                .style(.cancel)
             }
             
         }
-        .listStyle(InsetGroupedListStyle())
-        .navigationBarHidden(true)
+        .listStyle(.insetGrouped)
+        .pageTitle(Lang.Visitor.add.localized(), dismiss: { user.page = nil })
     }
     
     private func handleAddVisitor(success: Bool) {
         if success {
             user.visitors = nil
-            user.addVisitor = false
+            user.page = nil
             
             Task {
                 await user.getVisitors()

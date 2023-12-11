@@ -50,22 +50,25 @@ struct AccountDetailView: View {
                 }
                 .padding(.vertical, Constants.padding.mini)
             }
+            Section {
+                Button(action: save) {
+                    Text(Lang.Common.save.localized())
+                        .font(.title3)
+                        .bold()
+                        .centered()
+                }
+                .style(.success, disabled: false)
+            }
         }
         .onAppear {
             alias = account.alias ?? ""
             username = account.username
             password = account.password
         }
-        .navigationBarTitle(Text(account.username.isEmpty ? Lang.Account.newAccount.localized() : Lang.Account.details.localized()))
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(
-            leading: Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                Image(systemName: "arrow.left")
-            },
-            trailing: Button(action: save) {
-                Image(systemName: "checkmark.circle")
-            }
-        )
+        .pageTitle(account.username.isEmpty
+                       ? Lang.Account.newAccount.localized()
+                       : Lang.Account.details.localized(),
+                   dismiss: { presentationMode.wrappedValue.dismiss() })
     }
     
     private func save() {

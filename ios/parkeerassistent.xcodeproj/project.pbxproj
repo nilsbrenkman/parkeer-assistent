@@ -26,6 +26,7 @@
 		29688E6826B08361008BC85A /* car-horn.wav in Resources */ = {isa = PBXBuildFile; fileRef = 29688E6726B08361008BC85A /* car-horn.wav */; };
 		29688E6A26B0B650008BC85A /* ParkingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29688E6926B0B650008BC85A /* ParkingView.swift */; };
 		29688E7226B1C729008BC85A /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29688E7126B1C729008BC85A /* Launch Screen.storyboard */; };
+		2973F4362B2700210004DEB8 /* PageTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2973F4352B2700210004DEB8 /* PageTitle.swift */; };
 		298632A126CBEBCE00990215 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298632A026CBEBCE00990215 /* Font.swift */; };
 		298F7D8226825EC900D75A5C /* VisitorListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298F7D8126825EC900D75A5C /* VisitorListView.swift */; };
 		298F7D8426825EDC00D75A5C /* VisitorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298F7D8326825EDC00D75A5C /* VisitorView.swift */; };
@@ -105,7 +106,6 @@
 		29AD3BFE26D572470082E913 /* Language.strings in Resources */ = {isa = PBXBuildFile; fileRef = 29AD3C0026D572470082E913 /* Language.strings */; };
 		29AD3C0526D57A9C0082E913 /* Lang.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AD3C0426D57A9C0082E913 /* Lang.swift */; };
 		29AE299C27B58D9300A00FDF /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AE299B27B58D9300A00FDF /* AccountView.swift */; };
-		29AE299E27B599DF00A00FDF /* AccountRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29AE299D27B599DF00A00FDF /* AccountRowView.swift */; };
 		29B827B826755F820025E717 /* parkeerassistentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B827B726755F820025E717 /* parkeerassistentApp.swift */; };
 		29B827BA26755F820025E717 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B827B926755F820025E717 /* ContentView.swift */; };
 		29B827BF26755F840025E717 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29B827BE26755F840025E717 /* Preview Assets.xcassets */; };
@@ -221,6 +221,7 @@
 		29688E6726B08361008BC85A /* car-horn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "car-horn.wav"; sourceTree = "<group>"; };
 		29688E6926B0B650008BC85A /* ParkingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParkingView.swift; sourceTree = "<group>"; };
 		29688E7126B1C729008BC85A /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		2973F4352B2700210004DEB8 /* PageTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageTitle.swift; sourceTree = "<group>"; };
 		298632A026CBEBCE00990215 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		298F7D8126825EC900D75A5C /* VisitorListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitorListView.swift; sourceTree = "<group>"; };
 		298F7D8326825EDC00D75A5C /* VisitorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitorView.swift; sourceTree = "<group>"; };
@@ -278,7 +279,6 @@
 		29AD3BFF26D572470082E913 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Language.strings; sourceTree = "<group>"; };
 		29AD3C0426D57A9C0082E913 /* Lang.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lang.swift; sourceTree = "<group>"; };
 		29AE299B27B58D9300A00FDF /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
-		29AE299D27B599DF00A00FDF /* AccountRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRowView.swift; sourceTree = "<group>"; };
 		29B827B426755F820025E717 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29B827B726755F820025E717 /* parkeerassistentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = parkeerassistentApp.swift; sourceTree = "<group>"; };
 		29B827B926755F820025E717 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -395,9 +395,8 @@
 		298F7D7E2682558800D75A5C /* view */ = {
 			isa = PBXGroup;
 			children = (
-				29AE299D27B599DF00A00FDF /* AccountRowView.swift */,
-				29AE299B27B58D9300A00FDF /* AccountView.swift */,
 				2951455E2B245E3200ACD607 /* AccountDetailView.swift */,
+				29AE299B27B58D9300A00FDF /* AccountView.swift */,
 				298F7D8F2688CDD700D75A5C /* AddParkingView.swift */,
 				298F7D87268287A200D75A5C /* AddVisitorView.swift */,
 				29B827B926755F820025E717 /* ContentView.swift */,
@@ -405,7 +404,6 @@
 				29CCB0C7274458CF00504164 /* HistoryListView.swift */,
 				29CCB0CD27459C3A00504164 /* HistoryRowView.swift */,
 				29CCB0C927445DAA00504164 /* HistoryView.swift */,
-				29FE2B3C2B23DD1B003510EA /* SettingsView.swift */,
 				29D4F72E26B89D2700600D33 /* InfoView.swift */,
 				29B827E8267564420025E717 /* LoginView.swift */,
 				29F7B14B2690C14F0079EF92 /* MessageView.swift */,
@@ -414,6 +412,7 @@
 				291988C9268B83B100B289F0 /* ParkingRowView.swift */,
 				29688E6926B0B650008BC85A /* ParkingView.swift */,
 				2994A45226CF251200332807 /* PaymentView.swift */,
+				29FE2B3C2B23DD1B003510EA /* SettingsView.swift */,
 				29B827F5267570770025E717 /* UserView.swift */,
 				298F7D8126825EC900D75A5C /* VisitorListView.swift */,
 				298F7D8326825EDC00D75A5C /* VisitorView.swift */,
@@ -674,16 +673,17 @@
 		29D4F73026B9AF4500600D33 /* components */ = {
 			isa = PBXGroup;
 			children = (
-				291988C1268B4F1E00B289F0 /* DataBox.swift */,
 				29D4F73B26B9BBCE00600D33 /* ButtonWait.swift */,
+				29CCB0CB274478E300504164 /* CalendarDate.swift */,
+				295898332A17BF71000FDA59 /* CalendarView.swift */,
+				291988C1268B4F1E00B289F0 /* DataBox.swift */,
 				29D4F73526B9B91A00600D33 /* DatePickerModal.swift */,
 				29AD3BF126CF42B10082E913 /* InsetPicker.swift */,
 				29D4F73126B9AF9E00600D33 /* Modal.swift */,
+				2973F4352B2700210004DEB8 /* PageTitle.swift */,
 				29F7B1472690B56C0079EF92 /* Property.swift */,
-				291988C3268B5CCB00B289F0 /* WheelSelector.swift */,
-				29CCB0CB274478E300504164 /* CalendarDate.swift */,
-				295898332A17BF71000FDA59 /* CalendarView.swift */,
 				29F26DED2B25230F002FB09C /* SectionHeader.swift */,
+				291988C3268B5CCB00B289F0 /* WheelSelector.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1054,13 +1054,13 @@
 				290B2315268BF98600266920 /* HeaderView.swift in Sources */,
 				292A1D0A267D53F700F14A59 /* LoadingView.swift in Sources */,
 				291988C8268B82B700B289F0 /* ParkingListView.swift in Sources */,
-				29AE299E27B599DF00A00FDF /* AccountRowView.swift in Sources */,
 				29D4F74126B9D2EB00600D33 /* Color.swift in Sources */,
 				298F7D862682639300D75A5C /* LicenseView.swift in Sources */,
 				299395E1271B4A9800B1AB57 /* Util.swift in Sources */,
 				299395C0271B1DD500B1AB57 /* Login.swift in Sources */,
 				29939681271F6DA800B1AB57 /* AppMessenger.swift in Sources */,
 				299395F1271B4B0400B1AB57 /* ApiClient.swift in Sources */,
+				2973F4362B2700210004DEB8 /* PageTitle.swift in Sources */,
 				29F7B15B269CD6900079EF92 /* Notifications.swift in Sources */,
 				29F7B14C2690C14F0079EF92 /* MessageView.swift in Sources */,
 				299395F3271B4B0400B1AB57 /* PaymentClient.swift in Sources */,
@@ -1501,7 +1501,7 @@
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_ASSET_PATHS = "\"app/Preview Content\"";
 				DEVELOPMENT_TEAM = NVWAZSZHJQ;
 				ENABLE_PREVIEWS = YES;
@@ -1529,7 +1529,7 @@
 				CODE_SIGN_ENTITLEMENTS = app/app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 33;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_ASSET_PATHS = "\"app/Preview Content\"";
 				DEVELOPMENT_TEAM = NVWAZSZHJQ;
 				ENABLE_PREVIEWS = YES;

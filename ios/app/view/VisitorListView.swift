@@ -23,19 +23,13 @@ struct VisitorListView: View {
                         .centered()
                 } else {
                     ForEach(visitors, id: \.self) { visitor in
-                        Button(action: { self.user.selectedVisitor = visitor }) {
-                            ZStack {
-                                NavigationLink(destination: AddParkingView(visitor: visitor),
-                                               tag: visitor,
-                                               selection: $user.selectedVisitor) {
-                                    EmptyView()
-                                }
-                                .hidden()
-
-                                HStack {
-                                    VisitorView(visitor: visitor)
-                                    Spacer()
-                                }
+                        Button(action: {
+                            user.selectedVisitor = visitor
+                            user.page = .parking
+                        }) {
+                            HStack {
+                                VisitorView(visitor: visitor)
+                                Spacer()
                             }
                         }
                         .accessibility(identifier: "visitor")
@@ -58,23 +52,15 @@ struct VisitorListView: View {
                         return
                     }
                 }
-                self.user.addVisitor = true
+                user.page = .visitor
             }) {
-                ZStack {
-                    NavigationLink(destination: AddVisitorView(), isActive: $user.addVisitor) {
-                        
-                    }
-                    .hidden()
-                    
-                    Text(Lang.Visitor.add.localized())
-                        .font(.title3)
-                        .bold()
-                        .centered()
-                }
+                Text(Lang.Visitor.add.localized())
+                    .font(.title3)
+                    .bold()
+                    .centered()
             }
             .style(.success)
         }
-
     }
     
     func delete(at offsets: IndexSet) {

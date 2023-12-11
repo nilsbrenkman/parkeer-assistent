@@ -28,18 +28,8 @@ struct HistoryView: View {
                 }
                 .padding(.vertical)
             }
-            
-            Section {
-                Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                    Text(Lang.Common.back.localized())
-                        .font(.title3)
-                        .bold()
-                        .centered()
-                }
-                .style(.cancel)
-            }
         }
-        .navigationBarHidden(true)
+        .pageTitle(Lang.Parking.details.localized(), dismiss: { presentationMode.wrappedValue.dismiss() })
     }
 }
 

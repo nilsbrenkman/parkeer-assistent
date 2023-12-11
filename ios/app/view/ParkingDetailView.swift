@@ -44,19 +44,9 @@ struct ParkingDetailView: View {
                         .centered()
                 }
                 .style(.danger)
-                
-                Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
-                    Text(Lang.Common.back.localized())
-                        .font(.title3)
-                        .bold()
-                        .centered()
-                }
-                .style(.cancel)
-
             }
         }
-        .navigationBarHidden(true)
-
+        .pageTitle(Lang.Parking.header.localized(), dismiss: { presentationMode.wrappedValue.dismiss() })
     }
 }
 
