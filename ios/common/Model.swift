@@ -72,7 +72,7 @@ struct Parking: Codable, Hashable, Comparable {
     var cost: Double
     
     static func < (lhs: Parking, rhs: Parking) -> Bool {
-        return lhs.id < rhs.id
+        lhs.id < rhs.id
     }
 }
 
@@ -81,7 +81,7 @@ struct ParkingResponse: Codable, Equatable {
     var scheduled: [Parking]
     
     static func == (lhs: ParkingResponse, rhs: ParkingResponse) -> Bool {
-        return lhs.active.sorted() == rhs.active.sorted() && lhs.scheduled.sorted() == rhs.scheduled.sorted()
+        lhs.active.sorted() == rhs.active.sorted() && lhs.scheduled.sorted() == rhs.scheduled.sorted()
     }
 }
 

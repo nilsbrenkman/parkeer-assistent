@@ -28,7 +28,7 @@ struct parkeerassistentWatch: App {
     }
     
     func useMockClient() -> Bool {
-        return true
+        true
     }
    
     @SceneBuilder var body: some Scene {

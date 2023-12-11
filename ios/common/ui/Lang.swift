@@ -63,11 +63,11 @@ protocol Localized {
 extension Localized where Self : RawRepresentable, Self.RawValue == String {
     func localized() -> String {
         let prefix = String(describing: type(of: self)).lowercased()
-        let key = prefix + "." + self.rawValue
+        let key = prefix + "." + rawValue
         return NSLocalizedString(key, tableName: "Language", bundle: .main, value: key, comment: key)
     }
     func predicate() -> NSPredicate {
-        return NSPredicate(format: "label CONTAINS %@", localized())
+        NSPredicate(format: "label CONTAINS %@", localized())
     }
 }
 

@@ -45,18 +45,18 @@ class License {
     }
 
     static func isSame(a: Character, b: Character) -> Bool {
-        return (isDigit(c: a) && isDigit(c: b)) || (!isDigit(c: a) && !isDigit(c: b))
+        (isDigit(c: a) && isDigit(c: b)) || (!isDigit(c: a) && !isDigit(c: b))
     }
     
     static func isDigit(c: Character) -> Bool {
-        return "0"..."9" ~= c
+        "0"..."9" ~= c
     }
 
     static let formats = [
         // 2-2-2
         Format(
             matches: {chars in
-                return chars.count == 6 && isGroup(chars: chars[0...1]) && isGroup(chars: chars[2...3]) && isGroup(chars: chars[4...5])
+                chars.count == 6 && isGroup(chars: chars[0...1]) && isGroup(chars: chars[2...3]) && isGroup(chars: chars[4...5])
             },
             format: {chars in
                 var c = chars
@@ -68,7 +68,7 @@ class License {
         // 2-3-1
         Format(
             matches: {chars in
-                return chars.count == 6 && isGroup(chars: chars[0...1]) && isGroup(chars: chars[2...4])
+                chars.count == 6 && isGroup(chars: chars[0...1]) && isGroup(chars: chars[2...4])
             },
             format: {chars in
                 var c = chars
@@ -80,7 +80,7 @@ class License {
         // 1-3-2
         Format(
             matches: {chars in
-                return chars.count == 6 && isGroup(chars: chars[1...3]) && isGroup(chars: chars[4...5])
+                chars.count == 6 && isGroup(chars: chars[1...3]) && isGroup(chars: chars[4...5])
             },
             format: {chars in
                 var c = chars
@@ -92,7 +92,7 @@ class License {
         // 3-2-1
         Format(
             matches: {chars in
-                return chars.count == 6 && isGroup(chars: chars[0...2]) && isGroup(chars: chars[3...4])
+                chars.count == 6 && isGroup(chars: chars[0...2]) && isGroup(chars: chars[3...4])
             },
             format: {chars in
                 var c = chars
@@ -104,7 +104,7 @@ class License {
         // 1-2-3
         Format(
             matches: {chars in
-                return chars.count == 6 && isGroup(chars: chars[1...2]) && isGroup(chars: chars[3...5])
+                chars.count == 6 && isGroup(chars: chars[1...2]) && isGroup(chars: chars[3...5])
             },
             format: {chars in
                 var c = chars

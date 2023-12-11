@@ -22,15 +22,15 @@ class UserClientApi: UserClient {
     }
     
     func get() async throws -> UserResponse {
-        return try await ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET)
+        try await ApiClient.client.call(UserResponse.self, path: "user", method: Method.GET)
     }
     
     func balance() async throws -> BalanceResponse {
-        return try await ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET)
+        try await ApiClient.client.call(BalanceResponse.self, path: "user/balance", method: Method.GET)
     }
     
     func regime(_ date: Date) async throws -> RegimeResponse {
-        return try await ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET)
+        try await ApiClient.client.call(RegimeResponse.self, path: "user/regime/\(Util.dateFormatter.string(from: date))", method: Method.GET)
     }
     
 }

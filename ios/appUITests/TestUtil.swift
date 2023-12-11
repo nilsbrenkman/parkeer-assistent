@@ -34,7 +34,7 @@ struct Label {
     static let dismiss = Label.buildPredicate("Not Now")
     
     private static func buildPredicate(_ label: String) -> NSPredicate {
-        return NSPredicate(format: "label CONTAINS %@", label)
+        NSPredicate(format: "label CONTAINS %@", label)
     }
     
 }

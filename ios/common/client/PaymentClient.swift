@@ -24,7 +24,7 @@ class PaymentClientApi: PaymentClient {
     }
     
     func ideal() async throws -> IdealResponse {
-        return try await ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET)
+        try await ApiClient.client.call(IdealResponse.self, path: "payment", method: Method.GET)
     }
     
     func payment(amount: String, issuerId: String) async throws -> PaymentResponse {
@@ -38,7 +38,7 @@ class PaymentClientApi: PaymentClient {
     }
     
     func status(_ transactionId: String) async throws -> StatusResponse {
-        return try await ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET)
+        try await ApiClient.client.call(StatusResponse.self, path: "payment/\(transactionId)", method: Method.GET)
     }
     
 }

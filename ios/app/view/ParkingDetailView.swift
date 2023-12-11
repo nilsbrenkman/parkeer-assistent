@@ -36,7 +36,7 @@ struct ParkingDetailView: View {
                     Task {
                         await user.stopParking(parking)
                     }
-                    self.presentationMode.wrappedValue.dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 }){
                     Text(Lang.Parking.stop.localized())
                         .font(.title3)

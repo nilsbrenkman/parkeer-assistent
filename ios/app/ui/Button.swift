@@ -13,27 +13,27 @@ extension Button {
         switch style {
         case .success:
             if disabled {
-                return self
-                    .foregroundColor(Color.ui.disabled)
+                return
+                    foregroundColor(Color.ui.disabled)
                     .listRowBackground(Color.ui.successDisabled)
             }
-            return self
-                .foregroundColor(Color.ui.enabled)
+            return
+                foregroundColor(Color.ui.enabled)
                 .listRowBackground(Color.ui.success)
 
         case .danger:
             if disabled {
-                return self
-                    .foregroundColor(Color.ui.disabled)
+                return
+                    foregroundColor(Color.ui.disabled)
                     .listRowBackground(Color.ui.dangerDisabled)
             }
-            return self
-                .foregroundColor(Color.ui.enabled)
+            return
+                foregroundColor(Color.ui.enabled)
                 .listRowBackground(Color.ui.danger)
 
         case .cancel:
-            return self
-                .foregroundColor(Color.ui.danger)
+            return
+                foregroundColor(Color.ui.danger)
                 .listRowBackground(Color.ui.light)
 
         }

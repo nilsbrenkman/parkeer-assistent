@@ -29,7 +29,7 @@ struct MessageView: ViewModifier {
                         VStack {
                             Button(action: {
 //                                DispatchQueue.main.async {
-                                    if let ok = self.message?.ok {
+                                    if let ok = message?.ok {
                                         ok()
                                     }
                                     self.message = nil

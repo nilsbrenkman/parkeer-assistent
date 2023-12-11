@@ -48,8 +48,8 @@ struct InfoView: View {
     }
     
     private func createLink(_ title: String, url: String) -> some View {
-        return Link(title, destination: URL(string: url)!)
-            .foregroundColor(Color.ui.header)
+        Link(title, destination: URL(string: url)!)
+          .foregroundColor(Color.ui.header)
     }
     
 }

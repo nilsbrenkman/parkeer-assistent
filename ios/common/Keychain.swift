@@ -34,7 +34,6 @@ class Keychain {
         }
         credentials.append(Credentials(alias: alias, username: username, password: password))
         try storeCredentials(credentials: credentials)
-        return
     }
     
     static func updateCredentials(_ account: Credentials, username: String, password: String, alias: String?) throws {
@@ -135,7 +134,7 @@ class Keychain {
     }
     
     static func autoLogin() -> Bool {
-        return !UserDefaults.standard.bool(forKey: Keychain.AUTO_LOGIN_DISABLED_KEY)
+        !UserDefaults.standard.bool(forKey: Keychain.AUTO_LOGIN_DISABLED_KEY)
     }
   
     static func autoLogin(enabled: Bool) {

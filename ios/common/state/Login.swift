@@ -51,34 +51,34 @@ class Login: ObservableObject, ErrorHandler {
     }
     
     private func clearUser() {
-        self.isLoggedIn = false
-        self.isLoading = false
-        self.isBackground = false
-        self.autoLogin = false
+        isLoggedIn = false
+        isLoading = false
+        isBackground = false
+        autoLogin = false
         
-        self.user?.page = nil
-        self.user?.selectedVisitor = nil
-        self.user?.isLoaded = false
+        user?.page = nil
+        user?.selectedVisitor = nil
+        user?.isLoaded = false
     }
     
     func loggedIn() async {
-        self.isLoading = true
+        isLoading = true
         
-        guard let response = try? await self.loginClient.loggedId() else {
-            self.isLoggedIn = false
-            self.isLoading = false
+        guard let response = try? await loginClient.loggedId() else {
+            isLoggedIn = false
+            isLoading = false
             return
         }
         
-        self.isLoggedIn = response.success
-        self.isLoading = false
+        isLoggedIn = response.success
+        isLoading = false
     }
     
     func login(username: String, password: String, storeCredentials: Bool) async {
         
         let response: Response
         do {
-            response = try await self.loginClient.login(username: username, password: password)
+            response = try await loginClient.login(username: username, password: password)
         } catch {
             if let clientError = error as? ClientError {
                 if clientError == .Unauthorized {
@@ -100,7 +100,7 @@ class Login: ObservableObject, ErrorHandler {
                     Log.warning("Store credentials failed: \(error)")
                 }
             }
-            self.isLoggedIn = true
+            isLoggedIn = true
             
         } else {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
@@ -109,19 +109,19 @@ class Login: ObservableObject, ErrorHandler {
     }
     
     func logout() async {
-        self.isLoading = true
+        isLoading = true
         
-        if let response = try? await self.loginClient.logout() {
+        if let response = try? await loginClient.logout() {
             if !response.success {
                 MessageManager.instance.addMessage(response.message, type: Type.ERROR)
             }
         }
         
-        self.clearUser()    
+        clearUser()
     }
     
     func selectedAccount() -> Credentials {
-        return Keychain.getRecent(accounts) ?? Credentials(username: "", password: "")
+        Keychain.getRecent(accounts) ?? Credentials(username: "", password: "")
     }
     
     func setSelectedAccount(_ account: Credentials?) {
@@ -133,7 +133,7 @@ class Login: ObservableObject, ErrorHandler {
         var error: NSError?
 
         if authenticated != nil && authenticated!.addingTimeInterval(5 * 60) > Date.now() {
-            return self.accounts
+            return accounts
         }
         
         if !context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
@@ -158,34 +158,34 @@ class Login: ObservableObject, ErrorHandler {
         semaphore.wait()
         
         if success {
-            self.accounts = stored
-            self.authenticated = Date.now()
+            accounts = stored
+            authenticated = Date.now()
         } else {
             throw AuthenticationError.Failed
         }
-        return self.accounts
+        return accounts
     }
     
     func addAccount(username: String, password: String, alias: String?) {
         try? Keychain.storeCredentials(username: username, password: password, alias: alias)
-        self.accounts = Keychain.retrieveCredentials()
+        accounts = Keychain.retrieveCredentials()
     }
     
     func updateAccount(_ account: Credentials, username: String, password: String, alias: String?) {
-        let isRecent = Keychain.getRecent(self.accounts)?.username == account.username
+        let isRecent = Keychain.getRecent(accounts)?.username == account.username
         try? Keychain.updateCredentials(account, username: username, password: password, alias: alias)
-        self.accounts = Keychain.retrieveCredentials()
+        accounts = Keychain.retrieveCredentials()
         if isRecent {
             Keychain.setRecent(username)
         }
     }
 
     func deleteAccount(_ account: Credentials) {
-        let isRecent = Keychain.getRecent(self.accounts)?.username == account.username
+        let isRecent = Keychain.getRecent(accounts)?.username == account.username
         try? Keychain.deleteCredentials(account: account)
-        self.accounts = Keychain.retrieveCredentials()
+        accounts = Keychain.retrieveCredentials()
         if isRecent {
-            Keychain.setRecent(self.accounts.first?.username)
+            Keychain.setRecent(accounts.first?.username)
         }
     }
 

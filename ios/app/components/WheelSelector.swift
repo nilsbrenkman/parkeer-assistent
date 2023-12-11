@@ -48,22 +48,22 @@ struct WheelSelector: View {
 
             Circle()
                 .stroke(Color.ui.grey70, style: StrokeStyle(lineWidth: 2))
-                .frame(width: self.getFrameSize(offset: -1), height: self.getFrameSize(offset: -1))
+                .frame(width: getFrameSize(offset: -1), height: getFrameSize(offset: -1))
             
             Circle()
                 .stroke(Color.ui.grey80, style: StrokeStyle(lineWidth: 2))
-                .frame(width: self.getFrameSize(offset: -3), height: self.getFrameSize(offset: -3))
+                .frame(width: getFrameSize(offset: -3), height: getFrameSize(offset: -3))
             
             Circle()
                 .fill(Color.ui.grey70)
-                .frame(width: self.getFrameSize(offset: -4), height: self.getFrameSize(offset: -4))
+                .frame(width: getFrameSize(offset: -4), height: getFrameSize(offset: -4))
                 .shadow(color: Color.ui.grey50, radius: 1)
 
-            if self.showRotate {
+            if showRotate {
                 Image("Image-rotate")
                     .resizable()
                     .scaledToFit()
-                    .rotationEffect(Angle(degrees: self.rotate ? 360 : 0))
+                    .rotationEffect(Angle(degrees: rotate ? 360 : 0))
                     .frame(width: config.radius * 0.75, height: config.radius * 0.75)
                     .foregroundColor(Color.ui.grey80)
                     .onAppear {
@@ -109,7 +109,7 @@ struct WheelSelector: View {
     }
     
     private func getFrameSize(offset: Double) -> CGFloat {
-        return (config.radius - config.size + CGFloat(offset)) * 2
+        (config.radius - config.size + CGFloat(offset)) * 2
     }
     
 }

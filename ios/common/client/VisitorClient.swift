@@ -22,7 +22,7 @@ class VisitorClientApi: VisitorClient {
     }
 
     func get() async throws -> VisitorResponse {
-        return try await ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET)
+        try await ApiClient.client.call(VisitorResponse.self, path: "visitor", method: Method.GET)
     }
     
     func add(license: String, name: String) async throws -> Response {
@@ -31,7 +31,7 @@ class VisitorClientApi: VisitorClient {
     }
     
     func delete(_ visitor: Visitor) async throws -> Response {
-        return try await ApiClient.client.call(Response.self, path: "visitor/\(visitor.id)", method: Method.DELETE)
+        try await ApiClient.client.call(Response.self, path: "visitor/\(visitor.id)", method: Method.DELETE)
     }
 
 }

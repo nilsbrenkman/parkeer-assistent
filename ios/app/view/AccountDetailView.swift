@@ -77,7 +77,7 @@ struct AccountDetailView: View {
         } else {
             login.updateAccount(account, username: username, password: password, alias: alias)
         }
-        self.presentationMode.wrappedValue.dismiss()
+        presentationMode.wrappedValue.dismiss()
     }
     
 }

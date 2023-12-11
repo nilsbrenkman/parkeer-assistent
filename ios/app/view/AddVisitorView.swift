@@ -79,7 +79,7 @@ struct AddVisitorView: View {
                         .bold()
                         .wait($wait)
                 }
-                .style(.success, disabled: self.license.count == 0 || self.name.count == 0)
+                .style(.success, disabled: license.count == 0 || name.count == 0)
             }
             
         }

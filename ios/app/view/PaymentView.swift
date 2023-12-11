@@ -88,7 +88,7 @@ struct PaymentView: View {
                 startStatusTask()
             } else {
                 Task {
-                    await self.payment.ideal()
+                    await payment.ideal()
                 }
             }
         }
@@ -113,7 +113,7 @@ struct PaymentView: View {
     }
     
     private func formatAmount(_ amount: String) -> String {
-        return "€ \(amount.replacingOccurrences(of: ",", with: "."))"
+        "€ \(amount.replacingOccurrences(of: ",", with: "."))"
     }
     
     private func startStatusTask() {
@@ -126,7 +126,7 @@ struct PaymentView: View {
             while !Task.isCancelled {
                 if let response = try? await payment.status() {
                     await MainActor.run {
-                        self.handleStatusResponse(response)
+                        handleStatusResponse(response)
                     }
                 }
                 Log.debug("Waiting \(wait, privacy: .public) seconds")

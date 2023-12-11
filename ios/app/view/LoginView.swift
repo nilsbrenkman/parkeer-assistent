@@ -84,10 +84,10 @@ struct LoginView: View {
                         .bold()
                         .wait($wait)
                 }
-                .style(.success, disabled: self.username.count == 0 || self.password.count == 0)
+                .style(.success, disabled: username.count == 0 || password.count == 0)
             }
             if login.accounts.isEmpty {
-                if self.authenticationFailed {
+                if authenticationFailed {
                     Section {
                         HStack {
                             Spacer()
@@ -103,7 +103,7 @@ struct LoginView: View {
                         }
                     }
                     .listRowBackground(Color.system.groupedBackground)
-                } else if self.canAuthenticate {
+                } else if canAuthenticate {
                     Section {
                         Toggle(Lang.Login.remember.localized(), isOn: $storeCredentials)
                     }

@@ -76,7 +76,7 @@ struct AddParkingView: View {
                     WheelSelector(config: Config(
                         radius: 75,
                         size: 16
-                    ), onChange: self.onChange)
+                    ), onChange: onChange)
                 }
                 .padding(.vertical, Constants.padding.normal)
             }
@@ -187,15 +187,15 @@ struct AddParkingView: View {
     }
     
     private func today() -> Bool {
-        return Calendar.current.isDate(startDate, inSameDayAs: Date.now())
+        Calendar.current.isDate(startDate, inSameDayAs: Date.now())
     }
     
     private func regimeStartTime() -> Date {
-        return user.regimeTimeStart ?? Date.now()
+        user.regimeTimeStart ?? Date.now()
     }
     
     private func regimeEndTime() -> Date {
-        return user.regimeTimeEnd ?? Date.now()
+        user.regimeTimeEnd ?? Date.now()
     }
 
     private func opacity(enabled: Bool) -> Double {

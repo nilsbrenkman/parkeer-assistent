@@ -71,7 +71,7 @@ struct AccountView: View {
             default:
                 break
             }
-            self.presentationMode.wrappedValue.dismiss()
+            presentationMode.wrappedValue.dismiss()
         }
         self.autoLogin = Keychain.autoLogin()
     }

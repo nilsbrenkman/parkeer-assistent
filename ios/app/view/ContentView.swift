@@ -106,9 +106,9 @@ struct ContentView: View {
     }
     
     private func pageBinding(_ page: Page) -> Binding<Bool> {
-        return Binding<Bool>(
-            get: { return user.page == page },
-            set: { _ in }
+        Binding<Bool>(
+          get: { user.page == page },
+          set: { _ in }
         );
     }
     

@@ -36,29 +36,29 @@ class User: ObservableObject {
     }
 
     func getUser() async {
-        guard let response = try? await self.userClient.get() else { return }
+        guard let response = try? await userClient.get() else { return }
             
-        await self.getVisitors()
-        await self.getParking()
+        await getVisitors()
+        await getParking()
         
-        self.balance = response.balance
-        self.hourRate = response.hourRate
-        self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
-        self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
-        self.regime = response.regime
-        self.timeBalance = Util.calculateTimeBalance(balance: response.balance,
+        balance = response.balance
+        hourRate = response.hourRate
+        regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+        regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+        regime = response.regime
+        timeBalance = Util.calculateTimeBalance(balance: response.balance,
                                                      hourRate: response.hourRate)
     }
 
     func getBalance() async {
-        guard let response = try? await self.userClient.balance() else { return }
+        guard let response = try? await userClient.balance() else { return }
         
-        if response.balance == self.balance {
+        if response.balance == balance {
             return
         }
-        self.balance = response.balance
-        self.timeBalance = Util.calculateTimeBalance(balance: response.balance,
-                                                     hourRate: self.hourRate)
+        balance = response.balance
+        timeBalance = Util.calculateTimeBalance(balance: response.balance,
+                                                     hourRate: hourRate)
     }
     
     func getRegime(_ date: Date) async {
@@ -67,24 +67,24 @@ class User: ObservableObject {
             return
         }
         
-        guard let response = try? await self.userClient.regime(date) else { return }
+        guard let response = try? await userClient.regime(date) else { return }
         
-        self.regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
-        self.regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
+        regimeTimeStart = Util.dateTimeFormatter.date(from: response.regimeTimeStart)
+        regimeTimeEnd = Util.dateTimeFormatter.date(from: response.regimeTimeEnd)
     }
     
     func setRegimeForDate(_ date: Date) {
         guard let regime,
               let regimeDay = Util.getRegimeDay(regime: regime, date: date) else {
-            self.regimeTimeStart = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
-            self.regimeTimeEnd = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
+            regimeTimeStart = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
+            regimeTimeEnd = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)
             
             MessageManager.instance.addMessage(Lang.Parking.freeParking.localized(), type: Type.WARN)
 
             return
         }
-        self.regimeTimeStart = getRegimeTime(date: date, time: regimeDay.startTime)
-        self.regimeTimeEnd = getRegimeTime(date: date, time: regimeDay.endTime)
+        regimeTimeStart = getRegimeTime(date: date, time: regimeDay.startTime)
+        regimeTimeEnd = getRegimeTime(date: date, time: regimeDay.endTime)
     }
     
     func getRegimeTime(date: Date, time: String) -> Date? {
@@ -93,53 +93,53 @@ class User: ObservableObject {
     }
 
     func getVisitors() async {
-        guard let response = try? await self.visitorClient.get() else { return }
+        guard let response = try? await visitorClient.get() else { return }
         
         let sorted = response.visitors.sorted()
-        if sorted == self.visitors {
+        if sorted == visitors {
             return
         }
-        self.visitors = sorted
+        visitors = sorted
     }
     
     func addVisitor(license: String, name: String) async {
-        guard let response = try? await self.visitorClient.add(license: license, name: name) else { return }
+        guard let response = try? await visitorClient.add(license: license, name: name) else { return }
         
         if response.success {
             Stats.user.visitorCount += 1
-            self.visitors = nil
-            self.page = nil
-            await self.getVisitors()
+            visitors = nil
+            page = nil
+            await getVisitors()
         } else {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
     }
     
     func deleteVisitor(_ visitor: Visitor) async {
-        guard let response = try? await self.visitorClient.delete(visitor) else { return }
+        guard let response = try? await visitorClient.delete(visitor) else { return }
         
         if !response.success {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
-        await self.getVisitors()
+        await getVisitors()
     }
 
     func getParking() async {
-        guard let response = try? await self.parkingClient.get() else { return }
+        guard let response = try? await parkingClient.get() else { return }
 
-        Notifications.store.parking(response, visitors: self.visitors)
+        Notifications.store.parking(response, visitors: visitors)
 
-        if response == self.parking {
+        if response == parking {
             return
         }
-        self.parking = ParkingResponse(active: Array(response.active),
+        parking = ParkingResponse(active: Array(response.active),
                                        scheduled: Array(response.scheduled))
     }
     
     func startParking(_ visitor: Visitor, timeMinutes: Int, start: Date) async {
-        let regimeTimeEnd = Util.dateTimeFormatter.string(from: self.regimeTimeEnd!)
+        let regimeTimeEnd = Util.dateTimeFormatter.string(from: regimeTimeEnd!)
 
-        guard let response = try? await self.parkingClient.start(visitor: visitor,
+        guard let response = try? await parkingClient.start(visitor: visitor,
                                                                  timeMinutes: timeMinutes,
                                                                  start: start,
                                                                  regimeTimeEnd: regimeTimeEnd) else { return }
@@ -147,13 +147,13 @@ class User: ObservableObject {
         if response.success {
             Stats.user.parkingCount += 1
             
-            self.page = nil
-            self.selectedVisitor = nil
-            self.parking = nil
+            page = nil
+            selectedVisitor = nil
+            parking = nil
             
-            await self.getParking()
-            await self.getBalance()
-            await self.getRegime(Date.now())
+            await getParking()
+            await getBalance()
+            await getRegime(Date.now())
         } else {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
@@ -162,21 +162,21 @@ class User: ObservableObject {
     func stopParking(_ parking: Parking) async {
         self.parking = ParkingResponse(
             active: Array(self.parking!.active.filter({ p in
-                return p.id != parking.id
+                p.id != parking.id
             })),
             scheduled: Array(self.parking!.scheduled.filter({ p in
-                return p.id != parking.id
+                p.id != parking.id
             }))
         )
         
-        guard let response = try? await self.parkingClient.stop(parking) else { return }
+        guard let response = try? await parkingClient.stop(parking) else { return }
        
         if !response.success {
             MessageManager.instance.addMessage(response.message, type: Type.ERROR)
         }
         
-        await self.getParking()
-        await self.getBalance()
+        await getParking()
+        await getBalance()
     }
 
 }

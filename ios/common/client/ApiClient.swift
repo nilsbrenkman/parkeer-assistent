@@ -38,7 +38,7 @@ class ApiClient {
     }
     
     func throwError(_ error: ClientError) {
-        self.errorHandler?.handleError(error)
+        errorHandler?.handleError(error)
     }
     
     
@@ -109,7 +109,7 @@ class ApiClient {
             return try await httpTask.value
         } catch {
             if let clientError = error as? ClientError {
-                self.throwError(clientError)
+                throwError(clientError)
             }
             throw error
         }

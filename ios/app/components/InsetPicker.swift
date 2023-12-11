@@ -20,13 +20,13 @@ struct InsetPicker: View {
                 ForEach(0 ..< labels.count, id: \.self) { i in
                     Button(action: {
                         self.selected = i
-                        self.presentationMode.wrappedValue.dismiss()
+                        presentationMode.wrappedValue.dismiss()
                     }){
                         HStack {
                             Text(labels[i])
                                 .foregroundColor(Color.ui.bw0)
                             Spacer()
-                            if self.selected == i {
+                            if selected == i {
                                 Image(systemName: "checkmark")
                                     .foregroundColor(Color.ui.header)
                             }

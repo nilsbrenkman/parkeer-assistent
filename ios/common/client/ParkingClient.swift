@@ -23,7 +23,7 @@ class ParkingClientApi: ParkingClient {
     }
 
     func get() async throws -> ParkingResponse {
-        return try await ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET)
+        try await ApiClient.client.call(ParkingResponse.self, path: "parking", method: Method.GET)
     }
     
     func start(visitor: Visitor, timeMinutes: Int, start: Date, regimeTimeEnd: String) async throws -> Response {
@@ -33,11 +33,11 @@ class ParkingClientApi: ParkingClient {
     }
     
     func stop(_ parking: Parking) async throws -> Response {
-        return try await ApiClient.client.call(Response.self, path: "parking/\(parking.id)", method: Method.DELETE)
+        try await ApiClient.client.call(Response.self, path: "parking/\(parking.id)", method: Method.DELETE)
     }
     
     func history() async throws -> HistoryResponse {
-        return try await ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET)
+        try await ApiClient.client.call(HistoryResponse.self, path: "parking/history", method: Method.GET)
     }
 
 }

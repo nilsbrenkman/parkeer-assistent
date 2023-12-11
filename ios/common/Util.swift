@@ -39,7 +39,7 @@ class Util {
     }
     
     static func formatCost(_ cost: Double) -> String {
-        return String(format: "%.2f", cost)
+        String(format: "%.2f", cost)
     }
     
     static func calculateTimeBalance(balance: String?, hourRate: Double?) -> Int {
@@ -105,6 +105,6 @@ class Util {
 
 extension Date {
     static func now() -> Date {
-        return Date()
+        Date()
     }
 }

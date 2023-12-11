@@ -22,7 +22,7 @@ class LoginClientApi: LoginClient {
     }
 
     func loggedId() async throws -> Response {
-        return try await ApiClient.client.call(Response.self, path: "login", method: Method.GET)
+        try await ApiClient.client.call(Response.self, path: "login", method: Method.GET)
     }
     
     func login(username: String, password: String) async throws -> Response {
@@ -31,7 +31,7 @@ class LoginClientApi: LoginClient {
     }
     
     func logout() async throws -> Response {
-        return try await ApiClient.client.call(Response.self, path: "logout", method: Method.GET)
+        try await ApiClient.client.call(Response.self, path: "logout", method: Method.GET)
     }
     
 }
