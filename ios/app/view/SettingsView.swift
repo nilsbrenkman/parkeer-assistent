@@ -46,7 +46,7 @@ struct SettingsView: View {
                         .disabled(!reminders)
                         
                         Text(Notifications.INTERVAL_LABELS[Int(reminderInterval)])
-                            .foregroundStyle(reminders ? Color.ui.bw0 : Color.ui.bw30)
+                            .foregroundStyle(reminders ? .primary : .secondary)
                             .frame(width: 50)
                     }
                     

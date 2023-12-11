@@ -19,14 +19,14 @@ extension Color {
         let licenseBorder = Color("Color-license-border")
 
         let light = Color("Color-light")
-        let bw0 = Color("Color-bw-0")
-        let bw30 = Color("Color-bw-30")
+//        let bw0 = Color("Color-bw-0")
+//        let bw30 = Color("Color-bw-30")
         let bw70 = Color("Color-bw-70")
-        let bw100 = Color("Color-bw-100")
+//        let bw100 = Color("Color-bw-100")
         
         let enabled = Color("Color-enabled")
         let disabled = Color("Color-disabled")
-        let background = Color("Color-background")
+//        let background = Color("Color-background")
 
         let info = Color("Color-info")
         let infoDisabled = Color("Color-info-disabled")

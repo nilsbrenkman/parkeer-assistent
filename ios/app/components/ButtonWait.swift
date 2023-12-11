@@ -20,7 +20,6 @@ struct ButtonWait: ViewModifier {
             }
         }
         .centered()
-        .animation(nil, value: 0)
     }
     
 }

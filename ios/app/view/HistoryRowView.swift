@@ -24,7 +24,7 @@ struct HistoryRowView: View {
             Text("€ \(Util.formatCost(history.cost))")
                 .padding(.trailing)
         }
-        .padding(.vertical, Constants.padding.small)
+        .padding(.vertical, Constants.padding.mini)
     }
 }
 

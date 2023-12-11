@@ -18,6 +18,8 @@ struct ParkingView: View {
             if let parking = $user.parking.wrappedValue {
                 if parking.active.isEmpty && parking.scheduled.isEmpty {
                     Text(Lang.Parking.noSessions.localized())
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, Constants.padding.mini)
                         .centered()
                 } else {
                     if !parking.active.isEmpty {
@@ -33,7 +35,6 @@ struct ParkingView: View {
             }
         }
         .id(UUID())
-        .animation(nil, value: 0)
         
     }
     

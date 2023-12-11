@@ -17,6 +17,7 @@ struct SectionHeader: View {
     
     var body: some View {
         Text("\(header):")
+            .foregroundStyle(.secondary)
             .font(Font.ui.sectionHeader)
     }
 }

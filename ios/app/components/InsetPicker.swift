@@ -24,7 +24,7 @@ struct InsetPicker: View {
                     }){
                         HStack {
                             Text(labels[i])
-                                .foregroundColor(Color.ui.bw0)
+                                .foregroundColor(.primary)
                             Spacer()
                             if selected == i {
                                 Image(systemName: "checkmark")

@@ -91,11 +91,6 @@ class ApiClient {
                 }
             }
             
-            //            guard let data = data else {
-            //                self.throwError(.EmptyResponse)
-            //                throw ClientError.EmptyResponse
-            //            }
-            
             Log.debug("Response: \(String(decoding: data, as: UTF8.self))")
 
             guard let result = try? JSONDecoder().decode(RESPONSE.self, from: data) else {

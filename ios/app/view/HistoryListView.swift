@@ -31,15 +31,12 @@ struct HistoryListView: View {
                 } else {
                     let groupedHistory = groupHistory(history)
                     ForEach(groupedHistory, id: \.date) { group in
-                        Section {
+                        Section(header: SectionHeader(HistoryListView.groupFormatter.string(from: group.date))) {
                             ForEach(group.history, id: \.self) { h in
                                 NavigationLink(destination: HistoryView(history: h)) {
                                     HistoryRowView(history: h)
                                 }
                             }
-                        } header: {
-                            Text(HistoryListView.groupFormatter.string(from: group.date))
-                                .font(Font.ui.sectionHeader)
                         }
                     }
                 }

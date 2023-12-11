@@ -32,7 +32,7 @@ struct DatePickerModal: View {
                     .padding()
                 }
             }
-            .background(Color.ui.bw100)
+            .background(.background)
             .cornerRadius(Constants.radius.normal)
         }
         .cornerRadius(Constants.radius.normal)

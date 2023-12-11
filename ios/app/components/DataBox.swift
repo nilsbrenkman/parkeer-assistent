@@ -21,8 +21,10 @@ struct DataBox: View  {
                 RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
                     .fill(Color.ui.bw70)
                     .frame(height: 48)
-                    .overlay(RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
-                                .stroke(Color.ui.bw0, lineWidth: 1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
+                            .stroke(.primary, lineWidth: 1)
+                    )
                 
                 Text(content)
                     .font(Font.ui.dataBoxContent)

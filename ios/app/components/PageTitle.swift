@@ -17,5 +17,6 @@ extension View {
                     Image(systemName: "arrow.left")
                 }
             )
+            .foregroundStyle(.primary)
     }
 }

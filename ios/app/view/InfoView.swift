@@ -40,16 +40,18 @@ struct InfoView: View {
             .padding()
         }
         .frame(height: UIScreen.main.bounds.height * 0.5)
-        .overlay(RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
-                    .stroke(Color.ui.header, lineWidth: 1))
-        .background(Color.ui.bw100)
+        .overlay(
+            RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
+                .stroke(Color.ui.header, lineWidth: 1)
+        )
+        .background(.background)
         .cornerRadius(Constants.radius.normal)
         .padding(.horizontal)
     }
     
     private func createLink(_ title: String, url: String) -> some View {
         Link(title, destination: URL(string: url)!)
-          .foregroundColor(Color.ui.header)
+            .foregroundColor(Color.ui.header)
     }
     
 }

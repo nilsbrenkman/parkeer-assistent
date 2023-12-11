@@ -17,16 +17,16 @@ struct HistoryView: View {
     var body: some View {
         Form {
             Section {
-                VStack(alignment: .leading, spacing: Constants.spacing.normal) {
+                List {
                     LicenseView(license: history.license)
                         .centered()
+                        .padding(.vertical, Constants.padding.small)
 
                     Property(label: Lang.Visitor.name.localized(), text: history.name ?? "")
                     Property(label: Lang.Parking.cost.localized(), text: "€ \(Util.formatCost(history.cost))")
                     Property(label: Lang.Parking.startTime.localized(), text: Util.getParkingTime(history.startTime))
                     Property(label: Lang.Parking.endTime.localized(), text: Util.getParkingTime(history.endTime))
                 }
-                .padding(.vertical)
             }
         }
         .pageTitle(Lang.Parking.details.localized(), dismiss: { presentationMode.wrappedValue.dismiss() })

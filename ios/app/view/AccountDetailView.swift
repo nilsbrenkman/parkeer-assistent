@@ -24,27 +24,29 @@ struct AccountDetailView: View {
             Section {
                 HStack {
                     Text(Lang.Account.alias.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(alignment: .leading)
                     TextField(Lang.Account.alias.localized(), text: $alias)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.vertical, Constants.padding.mini)
+
                 HStack {
                     Text(Lang.Login.username.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(alignment: .leading)
                     TextField(Lang.Login.username.localized(), text: $username)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.vertical, Constants.padding.mini)
+
                 HStack {
                     Text(Lang.Login.password.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(alignment: .leading)
                     TextField(Lang.Login.password.localized(), text: $password)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }

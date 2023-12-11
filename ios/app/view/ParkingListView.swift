@@ -17,26 +17,22 @@ struct ParkingListView: View {
     
     var body: some View {
         
-        Text("\(title):")
-            .font(.title3)
-            .centered()
-
-        ForEach(parkingList, id: \.self) { parking in
-            NavigationLink(destination: ParkingDetailView(parking: parking)) {
-                ParkingRowView(parking: parking)
+        Section(header: SectionHeader(title)) {
+            ForEach(parkingList, id: \.self) { parking in
+                NavigationLink(destination: ParkingDetailView(parking: parking)) {
+                    ParkingRowView(parking: parking)
+                }
+                .accessibility(identifier: "parking")
             }
-            .accessibility(identifier: "parking")
-        }
-        .onDelete(perform: {offsets in
-            for i in offsets {
-                let parking = parkingList[i]
-                Task {
-                    await user.stopParking(parking)
+            .onDelete { offsets in
+                for i in offsets {
+                    let parking = parkingList[i]
+                    Task {
+                        await user.stopParking(parking)
+                    }
                 }
             }
-        })
-        .animation(nil, value: 0)
-        
+        }
     }
     
 }

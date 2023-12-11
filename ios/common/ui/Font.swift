@@ -19,9 +19,6 @@ extension Font {
         let dataBoxTitle = Font.system(size: 20.0, weight: .regular, design: .default)
         let dataBoxContent = Font.system(size: 24.0, weight: .regular, design: .default)
 
-        let propertyLabel = Font.system(size: 16.0, weight: .regular, design: .default)
-        let propertyValue = Font.system(size: 20.0, weight: .semibold, design: .default)
-        
         let calenderDow = Font.system(size: 10.0, weight: .bold, design: .default)
         let calenderDay = Font.system(size: 18.0, weight: .bold, design: .default)
 

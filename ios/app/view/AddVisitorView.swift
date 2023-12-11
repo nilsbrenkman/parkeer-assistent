@@ -23,7 +23,6 @@ struct AddVisitorView: View {
             Section {
                 HStack {
                     Text(Lang.Visitor.license.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(width: 120, alignment: .leading)
                     ZStack() {
                         RoundedRectangle(cornerRadius: Constants.radius.small, style: .continuous)
@@ -54,9 +53,9 @@ struct AddVisitorView: View {
                 
                 HStack {
                     Text(Lang.Visitor.name.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(width: 120, alignment: .leading)
                     TextField(Lang.Visitor.name.localized(), text: $name)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

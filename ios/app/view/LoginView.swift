@@ -28,54 +28,22 @@ struct LoginView: View {
             Section(header: SectionHeader(Lang.Login.login.localized())) {
                 HStack {
                     Text(Lang.Login.username.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(alignment: .leading)
                     TextField("", text: $username)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.vertical, Constants.padding.mini)
                 HStack {
                     Text(Lang.Login.password.localized())
-                        .foregroundStyle(Color.ui.bw30)
                         .frame(alignment: .leading)
                     SecureField("", text: $password)
+                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.trailing)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
                 .padding(.vertical, Constants.padding.mini)
-
-                
-//                VStack(alignment: .leading, spacing: Constants.spacing.normal) {
-//                    VStack(alignment: .leading, spacing: Constants.spacing.small) {
-//                        Text("\(Lang.Login.username.localized()):")
-//                            .font(.title3)
-//                            .bold()
-//                        TextField("", text: $username)
-//                            .accessibilityIdentifier("username")
-//                            .disableAutocorrection(true)
-//                            .frame(height: 36)
-//                            .padding(.horizontal)
-//                            .overlay(
-//                                RoundedRectangle(cornerRadius: Constants.radius.small)
-//                                    .stroke(Color.ui.bw0, lineWidth: 1)
-//                            )
-//                    }
-//                    VStack(alignment: .leading, spacing: Constants.spacing.small) {
-//                        Text("\(Lang.Login.password.localized()):")
-//                            .font(.title3)
-//                            .bold()
-//                        SecureField("", text: $password)
-//                            .accessibilityIdentifier("password")
-//                            .frame(height: 36)
-//                            .padding(.horizontal)
-//                            .overlay(
-//                                RoundedRectangle(cornerRadius: Constants.radius.small)
-//                                    .stroke(Color.ui.bw0, lineWidth: 1)
-//                            )
-//                    }
-//                }
-//                .padding(.vertical)
             }
             Section {
                 Button(action: startLogin){

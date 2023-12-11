@@ -13,13 +13,14 @@ struct Property: View {
     var text: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: Constants.spacing.small) {
-            Text("\(label):")
-                .font(Font.ui.propertyLabel)
-                .foregroundColor(Color.ui.bw30)
+        HStack {
+            Text(label)
+                .frame(alignment: .leading)
             Text(text)
-                .font(Font.ui.propertyValue)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
+        .padding(.vertical, Constants.padding.mini)
     }
 }
 

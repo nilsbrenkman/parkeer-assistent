@@ -33,7 +33,7 @@ struct VisitorListView: View {
                             }
                         }
                         .accessibility(identifier: "visitor")
-                        .foregroundColor(Color.ui.bw0)
+                        .foregroundColor(.primary)
                         .frame(minHeight: 42)
                     }
                     .onDelete(perform: delete)

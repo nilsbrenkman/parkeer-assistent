@@ -28,7 +28,7 @@ struct WheelSelector: View {
             Circle()
                 .stroke(Color.ui.grey80, style: StrokeStyle(lineWidth: config.size * 2))
                 .frame(width: config.radius * 2, height: config.radius * 2)
-                .shadow(color: Color.ui.bw0, radius: 2)
+                .shadow(color: .primary, radius: 2)
             
             Circle()
                 .stroke(Color.ui.grey90, style: StrokeStyle(lineWidth: config.size, lineCap: .butt, dash: [3, 4.8539]))

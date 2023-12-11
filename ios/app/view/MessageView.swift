@@ -19,7 +19,7 @@ struct MessageView: ViewModifier {
             if let msg = message {
                 ZStack {
                     Rectangle()
-                        .fill(Color.ui.background)
+                        .fill(.background)
                     
                     VStack(alignment: .center, spacing: 0) {
                         Text(msg.message)
@@ -60,7 +60,7 @@ struct MessageView: ViewModifier {
                     }
                     .background(
                         RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
-                            .fill(Color.ui.bw100)
+                            .fill(.background)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: Constants.radius.normal, style: .continuous)
